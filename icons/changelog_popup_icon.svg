@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!-- Generator: Adobe Illustrator 16.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd" [
+	<!ENTITY ns_flows "http://ns.adobe.com/Flows/1.0/">
+	<!ENTITY ns_extend "http://ns.adobe.com/Extensibility/1.0/">
+	<!ENTITY ns_ai "http://ns.adobe.com/AdobeIllustrator/10.0/">
+	<!ENTITY ns_graphs "http://ns.adobe.com/Graphs/1.0/">
+]>
+<svg version="1.1" id="Calque_1" xmlns:x="&ns_extend;" xmlns:i="&ns_ai;" xmlns:graph="&ns_graphs;"
+	 xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:a="http://ns.adobe.com/AdobeSVGViewerExtensions/3.0/"
+	 x="0px" y="0px" width="129.99px" height="129.99px" viewBox="0 0 129.99 129.99" enable-background="new 0 0 129.99 129.99"
+	 xml:space="preserve">
+<circle fill="none" stroke="#4C4B4B" stroke-width="10" stroke-miterlimit="10" cx="64.995" cy="64.995" r="59.995"/>
+<path fill="none" stroke="#4C4B4B" stroke-width="7.9131" stroke-miterlimit="10" d="M60.045,100.005H40.828
+	c-1.537,0-2.783-1.264-2.783-2.824V31.58c0-1.56,1.246-2.824,2.783-2.824h48.434c1.537,0,2.783,1.265,2.783,2.824v25.676"/>
+<g>
+	<g>
+		<circle fill="none" stroke="#4C4B4B" stroke-width="3.1678" stroke-miterlimit="10" cx="85.236" cy="83.568" r="9.438"/>
+		<circle fill="none" stroke="#4C4B4B" stroke-width="5" stroke-miterlimit="10" cx="85.236" cy="83.568" r="15.688"/>
+	</g>
+	<g>
+		<polygon fill="#4C4B4B" points="89.674,66.71 80.799,66.71 82.924,59.96 85.236,59.96 87.549,59.96 		"/>
+		<polygon fill="#4C4B4B" points="80.799,100.13 89.674,100.13 87.549,106.88 85.236,106.88 82.924,106.88 		"/>
+	</g>
+	<g>
+		<polygon fill="#4C4B4B" points="98.598,72.447 91.393,67.264 97.061,63.025 98.938,64.376 100.814,65.726 		"/>
+		<polygon fill="#4C4B4B" points="71.877,94.394 79.081,99.578 73.414,103.816 71.537,102.464 69.66,101.115 		"/>
+	</g>
+	<g>
+		<polygon fill="#4C4B4B" points="102.507,82.588 99.818,74.13 106.895,74.111 107.596,76.315 108.296,78.519 		"/>
+		<polygon fill="#4C4B4B" points="67.967,84.253 70.656,92.71 63.579,92.73 62.878,90.527 62.178,88.322 		"/>
+	</g>
+	<g>
+		<polygon fill="#4C4B4B" points="99.775,92.779 102.502,84.333 108.273,88.429 107.563,90.63 106.852,92.832 		"/>
+		<polygon fill="#4C4B4B" points="70.699,74.062 67.972,82.508 62.201,78.412 62.912,76.21 63.623,74.011 		"/>
+	</g>
+	<g>
+		<polygon fill="#4C4B4B" points="78.713,67.409 71.629,72.755 69.259,66.087 71.105,64.694 72.951,63.301 		"/>
+		<polygon fill="#4C4B4B" points="91.76,99.431 98.845,94.085 101.215,100.753 99.369,102.148 97.522,103.541 		"/>
+	</g>
+</g>
+<g>
+	<text transform="matrix(1.0986 0 0 1 42.9614 41.0054)" fill="#4C4B4B" font-family="'SourceSansPro-Semibold'" font-size="8">1)</text>
+	<text transform="matrix(1.0986 0 0 1 42.9614 67.8394)" fill="#4C4B4B" font-family="'SourceSansPro-Semibold'" font-size="8">2)</text>
+	<text transform="matrix(1.0986 0 0 1 48.9614 52.1724)" fill="#4C4B4B" font-family="'SourceSansPro-Semibold'" font-size="8">#</text>
+	<text transform="matrix(1.0986 0 0 1 48.9614 61.1724)" fill="#4C4B4B" font-family="'SourceSansPro-Semibold'" font-size="8">#</text>
+	<text transform="matrix(1.0986 0 0 1 48.9614 79.1724)" fill="#4C4B4B" font-family="'SourceSansPro-Semibold'" font-size="8">#</text>
+	<text transform="matrix(1.0986 0 0 1 48.9614 88.1724)" fill="#4C4B4B" font-family="'SourceSansPro-Semibold'" font-size="8">#</text>
+	<line fill="none" stroke="#4C4B4B" stroke-width="2" stroke-miterlimit="10" x1="45.045" y1="43.173" x2="81.045" y2="43.173"/>
+	<line fill="none" stroke="#4C4B4B" stroke-width="2" stroke-miterlimit="10" x1="45.045" y1="70.005" x2="65.962" y2="70.005"/>
+	<line fill="none" stroke="#4C4B4B" stroke-width="2" stroke-miterlimit="10" x1="53.962" y1="52.172" x2="81.045" y2="52.172"/>
+	<line fill="none" stroke="#4C4B4B" stroke-width="2" stroke-miterlimit="10" x1="53.962" y1="61.172" x2="69.295" y2="61.172"/>
+	<line fill="none" stroke="#4C4B4B" stroke-width="2" stroke-miterlimit="10" x1="53.962" y1="79.172" x2="60.128" y2="79.172"/>
+	<line fill="none" stroke="#4C4B4B" stroke-width="2" stroke-miterlimit="10" x1="53.962" y1="88.171" x2="60.128" y2="88.171"/>
+</g>
+</svg>
