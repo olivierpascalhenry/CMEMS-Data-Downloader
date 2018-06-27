@@ -12,9 +12,9 @@ from PyQt5 import QtCore, QtWidgets, QtGui
 from ui._version import _downloader_version, _eclipse_version, _py_version, _qt_version
 from functions.material_functions import info_button_text, object_init, dataset_data_information
 from functions.gui_functions import activate_type_cb, activate_source_cb
-from functions.window_functions import MyAbout, MyOptions, MyInfo, MyApi
+from functions.window_functions import MyAbout, MyOptions, MyInfo, MyApi, MyWarningUpdate, MyUpdate
 from ui.Ui_mainwindow import Ui_MainWindow
-from functions.thread_functions import CMEMSDataDownloadThread, CheckCMEMSDownloaderOnline, DownloadFile
+from functions.thread_functions import CMEMSDataDownloadThread, CheckCMEMSDownloaderOnline
 
 
 class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):

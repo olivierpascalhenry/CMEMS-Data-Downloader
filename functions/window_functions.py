@@ -7,17 +7,21 @@ from ui.Ui_infowindow import Ui_infoWindow
 from ui.Ui_aboutlogwindow import Ui_aboutlogWindow
 from ui.Ui_optionwindow import Ui_optionWindow
 from ui.Ui_apiwindow import Ui_apiWindow
-'''from ui.Ui_storewindow import Ui_storeWindow
-from ui.Ui_selectionwindow import Ui_selectionWindow
+from ui.Ui_updatewindow import Ui_updateWindow
 from ui.Ui_downloadwindow import Ui_downloadWindow
+
+from ui.Ui_storewindow import Ui_storeWindow
+'''from ui.Ui_selectionwindow import Ui_selectionWindow
+
 from ui.Ui_cancelwindow import Ui_cancelWindow
 
 from ui.Ui_presavewindow import Ui_presaveWindow
-from ui.Ui_updatewindow import Ui_updateWindow
+
 from ui.Ui_expertwindow import Ui_expertWindow
 from ui.Ui_successwindow import Ui_successWindow
 from functions.thread_functions import DownloadFile, ECMWFDataDownloadThread'''
 from PyQt5 import QtWidgets, QtCore, QtGui
+from functions.thread_functions import DownloadFile
 
 
 class MyInfo(QtWidgets.QDialog, Ui_infoWindow):
@@ -138,7 +142,7 @@ class MyOptions(QtWidgets.QDialog, Ui_optionWindow):
         self.close()
 
 
-'''class MyUpdate(QtWidgets.QDialog, Ui_storeWindow):
+class MyUpdate(QtWidgets.QDialog, Ui_storeWindow):
     def __init__(self, url, folder):
         logging.debug('window_functions.py - MyUpdate - __init__')
         QtWidgets.QWidget.__init__(self)
@@ -188,7 +192,28 @@ class MyOptions(QtWidgets.QDialog, Ui_optionWindow):
             os.remove(self.update_file)
 
 
-class MySelect(QtWidgets.QDialog, Ui_selectionWindow):
+class MyWarningUpdate(QtWidgets.QDialog, Ui_updateWindow):
+    def __init__(self, frozen):
+        logging.debug('window_functions.py - MyWarningUpdate - __init__')
+        QtWidgets.QWidget.__init__(self)
+        self.setupUi(self)
+        if not frozen:
+            self.label_1.setText('<p>Click on <b>Download</b> to download the latest update from GitHub repository.</p>'
+                                 + '<p>Once the download is over, the software will close automatically. The package is'
+                                 + ' downloaded in the <b>Download</b> folder of your operating system. You will have t'
+                                 + 'o uncompress it and move all files in the directory of <b>CMEMS Data Downloader</b>'
+                                 + '. Do not delete <i>cmems_downloader.ini</i> if you want to keep all your options.</p>')
+            self.update_button.setText('Download')
+        self.update_button.clicked.connect(self.closeWindow)
+        self.cancel_button.clicked.connect(self.closeWindow)
+        
+    def closeWindow(self):
+        logging.debug('window_functions.py - MyWarningUpdate - closeWindow')
+        self.buttonName = self.sender().objectName()
+        self.close()
+
+
+'''class MySelect(QtWidgets.QDialog, Ui_selectionWindow):
     def __init__(self):
         logging.debug('window_functions.py - MySelect - __init__')
         QtWidgets.QWidget.__init__(self)
@@ -334,25 +359,7 @@ class MyWarning(QtWidgets.QDialog, Ui_presaveWindow):
         self.close()
         
         
-class MyWarningUpdate(QtWidgets.QDialog, Ui_updateWindow):
-    def __init__(self, frozen):
-        logging.debug('window_functions.py - MyWarningUpdate - __init__')
-        QtWidgets.QWidget.__init__(self)
-        self.setupUi(self)
-        if not frozen:
-            self.label_1.setText('<p>Click on <b>Download</b> to download the latest update from GitHub repository.</p>'
-                                 + '<p>Once the download is over, the software will close automatically. The package is'
-                                 + ' downloaded in the <b>Download</b> folder of your operating system. You will have t'
-                                 + 'o uncompress it and move all files in the directory of <b>ECMWF Data Downloader</b>'
-                                 + '. Do not delete <i>ecmwf_downloader.ini</i> if you want to keep all your options.</p>')
-            self.update_button.setText('Download')
-        self.update_button.clicked.connect(self.closeWindow)
-        self.cancel_button.clicked.connect(self.closeWindow)
-        
-    def closeWindow(self):
-        logging.debug('window_functions.py - MyWarningUpdate - closeWindow')
-        self.buttonName = self.sender().objectName()
-        self.close()
+
         
         
 class MyExpert(QtWidgets.QDialog, Ui_expertWindow):

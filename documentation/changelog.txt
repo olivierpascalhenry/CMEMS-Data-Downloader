@@ -12,6 +12,15 @@ To do list:
   - check python version for the update system on linux.
 
 
+June 27 2018, Release version 0.4.1
+===================================
+Version for testing purposes. No API embedded at this time.
+
+  ADDED:
+    - the download window has been added to the update system.
+    - a window to warn the user about an update has been added to the update system.
+
+  
 June 27 2018, Release version 0.4.0
 ===================================
 Version for testing purposes. No API embedded at this time.
