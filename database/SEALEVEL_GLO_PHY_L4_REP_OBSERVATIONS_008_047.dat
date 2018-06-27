@@ -1,0 +1,21 @@
+version=1.0
+creation_date=2018-06-26
+domain=Global
+type=Physics
+source=Satellite
+mode=Delayed delivery
+product=SEALEVEL_GLO_PHY_L3_REP_OBSERVATIONS_008_047
+short_description=For the Global Ocean - Multimission altimeter satellite gridded sea surface heights and derived variables computed with respect to a twenty-year mean. Previously distributed by Aviso+, no change in the scientific content. All the missions are homogenized with respect to a reference mission which is currently OSTM/Jason-2. The sla is computed with an optimal and centered computation time window (6 weeks before and after the date). Two kinds of datasets are proposed: filtered (nominal dataset) and unfiltered.
+description=Short description: For the Global Ocean - Multimission altimeter satellite gridded sea surface heights and derived variables computed with respect to a twenty-year mean. Previously distributed by Aviso+, no change in the scientific content. All the missions are homogenized with respect to a reference mission which is currently OSTM/Jason-2. The sla is computed with an optimal and centered computation time window (6 weeks before and after the date). Two kinds of datasets are proposed: filtered (nominal dataset) and unfiltered. Detailed description: This product is processed by the SL-TAC multimission altimeter data processing system. It processes data from all altimeter missions: Jason-3, Sentinel-3A, HY-2A, Saral/AltiKa, Cryosat-2, Jason-2, Jason-1, T/P, ENVISAT, GFO, ERS1/2. It provides a consistent and homogeneous catalogue of products for varied applications, both for near real time applications and offline studies. Two resolutions are proposed (appears in the file name): *vfec* : for validated, filtered, sub-sampled and LWE-corrected data *vxxc* (named unfiltered) : for validated, NON-filtered, NON-sub-sampled and LWE-corrected data. Processing information: To produce SLA in delayed-time (REPROCESSED), the system uses the Geophysical Data Records which are computed from a Precise Orbit Ephemeris (POE) and are delivered within 2 months depending on the mission. Reanalysis products are more precise than NRT products. The system acquires and then synchronizes altimeter data and auxiliary data; each mission is homogenized using the same models and corrections. The Input Data Quality Control checks that the system uses the best altimeter data. The multi-mission cross-calibration process removes any residual orbit error, or long wavelength error (LWE), as well as large scale biases and discrepancies between various data flows; all altimeter fields are interpolated at crossover locations and dates. After a repeat-track analysis, a mean profile, which is peculiar to each mission, or a Mean Sea Surface (MSS) (when the orbit is non repetitive) is subtracted to compute sea level anomaly. The MSS is available via the Aviso+ dissemination (http://www.aviso.altimetry.fr/en/data/products/auxiliary-products/mss.html). Data are then cross validated, filtered from residual noise and small scale signals, and finally sub-sampled (sla variable). Finally an Optimal Interpolation is made merging all the flying satellites in order to compute gridded SLA. The ADT (Absolute Dynamic Topography, adt variable) is then computed as follows: adt =sla +MDT where MDT is the Mean Dynamic Topography distributed by Aviso+ (http://www.aviso.altimetry.fr/en/data/products/auxiliary-products/mdt.html). The geostrophic currents are derived from sla (geostrophic velocities anomalies, ugosa and vgosa variables) . Note that the gridded products can be visualized on the LAS (Live Access Data) Aviso+ web page http://www.aviso.altimetry.fr/en/data/data-access/las-live-access-server.html).
+resolution=0.25degree x 0.25degree
+temporal_resolution=irregular
+level=L4
+dataset_type=grid
+vertical=surface
+temporal=from 1993-01-01T00:00:00Z to 2017-05-15T00:00:00Z
+production=SL-CLS-TOULOUSE-FR
+image=SEALEVEL_GLO_PHY_L4_REP_OBSERVATIONS_008_047.png
+variables=sla,adt,ugos,vgos,ugosa,vgosa,err
+subset=geographical
+swath=dataset-duacs-rep-global-merged-allsat-phy-l4
+suffixe=-TDS

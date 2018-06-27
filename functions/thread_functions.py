@@ -16,22 +16,22 @@ import urllib
 from hurry.filesize import size, alternative
 from PyQt5 import QtCore, Qt
 from distutils.version import LooseVersion
-#from ui._version import _downloader_version
+from ui._version import _downloader_version
 from PyQt5 import QtWidgets
 from datetime import datetime
 from xml.dom import minidom
 
         
-'''class CheckECMWFDownloaderOnline(Qt.QThread):
+class CheckCMEMSDownloaderOnline(Qt.QThread):
     finished = QtCore.pyqtSignal(str)
     
     def __init__(self):
         Qt.QThread.__init__(self)
-        logging.debug('thread_functions.py - CheckECMWFDownloaderOnline - __init__')
+        logging.debug('thread_functions.py - CheckCMEMSDownloaderOnline - __init__')
     
     def run(self):
-        logging.debug('thread_functions.py - CheckECMWFDownloaderOnline - run')
-        url = 'https://api.github.com/repos/olivierpascalhenry/ECMWF-Data-Downloader/releases/latest'
+        logging.debug('thread_functions.py - CheckCMEMSDownloaderOnline - run')
+        url = 'https://api.github.com/repos/olivierpascalhenry/CMEMS-Data-Downloader/releases/latest'
         try:
             json_object = requests.get(url=url).json()
             format = ''
@@ -54,13 +54,13 @@ from xml.dom import minidom
             else:
                 self.finished.emit('no new version')
         except Exception:
-            logging.exception('thread_functions.py - CheckECMWFDownloaderOnline - run - internet connection error - url ' + url)
+            logging.exception('thread_functions.py - CheckCMEMSDownloaderOnline - run - internet connection error - url ' + url)
     
     def stop(self):
-        self.terminate()'''
+        self.terminate()
         
         
-'''class DownloadFile(Qt.QThread):
+class DownloadFile(Qt.QThread):
     download_update = QtCore.pyqtSignal(list)
     download_done = QtCore.pyqtSignal()
     download_failed = QtCore.pyqtSignal()
@@ -99,7 +99,7 @@ from xml.dom import minidom
                     break
                 fileSize += len(buffer)
                 opened_file.write(buffer)
-                download_speed = self.set_size(fileSize/(time.time() - start)) + '/s'
+                download_speed = self._set_size(fileSize/(time.time() - start)) + '/s'
                 self.download_update.emit([round(fileSize * 100 / totalFileSize), 'Downloading %s at %s' % (self.filename, download_speed)])
             opened_file.close()
             if not self.cancel:
@@ -112,7 +112,7 @@ from xml.dom import minidom
             opened_file.close()
             self.download_failed.emit()
     
-    def set_size(self, bytes):
+    def _set_size(self, bytes):
         suffixes = ['B', 'KB', 'MB', 'GB', 'TB', 'PB']
         i = 0
         while bytes >= 1024 and i < len(suffixes)-1:
@@ -127,7 +127,7 @@ from xml.dom import minidom
     
     def stop(self):
         logging.debug('thread_functions.py - DownloadFile - stop')
-        self.terminate()'''
+        self.terminate()
         
         
 class CMEMSDataDownloadThread(Qt.QThread):
