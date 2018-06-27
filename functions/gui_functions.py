@@ -22,7 +22,7 @@ def activate_type_cb(self):
     deactivate_source_cb(self)
     deactivate_delivery_cb(self)
     deactivate_product_cb(self)
-    deactivate_information_lab(self)
+    deactivate_dataset_information(self)
     try:
         types = self.dataset_database[self.main_cb_1.currentText()]
         cb_list = []
@@ -41,7 +41,7 @@ def activate_source_cb(self):
     deactivate_source_cb(self)
     deactivate_delivery_cb(self)
     deactivate_product_cb(self)
-    deactivate_information_lab(self)
+    deactivate_dataset_information(self)
     try:
         sources = self.dataset_database[self.main_cb_1.currentText()][self.main_cb_2.currentText()]
         cb_list = []
@@ -59,7 +59,7 @@ def activate_source_cb(self):
 def activate_delivery_cb(self):
     deactivate_delivery_cb(self)
     deactivate_product_cb(self)
-    deactivate_information_lab(self)
+    deactivate_dataset_information(self)
     try:
         deliveries = self.dataset_database[self.main_cb_1.currentText()][self.main_cb_2.currentText()][self.main_cb_3.currentText()]
         cb_list = []
@@ -76,66 +76,200 @@ def activate_delivery_cb(self):
 
 def activate_product_cb(self):
     deactivate_product_cb(self)
-    deactivate_information_lab(self)
+    deactivate_dataset_information(self)
     try:
         products = self.dataset_database[self.main_cb_1.currentText()][self.main_cb_2.currentText()][self.main_cb_3.currentText()][self.main_cb_4.currentText()]
         self.main_cb_5.setEnabled(True)
         self.main_cb_5.clear()
         self.main_cb_5.addItem('Make a choice...')
         self.main_cb_5.addItems(sorted(products))
-        self.main_cb_5.currentIndexChanged.connect(lambda: activate_information_tab(self))
+        self.main_cb_5.currentIndexChanged.connect(lambda: activate_dataset_information(self))
     except KeyError:
         pass
 
 
-def activate_information_tab(self):
-    deactivate_information_lab(self)
-    try:
+def activate_dataset_information(self):
+    deactivate_dataset_information(self)
+    if self.main_cb_5.currentText() != 'Make a choice...':
         product = self.product_database[self.main_cb_5.currentText()]
         information_text = ('<p align="justify">Please click on the information button on the right to access more detailed information about the product.</p>'
                             + '<p align="justify">' + product['information']['short_description'] + '</p>')
         self.main_lb_7.setText(information_text)
-        self.tabWidget.setEnabled(True)
-        self.information_scroll_area.setVisible(True)
-    except KeyError:
-        pass
+        swath, period = product['swath'], product['information']['temporal']
+        start, end = period[5:15], period[29:39]
+        self.main_de_1.setEnabled(True)
+        self.main_de_2.setEnabled(True)
+        self.main_de_1.setDate(QtCore.QDate.fromString(start, QtCore.Qt.ISODate))
+        self.main_de_1.setMinimumDate(QtCore.QDate.fromString(start, QtCore.Qt.ISODate))
+        self.main_de_1.setMaximumDate(QtCore.QDate.fromString(end, QtCore.Qt.ISODate))
+        self.main_de_2.setDate(QtCore.QDate.fromString(end, QtCore.Qt.ISODate))
+        self.main_de_2.setMinimumDate(QtCore.QDate.fromString(start, QtCore.Qt.ISODate))
+        self.main_de_2.setMaximumDate(QtCore.QDate.fromString(end, QtCore.Qt.ISODate))
+        self.main_cb_6.clear()
+        self.main_cb_6.setEnabled(True)
+        if isinstance(swath, list):
+            self.main_cb_6.addItem('Make a choice...')
+            self.main_cb_6.addItems(swath)
+            clear_layout(self.variables_vertical_layout)
+            self.main_cb_6.currentIndexChanged.connect(lambda: populate_variable_list(self, product['variables']))
+            self.main_cb_6.currentIndexChanged.connect(lambda: activate_depth_cb(self, product['information']['vertical']))
+            self.main_cb_6.currentIndexChanged.connect(lambda: activate_area_ln(self, product['subset']))
+        else:
+            self.main_cb_6.addItem(swath)
+            populate_variable_list(self, product['variables'])
+            activate_depth_cb(self, product['information']['vertical'])
+            activate_area_ln(self, product['subset'])
+
+
+def populate_variable_list(self, variables):
+    clear_layout(self.variables_vertical_layout)
+    if self.main_cb_6.currentText() != 'Make a choice...':
+        font = QtGui.QFont()
+        font.setFamily("fonts/SourceSansPro-Regular.ttf")
+        font.setPointSize(10)
+        font.setKerning(True)
+        font.setStyleStrategy(QtGui.QFont.PreferAntialias)
+        if variables is not None:
+            if isinstance(variables, list):
+                if isinstance(variables[0], list):
+                    index = self.main_cb_6.currentIndex() - 1
+                    variables = variables[index]
+            else:
+                variables = [variables]
+            self.variables_cb.clear()
+            var_num = 0
+            for var in variables:
+                self.variables_cb.append(QtWidgets.QCheckBox())
+                self.variables_cb[var_num].setMinimumSize(QtCore.QSize(0, 27))
+                self.variables_cb[var_num].setMaximumSize(QtCore.QSize(16777215, 27))
+                self.variables_cb[var_num].setFont(font)
+                self.variables_cb[var_num].setObjectName('variables_cb_' + str(var_num))
+                self.variables_cb[var_num].setText(self.variables_name[var])
+                self.variables_vertical_layout.addWidget(self.variables_cb[var_num])
+                var_num += 1
+        else:
+            label = QtWidgets.QLabel()
+            label.setMinimumSize(QtCore.QSize(0, 27))
+            label.setMaximumSize(QtCore.QSize(16777215, 27))
+            label.setFont(font)
+            label.setObjectName('label')
+            label.setText('Only one variable is available with the current dataset. It has been automatically selected.')
+            self.variables_vertical_layout.addWidget(label)
+
+
+def activate_depth_cb(self, depth):
+    if self.main_cb_6.currentText() != 'Make a choice...' and self.main_cb_6.currentText() != 'No product selected...':
+        if depth == 'surface':
+            self.main_cb_7.clear()
+            self.main_cb_7.addItem('surface')
+        else:
+            self.main_cb_7.setEnabled(True)
+            self.main_cb_7.clear()
+            self.main_cb_7.addItem('Make a choice...')
+
+
+def activate_area_ln(self, subset):
+    if subset == 'geographical':
+        self.space_ln_north.setEnabled(True)
+        self.space_ln_south.setEnabled(True)
+        self.space_ln_east.setEnabled(True)
+        self.space_ln_west.setEnabled(True)
+        self.earth_im.setEnabled(True)
+    
+    
+def deactivate_area_ln(self):
+    self.space_ln_north.setText('')
+    self.space_ln_south.setText('')
+    self.space_ln_east.setText('')
+    self.space_ln_west.setText('')
+    self.space_ln_north.setEnabled(False)
+    self.space_ln_south.setEnabled(False)
+    self.space_ln_east.setEnabled(False)
+    self.space_ln_west.setEnabled(False)
+    self.earth_im.setEnabled(False)
+
+
+def deactivate_depth_cb(self):
+    self.main_cb_7.setEnabled(False)
+    self.main_cb_7.clear()
+    self.main_cb_7.addItem('No depth...')
 
 
 def deactivate_type_cb(self):
     try:
-        self.main_cb_2.currentIndexChanged.disconnect(lambda: activate_source_cb(self))
+        self.main_cb_2.currentIndexChanged.disconnect()
     except TypeError:
         pass
+    self.main_cb_2.clear()
+    self.main_cb_2.addItem('No type available...')
     self.main_cb_2.setCurrentIndex(0)
     self.main_cb_2.setEnabled(False)
 
 
 def deactivate_source_cb(self):
     try:
-        self.main_cb_3.currentIndexChanged.disconnect(lambda: activate_delivery_cb(self))
+        self.main_cb_3.currentIndexChanged.disconnect()
     except TypeError:
         pass
+    self.main_cb_3.clear()
+    self.main_cb_3.addItem('No source available...')
     self.main_cb_3.setCurrentIndex(0)
     self.main_cb_3.setEnabled(False)
 
 
 def deactivate_delivery_cb(self):
     try:
-        self.main_cb_4.currentIndexChanged.disconnect(lambda: activate_product_cb(self))
+        self.main_cb_4.currentIndexChanged.disconnect()
     except TypeError:
         pass
+    self.main_cb_4.clear()
+    self.main_cb_4.addItem('No mode available...')
     self.main_cb_4.setCurrentIndex(0)
     self.main_cb_4.setEnabled(False)
 
 
 def deactivate_product_cb(self):
     try:
-        self.main_cb_5.currentIndexChanged.disconnect(lambda: activate_information_tab(self))
+        self.main_cb_5.currentIndexChanged.disconnect()
     except TypeError:
         pass
+    self.main_cb_5.clear()
+    self.main_cb_5.addItem('No product available...')
     self.main_cb_5.setCurrentIndex(0)
     self.main_cb_5.setEnabled(False)
 
 
-def deactivate_information_lab(self):
+def deactivate_dataset_information(self):
     self.main_lb_7.setText('')
+    try:
+        self.main_cb_6.currentIndexChanged.disconnect()
+    except TypeError:
+        pass
+    self.main_cb_6.clear()
+    self.main_cb_6.addItem('No product selected...')
+    self.main_cb_6.setCurrentIndex(0)
+    self.main_cb_6.setEnabled(False)
+    self.main_de_1.setMinimumDate(QtCore.QDate.fromString('1979-01-01', QtCore.Qt.ISODate))
+    self.main_de_1.setDate(QtCore.QDate.fromString('1979-01-01', QtCore.Qt.ISODate))
+    self.main_de_2.setMaximumDate(QtCore.QDate.fromString('2018-01-01', QtCore.Qt.ISODate))
+    self.main_de_2.setDate(QtCore.QDate.fromString('2018-01-01', QtCore.Qt.ISODate))
+    self.main_de_1.setEnabled(False)
+    self.main_de_2.setEnabled(False)
+    clear_layout(self.variables_vertical_layout)
+    deactivate_depth_cb(self)
+    deactivate_area_ln(self)
+    
+    
+    
+def clear_layout(layout):
+    logging.debug('gui_functions.py - clear_layout')
+    for i in reversed(range(layout.count())):   
+        item = layout.itemAt(i)
+        if isinstance(item, QtWidgets.QWidgetItem):
+            item.widget().deleteLater()
+        elif isinstance(item, QtWidgets.QLayout):
+            clear_layout(item.layout())
+        layout.removeItem(item)      
+    
+    
+    

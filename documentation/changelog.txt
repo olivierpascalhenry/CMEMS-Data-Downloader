@@ -9,8 +9,21 @@ To do list:
   - if a download is a subset, the outfile is a .nc, if not a subset, the outfile is .zip.
   - a download can be a subset based on the dataset and on the space and depth selection.
   - if a user doesn't want to store its username and password, propose a window to enter them both before sending a query.
+  - check python version for the update system on linux.
 
 
+June 27 2018, Release version 0.4.0
+===================================
+Version for testing purposes. No API embedded at this time.
+
+  ADDED:
+    - information about CMEMS produts are now stored in .dat files. A template will be available later.
+    - 3 products are available in CDD for now.
+    - CMEMS data downloader can now produce a database dictionary from .dat files.
+    - option window has been added.
+    - logic between elements and tabs has been completed.
+  
+  
 June 25 2018, Release version 0.3.0
 ===================================
 Version for testing purposes. First version of the interface. No API embedded at this time.

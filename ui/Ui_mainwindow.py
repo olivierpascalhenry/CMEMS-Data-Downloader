@@ -337,8 +337,8 @@ class Ui_MainWindow(object):
         self.gridLayout.addWidget(self.main_lb_1, 0, 0, 1, 1)
         self.main_cb_1 = QtWidgets.QComboBox(self.scrollAreaWidgetContents)
         self.main_cb_1.setEnabled(True)
-        self.main_cb_1.setMinimumSize(QtCore.QSize(160, 27))
-        self.main_cb_1.setMaximumSize(QtCore.QSize(160, 27))
+        self.main_cb_1.setMinimumSize(QtCore.QSize(180, 27))
+        self.main_cb_1.setMaximumSize(QtCore.QSize(180, 27))
         font = QtGui.QFont()
         font.setFamily("fonts/SourceSansPro-Regular.ttf")
         font.setPointSize(9)
@@ -421,9 +421,9 @@ class Ui_MainWindow(object):
         self.main_lb_2.setObjectName("main_lb_2")
         self.gridLayout.addWidget(self.main_lb_2, 1, 0, 1, 1)
         self.main_cb_2 = QtWidgets.QComboBox(self.scrollAreaWidgetContents)
-        self.main_cb_2.setEnabled(True)
-        self.main_cb_2.setMinimumSize(QtCore.QSize(160, 27))
-        self.main_cb_2.setMaximumSize(QtCore.QSize(160, 27))
+        self.main_cb_2.setEnabled(False)
+        self.main_cb_2.setMinimumSize(QtCore.QSize(180, 27))
+        self.main_cb_2.setMaximumSize(QtCore.QSize(180, 27))
         font = QtGui.QFont()
         font.setFamily("fonts/SourceSansPro-Regular.ttf")
         font.setPointSize(9)
@@ -481,9 +481,6 @@ class Ui_MainWindow(object):
         self.main_cb_2.setMaxVisibleItems(12)
         self.main_cb_2.setObjectName("main_cb_2")
         self.main_cb_2.addItem("")
-        self.main_cb_2.addItem("")
-        self.main_cb_2.addItem("")
-        self.main_cb_2.addItem("")
         self.gridLayout.addWidget(self.main_cb_2, 1, 1, 1, 1)
         self.main_lb_3 = QtWidgets.QLabel(self.scrollAreaWidgetContents)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
@@ -504,9 +501,9 @@ class Ui_MainWindow(object):
         self.main_lb_3.setObjectName("main_lb_3")
         self.gridLayout.addWidget(self.main_lb_3, 2, 0, 1, 1)
         self.main_cb_3 = QtWidgets.QComboBox(self.scrollAreaWidgetContents)
-        self.main_cb_3.setEnabled(True)
-        self.main_cb_3.setMinimumSize(QtCore.QSize(160, 27))
-        self.main_cb_3.setMaximumSize(QtCore.QSize(160, 27))
+        self.main_cb_3.setEnabled(False)
+        self.main_cb_3.setMinimumSize(QtCore.QSize(180, 27))
+        self.main_cb_3.setMaximumSize(QtCore.QSize(180, 27))
         font = QtGui.QFont()
         font.setFamily("fonts/SourceSansPro-Regular.ttf")
         font.setPointSize(9)
@@ -564,10 +561,6 @@ class Ui_MainWindow(object):
         self.main_cb_3.setMaxVisibleItems(12)
         self.main_cb_3.setObjectName("main_cb_3")
         self.main_cb_3.addItem("")
-        self.main_cb_3.addItem("")
-        self.main_cb_3.addItem("")
-        self.main_cb_3.addItem("")
-        self.main_cb_3.addItem("")
         self.gridLayout.addWidget(self.main_cb_3, 2, 1, 1, 1)
         self.main_lb_4 = QtWidgets.QLabel(self.scrollAreaWidgetContents)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
@@ -588,9 +581,9 @@ class Ui_MainWindow(object):
         self.main_lb_4.setObjectName("main_lb_4")
         self.gridLayout.addWidget(self.main_lb_4, 3, 0, 1, 1)
         self.main_cb_4 = QtWidgets.QComboBox(self.scrollAreaWidgetContents)
-        self.main_cb_4.setEnabled(True)
-        self.main_cb_4.setMinimumSize(QtCore.QSize(160, 27))
-        self.main_cb_4.setMaximumSize(QtCore.QSize(160, 27))
+        self.main_cb_4.setEnabled(False)
+        self.main_cb_4.setMinimumSize(QtCore.QSize(180, 27))
+        self.main_cb_4.setMaximumSize(QtCore.QSize(180, 27))
         font = QtGui.QFont()
         font.setFamily("fonts/SourceSansPro-Regular.ttf")
         font.setPointSize(9)
@@ -648,9 +641,6 @@ class Ui_MainWindow(object):
         self.main_cb_4.setMaxVisibleItems(12)
         self.main_cb_4.setObjectName("main_cb_4")
         self.main_cb_4.addItem("")
-        self.main_cb_4.addItem("")
-        self.main_cb_4.addItem("")
-        self.main_cb_4.addItem("")
         self.gridLayout.addWidget(self.main_cb_4, 3, 1, 1, 1)
         self.horizontalLayout_2.addLayout(self.gridLayout)
         spacerItem1 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
@@ -704,7 +694,7 @@ class Ui_MainWindow(object):
         self.horizontalLayout_5.addItem(spacerItem7)
         self.verticalLayout_2.addLayout(self.horizontalLayout_5)
         self.main_cb_5 = QtWidgets.QComboBox(self.scrollAreaWidgetContents)
-        self.main_cb_5.setEnabled(True)
+        self.main_cb_5.setEnabled(False)
         self.main_cb_5.setMinimumSize(QtCore.QSize(430, 27))
         self.main_cb_5.setMaximumSize(QtCore.QSize(430, 27))
         font = QtGui.QFont()
@@ -763,8 +753,6 @@ class Ui_MainWindow(object):
 "}")
         self.main_cb_5.setMaxVisibleItems(12)
         self.main_cb_5.setObjectName("main_cb_5")
-        self.main_cb_5.addItem("")
-        self.main_cb_5.addItem("")
         self.main_cb_5.addItem("")
         self.verticalLayout_2.addWidget(self.main_cb_5)
         spacerItem8 = QtWidgets.QSpacerItem(17, 13, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Ignored)
@@ -1265,7 +1253,7 @@ class Ui_MainWindow(object):
         spacerItem22 = QtWidgets.QSpacerItem(20, 20, QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout_6.addItem(spacerItem22)
         self.main_cb_6 = QtWidgets.QComboBox(self.scrollAreaWidgetContents_6)
-        self.main_cb_6.setEnabled(True)
+        self.main_cb_6.setEnabled(False)
         self.main_cb_6.setMinimumSize(QtCore.QSize(430, 27))
         self.main_cb_6.setMaximumSize(QtCore.QSize(430, 27))
         font = QtGui.QFont()
@@ -1648,7 +1636,7 @@ class Ui_MainWindow(object):
         self.main_lb_13.setObjectName("main_lb_13")
         self.horizontalLayout_12.addWidget(self.main_lb_13)
         self.main_de_1 = QtWidgets.QDateEdit(self.scrollAreaWidgetContents_3)
-        self.main_de_1.setEnabled(True)
+        self.main_de_1.setEnabled(False)
         self.main_de_1.setMinimumSize(QtCore.QSize(130, 27))
         self.main_de_1.setMaximumSize(QtCore.QSize(130, 27))
         font = QtGui.QFont()
@@ -1718,7 +1706,7 @@ class Ui_MainWindow(object):
         self.main_lb_14.setObjectName("main_lb_14")
         self.horizontalLayout_12.addWidget(self.main_lb_14)
         self.main_de_2 = QtWidgets.QDateEdit(self.scrollAreaWidgetContents_3)
-        self.main_de_2.setEnabled(True)
+        self.main_de_2.setEnabled(False)
         self.main_de_2.setMinimumSize(QtCore.QSize(130, 27))
         self.main_de_2.setMaximumSize(QtCore.QSize(130, 27))
         font = QtGui.QFont()
@@ -1842,7 +1830,7 @@ class Ui_MainWindow(object):
         self.main_lb_15.setObjectName("main_lb_15")
         self.horizontalLayout_14.addWidget(self.main_lb_15)
         self.main_cb_7 = QtWidgets.QComboBox(self.scrollAreaWidgetContents_3)
-        self.main_cb_7.setEnabled(True)
+        self.main_cb_7.setEnabled(False)
         self.main_cb_7.setMinimumSize(QtCore.QSize(160, 27))
         self.main_cb_7.setMaximumSize(QtCore.QSize(160, 27))
         font = QtGui.QFont()
@@ -1974,6 +1962,7 @@ class Ui_MainWindow(object):
         spacerItem48 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout_9.addItem(spacerItem48)
         self.space_ln_north = QtWidgets.QLineEdit(self.scrollAreaWidgetContents_3)
+        self.space_ln_north.setEnabled(False)
         self.space_ln_north.setMinimumSize(QtCore.QSize(60, 27))
         self.space_ln_north.setMaximumSize(QtCore.QSize(60, 27))
         font = QtGui.QFont()
@@ -1988,6 +1977,10 @@ class Ui_MainWindow(object):
 "    border-radius: 3px;\n"
 "   padding: 1px 4px 1px 4px;\n"
 "    background-color:  rgb(240, 240, 240);\n"
+"}\n"
+"\n"
+"QLineEdit:disabled {\n"
+"    background-color:  rgb(200, 200, 200);\n"
 "}")
         self.space_ln_north.setFrame(False)
         self.space_ln_north.setAlignment(QtCore.Qt.AlignCenter)
@@ -2001,6 +1994,7 @@ class Ui_MainWindow(object):
         spacerItem50 = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
         self.verticalLayout_8.addItem(spacerItem50)
         self.space_ln_west = QtWidgets.QLineEdit(self.scrollAreaWidgetContents_3)
+        self.space_ln_west.setEnabled(False)
         self.space_ln_west.setMinimumSize(QtCore.QSize(60, 27))
         self.space_ln_west.setMaximumSize(QtCore.QSize(60, 27))
         font = QtGui.QFont()
@@ -2014,6 +2008,10 @@ class Ui_MainWindow(object):
 "    border-radius: 3px;\n"
 "   padding: 1px 4px 1px 4px;\n"
 "    background-color:  rgb(240, 240, 240);\n"
+"}\n"
+"\n"
+"QLineEdit:disabled {\n"
+"    background-color:  rgb(200, 200, 200);\n"
 "}")
         self.space_ln_west.setFrame(False)
         self.space_ln_west.setAlignment(QtCore.Qt.AlignCenter)
@@ -2023,6 +2021,7 @@ class Ui_MainWindow(object):
         self.verticalLayout_8.addItem(spacerItem51)
         self.gridLayout_8.addLayout(self.verticalLayout_8, 1, 0, 1, 1)
         self.earth_im = QtWidgets.QLabel(self.scrollAreaWidgetContents_3)
+        self.earth_im.setEnabled(False)
         self.earth_im.setMinimumSize(QtCore.QSize(230, 230))
         self.earth_im.setMaximumSize(QtCore.QSize(230, 230))
         self.earth_im.setText("")
@@ -2036,6 +2035,7 @@ class Ui_MainWindow(object):
         spacerItem52 = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
         self.verticalLayout_28.addItem(spacerItem52)
         self.space_ln_east = QtWidgets.QLineEdit(self.scrollAreaWidgetContents_3)
+        self.space_ln_east.setEnabled(False)
         self.space_ln_east.setMinimumSize(QtCore.QSize(60, 27))
         self.space_ln_east.setMaximumSize(QtCore.QSize(60, 27))
         font = QtGui.QFont()
@@ -2049,6 +2049,10 @@ class Ui_MainWindow(object):
 "    border-radius: 3px;\n"
 "   padding: 1px 4px 1px 4px;\n"
 "    background-color:  rgb(240, 240, 240);\n"
+"}\n"
+"\n"
+"QLineEdit:disabled {\n"
+"    background-color:  rgb(200, 200, 200);\n"
 "}")
         self.space_ln_east.setFrame(False)
         self.space_ln_east.setAlignment(QtCore.Qt.AlignCenter)
@@ -2062,6 +2066,7 @@ class Ui_MainWindow(object):
         spacerItem54 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout_10.addItem(spacerItem54)
         self.space_ln_south = QtWidgets.QLineEdit(self.scrollAreaWidgetContents_3)
+        self.space_ln_south.setEnabled(False)
         self.space_ln_south.setMinimumSize(QtCore.QSize(60, 27))
         self.space_ln_south.setMaximumSize(QtCore.QSize(60, 27))
         font = QtGui.QFont()
@@ -2075,6 +2080,10 @@ class Ui_MainWindow(object):
 "    border-radius: 3px;\n"
 "   padding: 1px 4px 1px 4px;\n"
 "    background-color:  rgb(240, 240, 240);\n"
+"}\n"
+"\n"
+"QLineEdit:disabled {\n"
+"    background-color:  rgb(200, 200, 200);\n"
 "}")
         self.space_ln_south.setFrame(False)
         self.space_ln_south.setAlignment(QtCore.Qt.AlignCenter)
@@ -2257,29 +2266,17 @@ class Ui_MainWindow(object):
         self.main_cb_1.setItemText(4, _translate("MainWindow", "Mediterranean Sea"))
         self.main_cb_1.setItemText(5, _translate("MainWindow", "Black Sea"))
         self.main_lb_2.setText(_translate("MainWindow", "2) Select the data type:"))
-        self.main_cb_2.setItemText(0, _translate("MainWindow", "Make a choice..."))
-        self.main_cb_2.setItemText(1, _translate("MainWindow", "Physics"))
-        self.main_cb_2.setItemText(2, _translate("MainWindow", "Biogeochemistry"))
-        self.main_cb_2.setItemText(3, _translate("MainWindow", "Waves"))
+        self.main_cb_2.setItemText(0, _translate("MainWindow", "No type available..."))
         self.main_lb_3.setText(_translate("MainWindow", "3) Select the data source:"))
-        self.main_cb_3.setItemText(0, _translate("MainWindow", "Make a choice..."))
-        self.main_cb_3.setItemText(1, _translate("MainWindow", "Model"))
-        self.main_cb_3.setItemText(2, _translate("MainWindow", "Insitu"))
-        self.main_cb_3.setItemText(3, _translate("MainWindow", "Satellite"))
-        self.main_cb_3.setItemText(4, _translate("MainWindow", "Satellite / Insitu"))
+        self.main_cb_3.setItemText(0, _translate("MainWindow", "No source available..."))
         self.main_lb_4.setText(_translate("MainWindow", "4) Select the delivery mode:"))
-        self.main_cb_4.setItemText(0, _translate("MainWindow", "Make a choice..."))
-        self.main_cb_4.setItemText(1, _translate("MainWindow", "Near real time"))
-        self.main_cb_4.setItemText(2, _translate("MainWindow", "Delayed delivery"))
-        self.main_cb_4.setItemText(3, _translate("MainWindow", "Reanalysis"))
+        self.main_cb_4.setItemText(0, _translate("MainWindow", "No mode available..."))
         self.main_lb_5.setText(_translate("MainWindow", "<html><head/><body><p>5) Select now a <span style=\" font-weight:600;\">product</span>:</p></body></html>"))
-        self.main_cb_5.setItemText(0, _translate("MainWindow", "Make a choice..."))
-        self.main_cb_5.setItemText(1, _translate("MainWindow", "SEALEVEL_GLO_PHY_L3_REP_OBSERVATIONS_008_045"))
-        self.main_cb_5.setItemText(2, _translate("MainWindow", "SEALEVEL_GLO_PHY_L4_REP_OBSERVATIONS_008_047"))
+        self.main_cb_5.setItemText(0, _translate("MainWindow", "No product available..."))
         self.main_lb_6.setText(_translate("MainWindow", "Information:"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tabWidgetPage1), _translate("MainWindow", "Product / Information"))
         self.main_lb_8.setText(_translate("MainWindow", "Datasets:"))
-        self.main_cb_6.setItemText(0, _translate("MainWindow", "Make a choice..."))
+        self.main_cb_6.setItemText(0, _translate("MainWindow", "No product selected..."))
         self.main_lb_10.setText(_translate("MainWindow", "Variables:"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tabWidgetPage2), _translate("MainWindow", "Datasets / Variables"))
         self.main_lb_11.setText(_translate("MainWindow", "Temporal coverage:"))
@@ -2289,7 +2286,7 @@ class Ui_MainWindow(object):
         self.main_de_2.setDisplayFormat(_translate("MainWindow", "yyyy-MM-dd"))
         self.main_lb_12.setText(_translate("MainWindow", "Depth:"))
         self.main_lb_15.setText(_translate("MainWindow", "end depth:"))
-        self.main_cb_7.setItemText(0, _translate("MainWindow", "Make a choice..."))
+        self.main_cb_7.setItemText(0, _translate("MainWindow", "No depth..."))
         self.main_lb_9.setText(_translate("MainWindow", "Regional coverage:"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tabWidgetPage3), _translate("MainWindow", "Time and Space"))
         self.download.setText(_translate("MainWindow", "Download"))
