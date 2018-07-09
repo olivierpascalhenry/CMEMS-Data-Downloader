@@ -160,17 +160,22 @@ class CMEMSDataDownloadThread(Qt.QThread):
     def run(self):
         logging.debug('thread_functions.py - CMEMSDataDownloadThread - run')
         
-        service_url = self._auth_connexion(self.auth_url)
+        print(self.auth_url)
+        
+        
+        
+        
+        '''service_url = self._auth_connexion(self.auth_url)
         
         id_res = requests.get(service_url, headers=self.headers)
         
         status = minidom.parseString(id_res.text).getElementsByTagName('statusModeResponse')[0].getAttribute('status')
         id = minidom.parseString(id_res.text).getElementsByTagName('statusModeResponse')[0].getAttribute('requestId')
         
-        '''if status == "2":
-            message = minidom.parseString(id_req.text).getElementsByTagName('statusModeResponse')[0].getAttribute('msg')
-            status_url = None
-        else:'''
+        #if status == "2":
+        #    message = minidom.parseString(id_req.text).getElementsByTagName('statusModeResponse')[0].getAttribute('msg')
+        #    status_url = None
+        #else:
         
         status_url = self.motu_url + '?action=getreqstatus&requestid=' + id + "&service=" + self.query['service'] + "&product=" + self.query['product']
         
@@ -206,19 +211,19 @@ class CMEMSDataDownloadThread(Qt.QThread):
                 logging.debug('thread_functions.py - ECMWFDataDownloadThread - run - downloading - headers ' + str(final_res.headers))
                 
                 with open(self.out_folder + self.out_filename + '.zip', 'wb') as f:
-                    '''text = 'The processing of the query is finished and the file is ready to be downloaded.<br>'
+                    text = 'The processing of the query is finished and the file is ready to be downloaded.<br>'
                     self.download_update.emit({'browser_text':text,
                                                 'bar_text':'Ready to download...',
-                                                'progress':0})'''
+                                                'progress':0})
                     start = time.time()
                     total_length = int(final_res.headers.get('content-length'))
                     downloaded = 0
-                    '''self.download_update.emit({'browser_text':'Downloading...',
+                    self.download_update.emit({'browser_text':'Downloading...',
                                                        'bar_text':'Downloading...',
                                                        'progress':0})
                     self.download_update.emit({'browser_text':'Total size of the file: ' + self.set_size(total_length),
                                                        'bar_text':'Downloading...',
-                                                       'progress':0})'''
+                                                       'progress':0})
                     self.downloading = True
                     download_start = datetime.now()
                     for chunk in final_res.iter_content(chunk_size=1024):
@@ -235,11 +240,11 @@ class CMEMSDataDownloadThread(Qt.QThread):
                         
                         print(bar_text)
                         
-                        '''self.download_update.emit({'browser_text':'',
+                        self.download_update.emit({'browser_text':'',
                                                     'bar_text':bar_text,
-                                                    'progress':progress})'''
+                                                    'progress':progress})
                 f.close()
-                print('download finished')
+                print('download finished')'''
         
         
         '''
@@ -424,6 +429,9 @@ class CMEMSDataDownloadThread(Qt.QThread):
     def _prepare_url_and_variables(self):
         self.auth_url = self.motu_url + '?'
         for key, value in self.query.items():
+            
+            ### virer user, password, filename, folder
+            
             self.auth_url += key + '=' + value + '&'
         self.auth_url = self.auth_url[:-1]
     

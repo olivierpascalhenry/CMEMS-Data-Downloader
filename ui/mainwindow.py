@@ -12,7 +12,9 @@ from PyQt5 import QtCore, QtWidgets, QtGui
 from ui._version import _downloader_version, _eclipse_version, _py_version, _qt_version
 from functions.material_functions import info_button_text, object_init, dataset_data_information
 from functions.gui_functions import activate_type_cb, activate_source_cb
-from functions.window_functions import MyAbout, MyOptions, MyInfo, MyApi, MyWarningUpdate, MyUpdate
+from functions.window_functions import MyAbout, MyOptions, MyInfo, MyApi, MyWarningUpdate, MyUpdate, MyProduct, MyQuery, MyWarning
+from functions.query_functions import prepare_query
+from functions.xml_functions import save_xml_query, open_xml_query
 from ui.Ui_mainwindow import Ui_MainWindow
 from functions.thread_functions import CMEMSDataDownloadThread, CheckCMEMSDownloaderOnline
 
@@ -33,52 +35,25 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.main_cb_3.setItemDelegate(itemDelegate)
         self.main_cb_4.setItemDelegate(itemDelegate)
         self.main_cb_5.setItemDelegate(itemDelegate)
+        self.main_cb_6.setItemDelegate(itemDelegate)
+        self.main_cb_7.setItemDelegate(itemDelegate)
         self.main_cb_1.currentIndexChanged.connect(lambda: activate_type_cb(self))
-        #self.download.clicked.connect(self.launch_query)
+        self.download.clicked.connect(self.launch_query)
         self.api_information()
         self.check_downloader_update()
         self.check_file_folder()
         self.prepare_datasets_database()
-        
-        
-    def launch_query(self):
-        logging.info('mainwindow.py - launch_query')
-        
-        user = self.config_dict['CREDENTIALS'].get('user')
-        password = self.config_dict['CREDENTIALS'].get('password')
-        motu_url = self.config_dict['CREDENTIALS'].get('url')
-        service = 'SEALEVEL_GLO_PHY_L3_REP_OBSERVATIONS_008_045-DGF'
-        product = 'dataset-duacs-rep-global-alg-phy-l3'
-        lon_min = '0'
-        lon_max = '40'
-        lat_min = '0'
-        lat_max = '40'
-        date_min = '2017-05-01T23:22:15'
-        date_max = '2017-05-10T23:42:03'
-        variable = 'sla'
-        folder = self.config_dict['CREDENTIALS'].get('folder') + '\\'
-        filename = 'test'
-        output = 'netcdf'
-        
-        auth_query = {'product':product,
-                      'service':service,
-                      'scriptVersion':'1.5.00',
-                      'mode':'status',
-                      'action':'productdownload',
-                      'output':output,
-                      't_lo':date_min,
-                      't_hi':date_max,
-                      'x_lo':lon_min,
-                      'x_hi':lon_max,
-                      'y_lo':lat_min,
-                      'y_hi':lat_max
-                      }
-        
-        
-        
-        self.test = CMEMSDataDownloadThread(auth_query, motu_url, user, password, folder, filename)
-        self.test.start()
-        
+        self.product_info_button.clicked.connect(self.product_information)
+        self.main_cb_6.currentIndexChanged.connect(self.set_modified)
+        self.main_cb_7.currentIndexChanged.connect(self.set_modified)
+        self.space_ln_north.textChanged.connect(self.set_modified)
+        self.space_ln_south.textChanged.connect(self.set_modified)
+        self.space_ln_west.textChanged.connect(self.set_modified)
+        self.space_ln_east.textChanged.connect(self.set_modified)
+        self.main_ln_1.textChanged.connect(self.set_modified)
+        self.main_de_1.dateChanged.connect(self.set_modified)
+        self.main_de_2.dateChanged.connect(self.set_modified)
+        self.make_window_title()
         
     
     @QtCore.pyqtSlot()
@@ -110,10 +85,28 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.download_and_install_downloader_update()
     
     def save_document(self):
-        print('no function yet')
+        logging.debug('mainwindow.py - save_document')
+        filename = self.get_file_name('save')
+        if filename:
+            save_xml_query(self, filename)
         
     def open_document(self):
-        print('no function yet')
+        logging.debug('mainwindow.py - open_document')
+        if self.modified:
+            result = self.save_warning_window("Open")
+            if result == "save_button":
+                self.save_document()
+                filename = self.get_file_name('open')
+                if filename:
+                    open_xml_query(self, filename)
+            elif result == "nosave_button":
+                filename = self.get_file_name('open')
+                if filename:
+                    open_xml_query(self, filename)
+        else:
+            filename = self.get_file_name('open')
+            if filename:
+                open_xml_query(self, filename)
         
     def open_expert_mode(self):
         print('no function yet')
@@ -149,9 +142,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 self.config_dict.write(config_file)
             logging.getLogger().setLevel(self.config_dict.get('LOG', 'level'))
             self.check_downloader_update()
-        
-    def download_and_install_downloader_update(self):
-        print('no function yet')
         
     def api_information(self):
         logging.debug('mainwindow.py - api_information')
@@ -286,25 +276,49 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                         self.product_database[product] = {}
                     self.product_database[product]['information'] = {'short_description':short_description,
                                                                         'description':description,
-                                                                        'resolution':resolution,
+                                                                        'spatial_resolution':resolution,
                                                                         'temporal_resolution':temporal_resolution,
                                                                         'level':level,
-                                                                        'type':dataset_type,
-                                                                        'vertical':vertical,
-                                                                        'temporal':temporal,
+                                                                        'product_type':dataset_type,
+                                                                        'vertical_coverage':vertical,
+                                                                        'temporal_coverage':temporal,
                                                                         'production':production,
                                                                         'image':image}
                     self.product_database[product]['variables'] = variables
                     self.product_database[product]['subset'] = subset
                     self.product_database[product]['swath'] = swath
                     self.product_database[product]['suffixe'] = suffixe
+                    self.product_database[product]['tree'] = [domain, data_type, source, mode]
                     domain_list = []
                     for key, _ in self.dataset_database.items():
                         domain_list.append(key)
                     self.main_cb_1.clear()
                     self.main_cb_1.addItem('Make a choice...')
                     self.main_cb_1.addItems(sorted(domain_list))
-                    
+    
+    def product_information(self):
+        logging.debug('mainwindow.py - product_information')
+        if self.main_cb_5.currentText() != 'Make a choice...' and self.main_cb_5.currentText() != 'No product available...':
+            self.productWindow = MyProduct(self.main_cb_5.currentText(), self.product_database[self.main_cb_5.currentText()])
+            x1, y1, w1, h1 = self.geometry().getRect()
+            _, _, w2, h2 = self.productWindow.geometry().getRect()
+            x2 = x1 + w1/2 - w2/2
+            y2 = y1 + h1/2 - h2/2
+            self.productWindow.setGeometry(x2, y2, w2, h2)
+            self.productWindow.exec_()
+    
+    def launch_query(self):
+        logging.info('mainwindow.py - launch_query')
+        query, motu_url, user, password, folder, filename = prepare_query(self)
+        '''self.queryWindow = MyQuery(query, motu_url, user, password, folder, filename)
+        x1, y1, w1, h1 = self.geometry().getRect()
+        _, _, w2, h2 = self.queryWindow.geometry().getRect()
+        x2 = x1 + w1/2 - w2/2
+        y2 = y1 + h1/2 - h2/2
+        self.queryWindow.setGeometry(x2, y2, w2, h2)
+        self.queryWindow.exec_()'''
+    
+    
     def check_downloader_update(self):
         logging.debug('mainwindow.py - check_downloader_update')
         if self.config_dict['OPTIONS'].getboolean('check_update'):
@@ -391,4 +405,59 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             except AttributeError:
                 pass
     
+    def get_file_name(self, action):
+        logging.debug('mainwindow.py - get_file_name')
+        file_dialog = QtWidgets.QFileDialog()
+        file_dialog.setDefaultSuffix('xml')
+        if action == 'save':
+            file_name, _ = file_dialog.getSaveFileName(self, 'Save XML File', '', filter='XML Files (*.xml)')
+        elif action == 'open':
+            file_name, _ = file_dialog.getOpenFileName(self, 'Open XML File', '', filter='XML Files (*.xml)')
+        logging.debug('mainwindow.py - get_file_name - file_name ' + file_name)
+        return file_name
+    
+    def set_modified(self):
+        logging.debug('mainwindow.py - set_modified')
+        if not self.modified:
+            self.modified = True
+            self.make_window_title()
+    
+    def make_window_title(self):
+        logging.debug('mainwindow.py - make_window_title - self.modified ' + str(self.modified))
+        title_string = 'CMEMS Data Downloader v' + _downloader_version
+        modified_string = ''
+        if self.modified:
+            modified_string = ' - modified'
+        title_string = title_string + modified_string
+        self.setWindowTitle(title_string)
+    
+    def save_warning_window(self, string):
+        logging.debug('mainwindow.py - save_warning_window')
+        self.presaveWindow = MyWarning(string)
+        x1, y1, w1, h1 = self.geometry().getRect()
+        _, _, w2, h2 = self.presaveWindow.geometry().getRect()
+        x2 = x1 + w1/2 - w2/2
+        y2 = y1 + h1/2 - h2/2
+        self.presaveWindow.setGeometry(x2, y2, w2, h2)
+        self.presaveWindow.setMinimumSize(QtCore.QSize(500, self.presaveWindow.sizeHint().height()))
+        self.presaveWindow.setMaximumSize(QtCore.QSize(500, self.presaveWindow.sizeHint().height()))
+        self.presaveWindow.exec_()
+        return self.presaveWindow.buttonName
+
+    def closeEvent(self, event):
+        logging.debug('mainwindow.py - closeEvent - self.modified ' + str(self.modified))
+        if self.modified:
+            result = self.save_warning_window("Close")
+            if result == "save_button":
+                self.save_document()
+                logging.info('CMEMS Data Downloader ' + _downloader_version + ' is closing ...')
+                self.close()
+            elif result == "nosave_button":
+                logging.info('CMEMS Data Downloader ' + _downloader_version + ' is closing ...')
+                self.close()
+            else:
+                event.ignore()
+        else:
+            logging.info('CMEMS Data Downloader ' + _downloader_version + ' is closing ...')
+            self.close()
     

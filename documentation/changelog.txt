@@ -11,7 +11,19 @@ To do list:
   - if a user doesn't want to store its username and password, propose a window to enter them both before sending a query.
   - check python version for the update system on linux.
 
+  
+July 9 2018, Release version 0.5.0
+==================================
+Version for testing purposes. No API embedded at this time.
 
+  ADDED:
+    - a window to display product information has been added.
+    - a function to translate user inputs into a query has been introduced.
+    - a function to save xml file containing a query has been introduced.
+    - a function to read xml file containing a query has been introduced.
+    - a window to warn the user about modifications to the query has been introduced when he tries to open a new xml query or to quit CDD.
+  
+  
 June 27 2018, Release version 0.4.1
 ===================================
 Version for testing purposes. No API embedded at this time.

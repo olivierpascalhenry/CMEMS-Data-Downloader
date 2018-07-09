@@ -91,11 +91,12 @@ def activate_product_cb(self):
 def activate_dataset_information(self):
     deactivate_dataset_information(self)
     if self.main_cb_5.currentText() != 'Make a choice...':
+        self.set_modified()
         product = self.product_database[self.main_cb_5.currentText()]
         information_text = ('<p align="justify">Please click on the information button on the right to access more detailed information about the product.</p>'
                             + '<p align="justify">' + product['information']['short_description'] + '</p>')
         self.main_lb_7.setText(information_text)
-        swath, period = product['swath'], product['information']['temporal']
+        swath, period = product['swath'], product['information']['temporal_coverage']
         start, end = period[5:15], period[29:39]
         self.main_de_1.setEnabled(True)
         self.main_de_2.setEnabled(True)
@@ -112,12 +113,12 @@ def activate_dataset_information(self):
             self.main_cb_6.addItems(swath)
             clear_layout(self.variables_vertical_layout)
             self.main_cb_6.currentIndexChanged.connect(lambda: populate_variable_list(self, product['variables']))
-            self.main_cb_6.currentIndexChanged.connect(lambda: activate_depth_cb(self, product['information']['vertical']))
+            self.main_cb_6.currentIndexChanged.connect(lambda: activate_depth_cb(self, product['information']['vertical_coverage']))
             self.main_cb_6.currentIndexChanged.connect(lambda: activate_area_ln(self, product['subset']))
         else:
             self.main_cb_6.addItem(swath)
             populate_variable_list(self, product['variables'])
-            activate_depth_cb(self, product['information']['vertical'])
+            activate_depth_cb(self, product['information']['vertical_coverage'])
             activate_area_ln(self, product['subset'])
 
 
@@ -190,9 +191,16 @@ def deactivate_area_ln(self):
 
 
 def deactivate_depth_cb(self):
+    try:
+        self.main_cb_7.currentIndexChanged.disconnect(self.set_modified)
+        depth_signal = True
+    except TypeError:
+        depth_signal = False
     self.main_cb_7.setEnabled(False)
     self.main_cb_7.clear()
     self.main_cb_7.addItem('No depth...')
+    if depth_signal:
+        self.main_cb_7.currentIndexChanged.connect(self.set_modified)
 
 
 def deactivate_type_cb(self):

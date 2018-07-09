@@ -4,18 +4,20 @@ import time
 import platform
 import subprocess
 from ui.Ui_infowindow import Ui_infoWindow
+from ui.Ui_productwindow import Ui_productWindow
 from ui.Ui_aboutlogwindow import Ui_aboutlogWindow
 from ui.Ui_optionwindow import Ui_optionWindow
 from ui.Ui_apiwindow import Ui_apiWindow
 from ui.Ui_updatewindow import Ui_updateWindow
 from ui.Ui_downloadwindow import Ui_downloadWindow
+from ui.Ui_presavewindow import Ui_presaveWindow
 
 from ui.Ui_storewindow import Ui_storeWindow
 '''from ui.Ui_selectionwindow import Ui_selectionWindow
 
 from ui.Ui_cancelwindow import Ui_cancelWindow
 
-from ui.Ui_presavewindow import Ui_presaveWindow
+
 
 from ui.Ui_expertwindow import Ui_expertWindow
 from ui.Ui_successwindow import Ui_successWindow
@@ -34,6 +36,33 @@ class MyInfo(QtWidgets.QDialog, Ui_infoWindow):
         
     def closeWindow(self):
         logging.debug('window_functions.py - MyInfo - closeWindow')
+        self.close()
+
+
+class MyProduct(QtWidgets.QDialog, Ui_productWindow):
+    def __init__(self, name, product):
+        logging.debug('window_functions.py - MyProduct - __init__')
+        QtWidgets.QWidget.__init__(self)
+        self.setupUi(self)
+        self.name = name
+        self.product = product
+        self.button.clicked.connect(self.closeWindow)
+        self.parse_product_information()
+    
+    def parse_product_information(self):
+        logging.debug('window_functions.py - MyProduct - parse_product_information')
+        self.edit_1.setText(self.name)
+        self.edit_2.setText(self.product['information']['description'])
+        self.edit_3.setText(self.product['information']['production'])
+        self.edit_4.setText(self.product['information']['level'])
+        self.edit_5.setText(self.product['information']['spatial_resolution'])
+        self.edit_6.setText(self.product['information']['temporal_resolution'])
+        self.edit_7.setText(self.product['information']['vertical_coverage'])
+        self.edit_8.setText(self.product['information']['temporal_coverage'])
+        self.edit_9.setText(self.product['information']['product_type'])
+    
+    def closeWindow(self):
+        logging.debug('window_functions.py - MyProduct - closeWindow')
         self.close()
 
         
@@ -222,27 +251,27 @@ class MyWarningUpdate(QtWidgets.QDialog, Ui_updateWindow):
 
     def closeWindow(self):
         logging.debug('window_functions.py - MySelect - closeWindow')
-        self.close()
+        self.close()'''
         
         
 class MyQuery(QtWidgets.QDialog, Ui_downloadWindow):
-    def __init__(self, query, config_dict):
+    def __init__(self, query, motu_url, user, password, folder, filename):
         logging.debug('window_functions.py - MyQuery - __init__')
         QtWidgets.QWidget.__init__(self)
         self.setupUi(self)
         self.query = query
-        self.config_dict = config_dict
+        self.motu_url = motu_url
+        self.user = user
+        self.password = password
+        self.folder = folder
+        self.filename = filename
         self.browser_text = []
-        self.download_data()
         self.dw_button.clicked.connect(self.cancel_window)
+        self.download_data()
     
     def download_data(self):
         logging.debug('window_functions.py - MyQuery - download_data')
-        api_url = self.config_dict.get('CREDENTIALS', 'url')
-        api_key = self.config_dict.get('CREDENTIALS', 'key')
-        api_email = self.config_dict.get('CREDENTIALS', 'email')
-        file_folder = self.config_dict.get('CREDENTIALS', 'folder')
-        self.thread = ECMWFDataDownloadThread(self.query, api_url, api_key, api_email, file_folder)
+        self.thread = CMEMSDataDownloadThread(self.query, self.motu_url, self.user, self.password, self.folder, self.filename)
         self.thread.download_update.connect(self.update_progress)
         self.thread.download_done.connect(self.download_done)
         self.thread.download_failed.connect(self.download_failed)
@@ -323,7 +352,7 @@ class MyQuery(QtWidgets.QDialog, Ui_downloadWindow):
         self.thread.stop()
 
 
-class MyCancel(QtWidgets.QDialog, Ui_cancelWindow):
+'''class MyCancel(QtWidgets.QDialog, Ui_cancelWindow):
     def __init__(self):
         logging.debug('window_functions.py - MyCancel - __init__')
         QtWidgets.QWidget.__init__(self)
@@ -339,7 +368,7 @@ class MyCancel(QtWidgets.QDialog, Ui_cancelWindow):
     
     def closeWindow(self):
         logging.debug('window_functions.py - MyCancel - closeWindow')
-        self.close()
+        self.close()'''
 
 
 class MyWarning(QtWidgets.QDialog, Ui_presaveWindow):
@@ -362,7 +391,7 @@ class MyWarning(QtWidgets.QDialog, Ui_presaveWindow):
 
         
         
-class MyExpert(QtWidgets.QDialog, Ui_expertWindow):
+'''class MyExpert(QtWidgets.QDialog, Ui_expertWindow):
     def __init__(self, info_text):
         logging.debug('window_functions.py - MyExpert - __init__')
         QtWidgets.QWidget.__init__(self)
@@ -421,10 +450,10 @@ class MyExpert(QtWidgets.QDialog, Ui_expertWindow):
     
     def closeWindow(self):
         logging.debug('window_functions.py - MyExpert - closeWindow')
-        self.close()
+        self.close()'''
 
 
-class MySuccess(QtWidgets.QDialog, Ui_successWindow):
+'''class MySuccess(QtWidgets.QDialog, Ui_successWindow):
     def __init__(self, download_time, file_path, average_speed):
         QtWidgets.QWidget.__init__(self)
         logging.debug('mainwindow.py - MySuccess - __init__')
