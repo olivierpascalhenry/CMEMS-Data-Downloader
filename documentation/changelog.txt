@@ -13,7 +13,20 @@ To do list:
   - add a button to check the size of a query.
   - complete the swath_temporal parameter in each product .dat file.
 
+  
+July 11 2018, Release version 0.6.1
+===================================
+Version for testing purposes.
 
+  FIXED:
+    - an issue has been fixed when CDD checks the presence of the folder to store downloaded data.
+    - log messages have been fixed in the update system for Linux.
+    - an issue with the default folder has been fixed in the update system for Linux.
+    
+  MODIFIED:
+    - !! IMPORTANT !! all functions in query_functions.py have been moved in mainwindow.py. PyInstaller couldn't find the file and I still don't understant why ...
+  
+  
 July 11 2018, Release version 0.6.0
 ===================================
 Version for testing purposes.
