@@ -12,8 +12,8 @@ from PyQt5 import QtCore, QtWidgets, QtGui
 from ui._version import _downloader_version, _eclipse_version, _py_version, _qt_version
 from functions.material_functions import info_button_text, object_init, dataset_data_information
 from functions.gui_functions import activate_type_cb, activate_source_cb
-from functions.window_functions import MyAbout, MyOptions, MyInfo, MyApi, MyWarningUpdate, MyUpdate, MyProduct, MyQuery, MyWarning
-from functions.query_functions import prepare_query
+from functions.window_functions import MyAbout, MyOptions, MyInfo, MyApi, MyWarningUpdate, MyUpdate, MyProduct, MyQuery, MyWarning, MySelect, MySuccess
+from functions.query_functions import prepare_query, check_product_dataset
 from functions.xml_functions import save_xml_query, open_xml_query
 from ui.Ui_mainwindow import Ui_MainWindow
 from functions.thread_functions import CMEMSDataDownloadThread, CheckCMEMSDownloaderOnline
@@ -309,14 +309,46 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     
     def launch_query(self):
         logging.info('mainwindow.py - launch_query')
-        query, motu_url, user, password, folder, filename = prepare_query(self)
-        '''self.queryWindow = MyQuery(query, motu_url, user, password, folder, filename)
-        x1, y1, w1, h1 = self.geometry().getRect()
-        _, _, w2, h2 = self.queryWindow.geometry().getRect()
-        x2 = x1 + w1/2 - w2/2
-        y2 = y1 + h1/2 - h2/2
-        self.queryWindow.setGeometry(x2, y2, w2, h2)
-        self.queryWindow.exec_()'''
+        product, dataset, variable = check_product_dataset(self)
+        if product and dataset and variable:
+            query, motu_url, user, password, folder, filename = prepare_query(self)
+            self.queryWindow = MyQuery(query, motu_url, user, password, folder, filename)
+            x1, y1, w1, h1 = self.geometry().getRect()
+            _, _, w2, h2 = self.queryWindow.geometry().getRect()
+            x2 = x1 + w1/2 - w2/2
+            y2 = y1 + h1/2 - h2/2
+            self.queryWindow.setGeometry(x2, y2, w2, h2)
+            self.queryWindow.exec_()
+            try:
+                download_time = self.queryWindow.download_time
+                file_path = self.queryWindow.file_path
+                average_speed = self.queryWindow.average_speed
+                self.successWindow = MySuccess(download_time, file_path, average_speed)
+                x1, y1, w1, h1 = self.geometry().getRect()
+                _, _, w2, h2 = self.successWindow.geometry().getRect()
+                x2 = x1 + w1/2 - w2/2
+                y2 = y1 + h1/2 - h2/2
+                self.successWindow.setGeometry(x2, y2, w2, h2)
+                self.successWindow.exec_()
+            except AttributeError:
+                pass
+        else:
+            if not product:
+                self.main_lb_5.setStyleSheet("color: rgb(200,0,0);")
+                self.tabWidget.tabBar().setTabTextColor(0, QtGui.QColor(200,0,0))
+            if not dataset:
+                self.main_lb_8.setStyleSheet("color: rgb(200,0,0);")
+                self.tabWidget.tabBar().setTabTextColor(1, QtGui.QColor(200,0,0))
+            if not variable:
+                self.main_lb_10.setStyleSheet("color: rgb(200,0,0);")
+                self.tabWidget.tabBar().setTabTextColor(1, QtGui.QColor(200,0,0))
+            self.selectionWindow = MySelect()
+            x1, y1, w1, h1 = self.geometry().getRect()
+            _, _, w2, h2 = self.selectionWindow.geometry().getRect()
+            self.selectionWindow.setGeometry(x1 + w1/2 - w2/2, y1 + h1/2 - h2/2, w2, h2)
+            self.selectionWindow.setMinimumSize(QtCore.QSize(500, self.selectionWindow.sizeHint().height()))
+            self.selectionWindow.setMaximumSize(QtCore.QSize(500, self.selectionWindow.sizeHint().height()))
+            self.selectionWindow.exec_()
     
     
     def check_downloader_update(self):

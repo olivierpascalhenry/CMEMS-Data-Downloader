@@ -3,6 +3,25 @@ import calendar
 from PyQt5 import QtCore
 
 
+def check_product_dataset(self):
+    logging.debug('query_functions.py - check_product_dataset')
+    product, dataset, variable = True, True, False
+    if self.main_cb_5.currentText() == 'Make a choice...' or self.main_cb_5.currentText() == 'No product available...':
+        product = False
+    if self.main_cb_6.currentText() == 'Make a choice...' or self.main_cb_6.currentText() == 'No product selected...':
+        dataset = False
+    if self.variables_cb:
+        for cb in self.variables_cb:
+            if cb.isChecked():
+                variable = True
+    else:
+        if self.variables_vertical_layout.count() == 0:
+            variable = False
+        else:
+            variable = True
+    return product, dataset, variable
+
+
 def prepare_query(self):
     logging.debug('query_functions.py - prepare_query')
     
@@ -57,15 +76,16 @@ def prepare_query(self):
     password = self.config_dict['CREDENTIALS'].get('password')
     motu_url = self.config_dict['CREDENTIALS'].get('url')
     
+    
     ### longitude and latitude
     if self.space_ln_north.text():
         lat_max = self.space_ln_north.text()
     if self.space_ln_south.text():
         lat_min = self.space_ln_south.text()
     if self.space_ln_west.text():
-        lon_min = self.space_ln_south.text()
+        lon_min = self.space_ln_west.text()
     if self.space_ln_east.text():
-        lon_max = self.space_ln_south.text()
+        lon_max = self.space_ln_east.text()
     
     ### depth
     '''depth_text = self.main_cb_7.currentText()
@@ -78,16 +98,20 @@ def prepare_query(self):
     
     # filename and folder
     filename = str(self.main_ln_1.text())
+    folder = self.config_dict['CREDENTIALS'].get('folder')
     
     # variables
     var_tmp = []
     var_names = {v: k for k, v in self.variables_name.items()}
+    checked_count = 0
     if self.variables_cb:
         for cb in self.variables_cb:
             if cb.isChecked():
+                checked_count +=1
                 var_tmp.append(var_names[cb.text()])
     if var_tmp:
-        var = var_tmp
+        if len(self.variables_cb) != checked_count:
+            var = var_tmp
     
     
     parameter_list = [service, product, lon_min, lon_max, lat_min, lat_max, 
@@ -98,6 +122,11 @@ def prepare_query(self):
     for index, parameter in enumerate(parameter_list):
         if parameter != None:
             query[name_list[index]] = parameter
+    
+    
+    ### si tous les champs Area sont vides , et si toutes les variables ont été sélectionnées, et si la profondeur n'a pas été modifiée, alors on télécharge
+    ### un fichier .zip avec des fichiers netcdf correspondant aux dates
+    ### si on demande une variable particulière, ou une zone particulière, ou une profondeur particulière, alors on télécharge un fichier netcdf.
     
     
     query['scriptVersion'] = '1.5.00'

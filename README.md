@@ -1,6 +1,6 @@
 Version
 -------
-CMEMS Data Downloader 0.5.0
+CMEMS Data Downloader 0.6.0
 
 !!! NOT SUITED FOR PRODUCTION ENVIRONMENT !!! ONLY FOR TESTING PURPOSES !!!
 

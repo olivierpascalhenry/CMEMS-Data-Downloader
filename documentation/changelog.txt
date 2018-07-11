@@ -6,11 +6,30 @@ CHANGELOG
 To do list:
 -----------
   
-  - if a download is a subset, the outfile is a .nc, if not a subset, the outfile is .zip.
-  - a download can be a subset based on the dataset and on the space and depth selection.
   - if a user doesn't want to store its username and password, propose a window to enter them both before sending a query.
   - check python version for the update system on linux.
+  - check new products in CDD github repository.
+  - warn the user if an issue is detected in an .xml file.
+  - add a button to check the size of a query.
+  - complete the swath_temporal parameter in each product .dat file.
 
+
+July 11 2018, Release version 0.6.0
+===================================
+Version for testing purposes.
+
+  ADDED:
+    - a function to check if mandatory fields have been well filled in has been introduced.
+    - a basic thread to send a query to CMEMS MOTU API has been introduced.
+    - a window has been added to give to the user information about download if it is successfull.
+    
+  MODIFIED:
+    - more messages are now produced by the thread which donwload data for information.
+    
+  FIXED:
+    - an error has been corrected in the product database.
+    - CDD couldn't read the folder path in the .ini file. It has been fixed.
+  
   
 July 9 2018, Release version 0.5.0
 ==================================

@@ -90,6 +90,7 @@ def activate_product_cb(self):
 
 def activate_dataset_information(self):
     deactivate_dataset_information(self)
+    self.variables_cb.clear()
     if self.main_cb_5.currentText() != 'Make a choice...':
         self.set_modified()
         product = self.product_database[self.main_cb_5.currentText()]
@@ -123,6 +124,8 @@ def activate_dataset_information(self):
 
 
 def populate_variable_list(self, variables):
+    clean_stylesheet_dataset(self)
+    clean_stylesheet_variable(self)
     clear_layout(self.variables_vertical_layout)
     if self.main_cb_6.currentText() != 'Make a choice...':
         font = QtGui.QFont()
@@ -146,6 +149,7 @@ def populate_variable_list(self, variables):
                 self.variables_cb[var_num].setFont(font)
                 self.variables_cb[var_num].setObjectName('variables_cb_' + str(var_num))
                 self.variables_cb[var_num].setText(self.variables_name[var])
+                self.variables_cb[var_num].toggled.connect(lambda: clean_stylesheet_variable(self))
                 self.variables_vertical_layout.addWidget(self.variables_cb[var_num])
                 var_num += 1
         else:
@@ -266,7 +270,27 @@ def deactivate_dataset_information(self):
     clear_layout(self.variables_vertical_layout)
     deactivate_depth_cb(self)
     deactivate_area_ln(self)
+    clean_stylesheet_product(self)
+    clean_stylesheet_dataset(self)
+    clean_stylesheet_variable(self)
+
+
+def clean_stylesheet_product(self):
+    logging.debug('gui_functions.py - clean_stylesheet_product')
+    self.main_lb_5.setStyleSheet("color: rgb(0,0,0);")
+    self.tabWidget.tabBar().setTabTextColor(0, QtGui.QColor(0,0,0))
     
+    
+def clean_stylesheet_dataset(self):
+    logging.debug('gui_functions.py - clean_stylesheet_dataset')
+    self.main_lb_8.setStyleSheet("color: rgb(0,0,0);")
+    self.tabWidget.tabBar().setTabTextColor(1, QtGui.QColor(0,0,0))
+
+
+def clean_stylesheet_variable(self):
+    logging.debug('gui_functions.py - clean_stylesheet_variable')
+    self.main_lb_10.setStyleSheet("color: rgb(0,0,0);")
+    self.tabWidget.tabBar().setTabTextColor(1, QtGui.QColor(0,0,0))
     
     
 def clear_layout(layout):

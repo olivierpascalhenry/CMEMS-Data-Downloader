@@ -11,19 +11,15 @@ from ui.Ui_apiwindow import Ui_apiWindow
 from ui.Ui_updatewindow import Ui_updateWindow
 from ui.Ui_downloadwindow import Ui_downloadWindow
 from ui.Ui_presavewindow import Ui_presaveWindow
-
+from ui.Ui_selectionwindow import Ui_selectionWindow
 from ui.Ui_storewindow import Ui_storeWindow
-'''from ui.Ui_selectionwindow import Ui_selectionWindow
-
-from ui.Ui_cancelwindow import Ui_cancelWindow
-
-
-
-from ui.Ui_expertwindow import Ui_expertWindow
 from ui.Ui_successwindow import Ui_successWindow
-from functions.thread_functions import DownloadFile, ECMWFDataDownloadThread'''
+'''from ui.Ui_selectionwindow import Ui_selectionWindow
+from ui.Ui_cancelwindow import Ui_cancelWindow
+from ui.Ui_expertwindow import Ui_expertWindow
+'''
 from PyQt5 import QtWidgets, QtCore, QtGui
-from functions.thread_functions import DownloadFile
+from functions.thread_functions import DownloadFile, CMEMSDataDownloadThread
 
 
 class MyInfo(QtWidgets.QDialog, Ui_infoWindow):
@@ -242,7 +238,7 @@ class MyWarningUpdate(QtWidgets.QDialog, Ui_updateWindow):
         self.close()
 
 
-'''class MySelect(QtWidgets.QDialog, Ui_selectionWindow):
+class MySelect(QtWidgets.QDialog, Ui_selectionWindow):
     def __init__(self):
         logging.debug('window_functions.py - MySelect - __init__')
         QtWidgets.QWidget.__init__(self)
@@ -251,7 +247,7 @@ class MyWarningUpdate(QtWidgets.QDialog, Ui_updateWindow):
 
     def closeWindow(self):
         logging.debug('window_functions.py - MySelect - closeWindow')
-        self.close()'''
+        self.close()
         
         
 class MyQuery(QtWidgets.QDialog, Ui_downloadWindow):
@@ -453,7 +449,7 @@ class MyWarning(QtWidgets.QDialog, Ui_presaveWindow):
         self.close()'''
 
 
-'''class MySuccess(QtWidgets.QDialog, Ui_successWindow):
+class MySuccess(QtWidgets.QDialog, Ui_successWindow):
     def __init__(self, download_time, file_path, average_speed):
         QtWidgets.QWidget.__init__(self)
         logging.debug('mainwindow.py - MySuccess - __init__')
@@ -480,4 +476,4 @@ class MyWarning(QtWidgets.QDialog, Ui_presaveWindow):
 
     def closeWindow(self):
         logging.debug('window_functions.py - MySuccess - closeWindow')
-        self.close()'''
+        self.close()
