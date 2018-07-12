@@ -9,11 +9,24 @@ import shutil
 import tempfile
 import logging
 
+
+def handle_exception(exc_type, exc_value, exc_traceback):
+    if issubclass(exc_type, KeyboardInterrupt):
+        sys.__excepthook__(exc_type, exc_value, exc_traceback)
+        return
+    logging.critical("Uncaught exception", exc_info=(exc_type, exc_value, exc_traceback))
+
+
+sys.excepthook = handle_exception
+
+
 logging.getLogger('').handlers = []
 logging.basicConfig(filename = 'cmems_updater_log.out',
                     level = getattr(logging, 'INFO'),
                     filemode = 'w',
                     format = '%(asctime)s : %(levelname)s : %(message)s')
+
+
 logging.info('********************************************')
 logging.info('CMEMS Data Downloader update is starting ...')
 logging.info('********************************************')

@@ -6,13 +6,32 @@ CHANGELOG
 To do list:
 -----------
   
-  - if a user doesn't want to store its username and password, propose a window to enter them both before sending a query.
-  - check python version for the update system on linux.
-  - check new products in CDD github repository.
-  - warn the user if an issue is detected in an .xml file.
-  - add a button to check the size of a query.
-  - complete the swath_temporal parameter in each product .dat file.
+  - check new products in CDD github repository. (v0.8)
+  - add products. (v0.8)
+  - tweak GUI and functions if it is necessary for new products (ex: depth). (v0.8)
+  - add expert window. (v0.8)
+  - track last bugs, check stability. (v0.9)
+  - prepare documentation and text for info buttons. (v1.0)
 
+
+July 12 2018, Release version 0.7.0
+===================================
+Version for testing purposes.
+
+  ADDED:
+    - a window has been added to enter username and password just before sending a query, if they are not stored in the .ini file.
+    - an information window has been added if an xml file can't be parsed.
+    - the user can now get the size of his query before requesting a download.
+    - now the size of a query is automatically checked before downloading it. If the size excess the limit of the CMEMS server, an error message is displayed.
+    - if multiple datasets are available for a product, and the period is different for each of them, CDD will use each particular period in the Temporal Coverage section.
+    - new logging messages have been added.
+    
+  MODIFIED:
+    - the update system for Linux has been improved.
+    
+  FIXED:
+    - the username and password fields in the option window were inverted during saving and reading of the options dictionary.
+  
   
 July 11 2018, Release version 0.6.1
 ===================================

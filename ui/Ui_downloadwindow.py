@@ -12,8 +12,8 @@ class Ui_downloadWindow(object):
     def setupUi(self, downloadWindow):
         downloadWindow.setObjectName("downloadWindow")
         downloadWindow.resize(500, 300)
-        downloadWindow.setMinimumSize(QtCore.QSize(500, 300))
-        downloadWindow.setMaximumSize(QtCore.QSize(500, 300))
+        downloadWindow.setMinimumSize(QtCore.QSize(600, 300))
+        downloadWindow.setMaximumSize(QtCore.QSize(600, 16777215))
         font = QtGui.QFont()
         font.setFamily("fonts/SourceSansPro-Regular.ttf")
         font.setPointSize(10)

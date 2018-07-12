@@ -14,8 +14,8 @@ from ui.Ui_presavewindow import Ui_presaveWindow
 from ui.Ui_selectionwindow import Ui_selectionWindow
 from ui.Ui_storewindow import Ui_storeWindow
 from ui.Ui_successwindow import Ui_successWindow
-'''from ui.Ui_selectionwindow import Ui_selectionWindow
-from ui.Ui_cancelwindow import Ui_cancelWindow
+from ui.Ui_credentialswindow import Ui_credentialsWindow
+'''
 from ui.Ui_expertwindow import Ui_expertWindow
 '''
 from PyQt5 import QtWidgets, QtCore, QtGui
@@ -24,20 +24,20 @@ from functions.thread_functions import DownloadFile, CMEMSDataDownloadThread
 
 class MyInfo(QtWidgets.QDialog, Ui_infoWindow):
     def __init__(self, infoText):
-        logging.debug('window_functions.py - MyInfo - __init__')
+        logging.info('window_functions.py - MyInfo - __init__')
         QtWidgets.QWidget.__init__(self)
         self.setupUi(self)
         self.iw_label_1.setText(infoText)
         self.iw_okButton.clicked.connect(self.closeWindow)
         
     def closeWindow(self):
-        logging.debug('window_functions.py - MyInfo - closeWindow')
+        logging.info('window_functions.py - MyInfo - closeWindow')
         self.close()
 
 
 class MyProduct(QtWidgets.QDialog, Ui_productWindow):
     def __init__(self, name, product):
-        logging.debug('window_functions.py - MyProduct - __init__')
+        logging.info('window_functions.py - MyProduct - __init__')
         QtWidgets.QWidget.__init__(self)
         self.setupUi(self)
         self.name = name
@@ -58,13 +58,13 @@ class MyProduct(QtWidgets.QDialog, Ui_productWindow):
         self.edit_9.setText(self.product['information']['product_type'])
     
     def closeWindow(self):
-        logging.debug('window_functions.py - MyProduct - closeWindow')
+        logging.info('window_functions.py - MyProduct - closeWindow')
         self.close()
 
         
 class MyAbout(QtWidgets.QDialog, Ui_aboutlogWindow):
     def __init__(self, text):
-        logging.debug('window_functions.py - MyAbout - __init__')
+        logging.info('window_functions.py - MyAbout - __init__')
         QtWidgets.QWidget.__init__(self)
         self.setupUi(self)
         self.label_1.setText(text)
@@ -84,13 +84,13 @@ class MyApi(QtWidgets.QDialog, Ui_apiWindow):
         self.button.clicked.connect(self.closeWindow)
         
     def closeWindow(self):
-        logging.debug('window_functions.py - MyApi - closeWindow')
+        logging.info('window_functions.py - MyApi - closeWindow')
         self.close()
 
 
 class MyOptions(QtWidgets.QDialog, Ui_optionWindow):
     def __init__(self, config_dict, info_text):
-        logging.debug('window_functions.py - MyOptions - __init__')
+        logging.info('window_functions.py - MyOptions - __init__')
         QtWidgets.QWidget.__init__(self)
         self.setupUi(self)
         self.config_dict = config_dict
@@ -115,14 +115,14 @@ class MyOptions(QtWidgets.QDialog, Ui_optionWindow):
         check_update = self.config_dict['OPTIONS'].getboolean('check_update')
         display_api = self.config_dict['OPTIONS'].getboolean('display_api_info')
         url = self.config_dict.get('CREDENTIALS', 'url')
-        key = self.config_dict.get('CREDENTIALS', 'password')
-        email = self.config_dict.get('CREDENTIALS', 'user')
+        password = self.config_dict.get('CREDENTIALS', 'password')
+        username = self.config_dict.get('CREDENTIALS', 'user')
         folder = self.config_dict.get('CREDENTIALS', 'folder')
         self.ow_comboBox_1.setCurrentIndex(self.ow_comboBox_1.findText(log_level))
         self.ow_lineEdit_1.setText(log_path)
         self.ow_lineEdit_2.setText(url)
-        self.ow_lineEdit_3.setText(key)
-        self.ow_lineEdit_4.setText(email)
+        self.ow_lineEdit_3.setText(username)
+        self.ow_lineEdit_4.setText(password)
         self.ow_lineEdit_5.setText(folder)
         self.ow_checkBox_1.setChecked(display_api)
         self.ow_checkBox_2.setChecked(check_update)
@@ -144,8 +144,8 @@ class MyOptions(QtWidgets.QDialog, Ui_optionWindow):
         self.config_dict.set('OPTIONS', 'check_update', str(self.ow_checkBox_2.isChecked()))
         self.config_dict.set('OPTIONS', 'display_api_info', str(self.ow_checkBox_1.isChecked()))
         self.config_dict.set('CREDENTIALS', 'url', str(self.ow_lineEdit_2.text()))
-        self.config_dict.set('CREDENTIALS', 'password', str(self.ow_lineEdit_3.text()))
-        self.config_dict.set('CREDENTIALS', 'user', str(self.ow_lineEdit_4.text()))
+        self.config_dict.set('CREDENTIALS', 'password', str(self.ow_lineEdit_4.text()))
+        self.config_dict.set('CREDENTIALS', 'user', str(self.ow_lineEdit_3.text()))
         self.config_dict.set('CREDENTIALS', 'folder', str(self.ow_lineEdit_5.text()))
         self.close_window()
     
@@ -163,13 +163,13 @@ class MyOptions(QtWidgets.QDialog, Ui_optionWindow):
             self.infoWindow.exec_()
     
     def close_window(self):
-        logging.debug('window_functions.py - MyOptions - closeWindow')
+        logging.info('window_functions.py - MyOptions - closeWindow')
         self.close()
 
 
 class MyUpdate(QtWidgets.QDialog, Ui_storeWindow):
     def __init__(self, url, folder):
-        logging.debug('window_functions.py - MyUpdate - __init__')
+        logging.info('window_functions.py - MyUpdate - __init__')
         QtWidgets.QWidget.__init__(self)
         self.setupUi(self)
         self.temp_folder = folder
@@ -211,7 +211,7 @@ class MyUpdate(QtWidgets.QDialog, Ui_storeWindow):
         self.cancel_download()
         
     def closeEvent(self, event):
-        logging.debug('window_functions.py - MyUpdate - closeEvent')
+        logging.info('window_functions.py - MyUpdate - closeEvent')
         self.thread.download_update.disconnect(self.update_progress_bar)
         if self.cancel:
             os.remove(self.update_file)
@@ -219,7 +219,7 @@ class MyUpdate(QtWidgets.QDialog, Ui_storeWindow):
 
 class MyWarningUpdate(QtWidgets.QDialog, Ui_updateWindow):
     def __init__(self, frozen):
-        logging.debug('window_functions.py - MyWarningUpdate - __init__')
+        logging.info('window_functions.py - MyWarningUpdate - __init__')
         QtWidgets.QWidget.__init__(self)
         self.setupUi(self)
         if not frozen:
@@ -233,36 +233,38 @@ class MyWarningUpdate(QtWidgets.QDialog, Ui_updateWindow):
         self.cancel_button.clicked.connect(self.closeWindow)
         
     def closeWindow(self):
-        logging.debug('window_functions.py - MyWarningUpdate - closeWindow')
+        logging.info('window_functions.py - MyWarningUpdate - closeWindow')
         self.buttonName = self.sender().objectName()
         self.close()
 
 
 class MySelect(QtWidgets.QDialog, Ui_selectionWindow):
     def __init__(self):
-        logging.debug('window_functions.py - MySelect - __init__')
+        logging.info('window_functions.py - MySelect - __init__')
         QtWidgets.QWidget.__init__(self)
         self.setupUi(self)
         self.sw_okButton.clicked.connect(self.closeWindow)
 
     def closeWindow(self):
-        logging.debug('window_functions.py - MySelect - closeWindow')
+        logging.info('window_functions.py - MySelect - closeWindow')
         self.close()
         
         
 class MyQuery(QtWidgets.QDialog, Ui_downloadWindow):
     def __init__(self, query, motu_url, user, password, folder, filename):
-        logging.debug('window_functions.py - MyQuery - __init__')
+        logging.info('window_functions.py - MyQuery - __init__')
         QtWidgets.QWidget.__init__(self)
         self.setupUi(self)
         self.query = query
+        if self.query['action'] == 'getSize':
+            self.setWindowTitle('Check size')
         self.motu_url = motu_url
         self.user = user
         self.password = password
         self.folder = folder
         self.filename = filename
         self.browser_text = []
-        self.dw_button.clicked.connect(self.cancel_window)
+        self.dw_button.clicked.connect(self.cancel_download)
         self.download_data()
     
     def download_data(self):
@@ -284,6 +286,7 @@ class MyQuery(QtWidgets.QDialog, Ui_downloadWindow):
             string = ''
             for t in self.browser_text:
                 string += t + '<br>'
+            string = string[:-4]
             self.dw_browser.setText(string)
             self.dw_browser.moveCursor(QtGui.QTextCursor.End)
     
@@ -292,21 +295,6 @@ class MyQuery(QtWidgets.QDialog, Ui_downloadWindow):
     
     def update_bar_text(self, string):
         self.dw_label.setText(string)
-    
-    def cancel_window(self):
-        logging.debug('window_functions.py - MyQuery - cancel_window')
-        if not self.thread.downloading:
-            self.cancelWindow = MyCancel()
-            x1, y1, w1, h1 = self.geometry().getRect()
-            _, _, w2, h2 = self.cancelWindow.geometry().getRect()
-            x2 = x1 + w1/2 - w2/2
-            y2 = y1 + h1/2 - h2/2
-            self.cancelWindow.setGeometry(x2, y2, w2, h2)
-            self.cancelWindow.exec_()
-            if self.cancelWindow.cancel:
-                self.close()
-        else:
-            self.cancel_download()
     
     def cancel_download(self):
         logging.debug('window_functions.py - MyQuery - cancel_download')
@@ -325,52 +313,44 @@ class MyQuery(QtWidgets.QDialog, Ui_downloadWindow):
     
     def download_done(self, val):
         logging.debug('window_functions.py - MyQuery - download_done')
-        time = str(val['download_time'])
-        index1 = time.find(':')
-        index2 = time.find(':', index1 + 1)
-        hour = time[:index1]
-        min = time[index1 + 1:index2]
-        sec = time[index2 + 1:]
-        if len(hour) == 1:
-            hour = '0' + hour
-        if len(min) == 1:
-            min ='0' + min
-        self.download_time = hour + 'h ' + min + 'mn ' + sec + 's'
-        self.file_path = val['file_path']
-        self.average_speed = val['average_speed']
-        self.close()
+        if val:
+            time = str(val['download_time'])
+            index1 = time.find(':')
+            index2 = time.find(':', index1 + 1)
+            hour = time[:index1]
+            min = time[index1 + 1:index2]
+            sec = time[index2 + 1:]
+            if len(hour) == 1:
+                hour = '0' + hour
+            if len(min) == 1:
+                min ='0' + min
+            self.download_time = hour + 'h ' + min + 'mn ' + sec + 's'
+            self.file_path = val['file_path']
+            self.average_speed = val['average_speed']
+            self.close()
+        else:
+            self.size_recovered()
+            
+    def size_recovered(self):
+        logging.debug('window_functions.py - MyQuery - size_recovered')
+        self.update_progress_bar(0)
+        self.dw_label.setText('Size recovered')
+        self.dw_button.setText('Quit')
+        self.dw_button.clicked.disconnect(self.cancel_download)
+        self.dw_button.clicked.connect(self.close)
     
     def closeEvent(self, event):
-        logging.debug('window_functions.py - MyQuery - closeEvent')
+        logging.info('window_functions.py - MyQuery - closeEvent')
         self.thread.download_update.disconnect(self.update_progress)
         self.thread.download_done.disconnect(self.download_done)
         self.thread.download_failed.disconnect(self.download_failed)
         self.thread.stop()
 
 
-'''class MyCancel(QtWidgets.QDialog, Ui_cancelWindow):
-    def __init__(self):
-        logging.debug('window_functions.py - MyCancel - __init__')
-        QtWidgets.QWidget.__init__(self)
-        self.setupUi(self)
-        self.cancel = False
-        self.cw_okButton.clicked.connect(self.closeWindow)
-        self.cw_cancelButton.clicked.connect(self.set_cancel)
-        
-    def set_cancel(self):
-        logging.debug('window_functions.py - MyCancel - set_cancel')
-        self.cancel = True
-        self.closeWindow()
-    
-    def closeWindow(self):
-        logging.debug('window_functions.py - MyCancel - closeWindow')
-        self.close()'''
-
-
 class MyWarning(QtWidgets.QDialog, Ui_presaveWindow):
     def __init__(self, string):
         QtWidgets.QWidget.__init__(self)
-        logging.debug('mainwindow.py - MyWarning - __init__ - string ' + string)
+        logging.info('mainwindow.py - MyWarning - __init__ - string ' + string)
         self.setupUi(self)
         self.cancel_button.setFocus(True)
         all_buttons = self.findChildren(QtWidgets.QToolButton)
@@ -379,12 +359,34 @@ class MyWarning(QtWidgets.QDialog, Ui_presaveWindow):
         self.nosave_button.setText(string + " without saving")
 
     def closeWindow(self):
-        logging.debug('window_functions.py - MyWarning - closeWindow')
+        logging.info('window_functions.py - MyWarning - closeWindow')
         self.buttonName = self.sender().objectName()
         self.close()
         
         
+class MyCredentials(QtWidgets.QDialog, Ui_credentialsWindow):
+    def __init__(self, user, password):
+        QtWidgets.QWidget.__init__(self)
+        logging.info('mainwindow.py - MyCredentials - __init__')
+        self.setupUi(self)
+        if user:
+            self.edit_1.setText(user)
+        if password:
+            self.edit_2.setText(password)
+        self.username = ''
+        self.password = ''
+        self.submit.clicked.connect(self.set_username_password)
+        self.cancel.clicked.connect(self.closeWindow)
 
+    def set_username_password(self):
+        logging.debug('window_functions.py - MyCredentials - set_username_password')
+        self.username = str(self.edit_1.text())
+        self.password = str(self.edit_2.text())
+        self.closeWindow()
+
+    def closeWindow(self):
+        logging.info('window_functions.py - MyCredentials - closeWindow')
+        self.close()
         
         
 '''class MyExpert(QtWidgets.QDialog, Ui_expertWindow):
@@ -452,7 +454,7 @@ class MyWarning(QtWidgets.QDialog, Ui_presaveWindow):
 class MySuccess(QtWidgets.QDialog, Ui_successWindow):
     def __init__(self, download_time, file_path, average_speed):
         QtWidgets.QWidget.__init__(self)
-        logging.debug('mainwindow.py - MySuccess - __init__')
+        logging.info('mainwindow.py - MySuccess - __init__')
         self.setupUi(self)
         self.download_time = download_time
         self.file_path = file_path
@@ -475,5 +477,5 @@ class MySuccess(QtWidgets.QDialog, Ui_successWindow):
             subprocess.Popen(['open', folder])
 
     def closeWindow(self):
-        logging.debug('window_functions.py - MySuccess - closeWindow')
+        logging.info('window_functions.py - MySuccess - closeWindow')
         self.close()

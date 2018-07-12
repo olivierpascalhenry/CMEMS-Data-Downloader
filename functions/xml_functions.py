@@ -2,6 +2,7 @@ import logging
 import xml.dom.minidom
 import datetime
 from PyQt5 import QtGui, QtCore
+from functions.window_functions import MyInfo
 
 NAMESPACE_URI = 'CMEMSDataDownloader'
 
@@ -86,72 +87,83 @@ def open_xml_query(self, file_name):
     f = open(file_name, 'r')
     doc = xml.dom.minidom.parse(f)
     
-    
-    ############################
-    # product and dataset
-    ############################
-    main_index = self.tabWidget.currentIndex()
-    self.tabWidget.setCurrentIndex(0)
-    product_dataset = get_element(doc, "ProductDataset")
-    product = get_element_value(product_dataset, 'Product')
-    dataset = get_element_value(product_dataset, 'Dataset')
-    tree = self.product_database[product]['tree']
-    self.main_cb_1.setCurrentIndex(self.main_cb_1.findText(tree[0]))
-    self.main_cb_2.setCurrentIndex(self.main_cb_2.findText(tree[1]))
-    self.main_cb_3.setCurrentIndex(self.main_cb_3.findText(tree[2]))
-    self.main_cb_4.setCurrentIndex(self.main_cb_4.findText(tree[3]))
-    self.main_cb_5.setCurrentIndex(self.main_cb_5.findText(product))
-    self.main_cb_6.setCurrentIndex(self.main_cb_6.findText(dataset))
-    self.tabWidget.setCurrentIndex(main_index)
-    
-    
-    ############################
-    # variables
-    ############################
-    self.tabWidget.setCurrentIndex(1)
-    variables = get_element_values(get_element(doc, "Variables"), 'Variable')
-    for widget in self.variables_cb:
-        if widget.text() in variables:
-            widget.setChecked(True)
-    self.tabWidget.setCurrentIndex(main_index)
-    
-    
-    ############################
-    # time period
-    ############################
-    period_from = get_element_value(get_element(doc, "TimePeriod"), 'From')
-    period_to = get_element_value(get_element(doc, "TimePeriod"), 'To')
-    self.main_de_1.setDate(QtCore.QDate.fromString(period_from, QtCore.Qt.ISODate))
-    self.main_de_2.setDate(QtCore.QDate.fromString(period_to, QtCore.Qt.ISODate))
-    
-    
-    ############################
-    # depth
-    ############################
-    depth_max = get_element_value(get_element(doc, "Depth"), "DepthMax")
-    if self.main_cb_7.isEnabled() and depth_max:
-        self.main_cb_7.setCurrentIndex(self.main_cb_7.findText(depth_max))
+    try:
+        ############################
+        # product and dataset
+        ############################
+        main_index = self.tabWidget.currentIndex()
+        self.tabWidget.setCurrentIndex(0)
+        product_dataset = get_element(doc, "ProductDataset")
+        product = get_element_value(product_dataset, 'Product')
+        dataset = get_element_value(product_dataset, 'Dataset')
+        tree = self.product_database[product]['tree']
+        self.main_cb_1.setCurrentIndex(self.main_cb_1.findText(tree[0]))
+        self.main_cb_2.setCurrentIndex(self.main_cb_2.findText(tree[1]))
+        self.main_cb_3.setCurrentIndex(self.main_cb_3.findText(tree[2]))
+        self.main_cb_4.setCurrentIndex(self.main_cb_4.findText(tree[3]))
+        self.main_cb_5.setCurrentIndex(self.main_cb_5.findText(product))
+        self.main_cb_6.setCurrentIndex(self.main_cb_6.findText(dataset))
+        self.tabWidget.setCurrentIndex(main_index)
         
-    
-    ############################
-    # area
-    ############################
-    if self.space_ln_north.isEnabled():
-        self.space_ln_north.setText(get_element_value(get_element(doc, "Area"), "LatMax"))
-        self.space_ln_south.setText(get_element_value(get_element(doc, "Area"), "LatMin"))
-        self.space_ln_west.setText(get_element_value(get_element(doc, "Area"), "LonMin"))
-        self.space_ln_east.setText(get_element_value(get_element(doc, "Area"), "LonMax"))
-    
-    
-    ############################
-    # filename
-    ############################
-    self.main_ln_1.setText(get_element_value(doc, "FileName"))
-    
-    
-    self.modified = False
-    self.make_window_title()
-    logging.info('xml_functions.py - open_xml_query - xml file successfully parsed')
+        
+        ############################
+        # variables
+        ############################
+        self.tabWidget.setCurrentIndex(1)
+        variables = get_element_values(get_element(doc, "Variables"), 'Variable')
+        for widget in self.variables_cb:
+            if widget.text() in variables:
+                widget.setChecked(True)
+        self.tabWidget.setCurrentIndex(main_index)
+        
+        
+        ############################
+        # time period
+        ############################
+        period_from = get_element_value(get_element(doc, "TimePeriod"), 'From')
+        period_to = get_element_value(get_element(doc, "TimePeriod"), 'To')
+        self.main_de_1.setDate(QtCore.QDate.fromString(period_from, QtCore.Qt.ISODate))
+        self.main_de_2.setDate(QtCore.QDate.fromString(period_to, QtCore.Qt.ISODate))
+        
+        
+        ############################
+        # depth
+        ############################
+        depth_max = get_element_value(get_element(doc, "Depth"), "DepthMax")
+        if self.main_cb_7.isEnabled() and depth_max:
+            self.main_cb_7.setCurrentIndex(self.main_cb_7.findText(depth_max))
+            
+        
+        ############################
+        # area
+        ############################
+        if self.space_ln_north.isEnabled():
+            self.space_ln_north.setText(get_element_value(get_element(doc, "Area"), "LatMax"))
+            self.space_ln_south.setText(get_element_value(get_element(doc, "Area"), "LatMin"))
+            self.space_ln_west.setText(get_element_value(get_element(doc, "Area"), "LonMin"))
+            self.space_ln_east.setText(get_element_value(get_element(doc, "Area"), "LonMax"))
+        
+        
+        ############################
+        # filename
+        ############################
+        self.main_ln_1.setText(get_element_value(doc, "FileName"))
+        
+        
+        self.modified = False
+        self.make_window_title()
+        logging.info('xml_functions.py - open_xml_query - xml file successfully parsed')
+    except Exception:
+        logging.exception('xml_functions.py - open_xml_query - an exception occured during the loading of an .xml file.')
+        text = ('An issue appeared when reading the .xml file. Please check the log file to check where the issue comes from. '
+                + 'Therefore, the .xml file couldn\'t be parsed.')
+        self.infoWindow = MyInfo(text)
+        x1, y1, w1, h1 = self.geometry().getRect()
+        _, _, w2, h2 = self.infoWindow.geometry().getRect()
+        x2 = x1 + w1/2 - w2/2
+        y2 = y1 + h1/2 - h2/2
+        self.infoWindow.setGeometry(x2, y2, w2, h2)
+        self.infoWindow.exec_()
 
     
 def add_element(doc, element_name, parent, value=None):

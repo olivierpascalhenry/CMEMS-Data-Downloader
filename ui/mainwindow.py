@@ -13,6 +13,7 @@ from ui._version import _downloader_version, _eclipse_version, _py_version, _qt_
 from functions.material_functions import info_button_text, object_init, dataset_data_information
 from functions.gui_functions import activate_type_cb, activate_source_cb
 from functions.window_functions import MyAbout, MyOptions, MyInfo, MyApi, MyWarningUpdate, MyUpdate, MyProduct, MyQuery, MyWarning, MySelect, MySuccess
+from functions.window_functions import MyCredentials
 from functions.xml_functions import save_xml_query, open_xml_query
 from ui.Ui_mainwindow import Ui_MainWindow
 from functions.thread_functions import CMEMSDataDownloadThread, CheckCMEMSDownloaderOnline
@@ -37,7 +38,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.main_cb_6.setItemDelegate(itemDelegate)
         self.main_cb_7.setItemDelegate(itemDelegate)
         self.main_cb_1.currentIndexChanged.connect(lambda: activate_type_cb(self))
-        self.download.clicked.connect(self.launch_query)
+        self.productdownload.clicked.connect(self.launch_query)
+        self.getSize.clicked.connect(self.launch_query)
         self.api_information()
         self.check_downloader_update()
         self.check_file_folder()
@@ -53,7 +55,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.main_de_1.dateChanged.connect(self.set_modified)
         self.main_de_2.dateChanged.connect(self.set_modified)
         self.make_window_title()
-        
+        logging.info('mainwindow.py - UI initialized ...')
+        logging.info('*****************************************')
     
     @QtCore.pyqtSlot()
     def on_actionExit_triggered(self):
@@ -183,6 +186,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             self.infoWindow.exec_()
             
     def prepare_datasets_database(self):
+        logging.debug('mainwindow.py - prepare_datasets_database')
         database_path = 'database//'
         if os.path.isdir(database_path):
             for file in os.listdir(database_path):
@@ -249,7 +253,11 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                                     swath = value
                                     if ',' in swath:
                                         swath = swath.split(',')
-                                if parameter == 'suffixe':
+                                if parameter == 'swath_temporal':
+                                    swath_temporal = value
+                                    if ',' in swath_temporal:
+                                        swath_temporal = swath_temporal.split(',')
+                                if parameter == 'suffix':
                                     suffixe = value
                     f.close()
                     try:
@@ -286,6 +294,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                     self.product_database[product]['variables'] = variables
                     self.product_database[product]['subset'] = subset
                     self.product_database[product]['swath'] = swath
+                    self.product_database[product]['swath_temporal'] = swath_temporal
                     self.product_database[product]['suffixe'] = suffixe
                     self.product_database[product]['tree'] = [domain, data_type, source, mode]
                     domain_list = []
@@ -294,6 +303,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                     self.main_cb_1.clear()
                     self.main_cb_1.addItem('Make a choice...')
                     self.main_cb_1.addItems(sorted(domain_list))
+                    logging.debug('mainwindow.py - prepare_datasets_database - database ready')
     
     def product_information(self):
         logging.debug('mainwindow.py - product_information')
@@ -310,27 +320,42 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         logging.info('mainwindow.py - launch_query')
         product, dataset, variable = self.check_product_dataset()
         if product and dataset and variable:
-            query, motu_url, user, password, folder, filename = self.prepare_query()
-            self.queryWindow = MyQuery(query, motu_url, user, password, folder, filename)
-            x1, y1, w1, h1 = self.geometry().getRect()
-            _, _, w2, h2 = self.queryWindow.geometry().getRect()
-            x2 = x1 + w1/2 - w2/2
-            y2 = y1 + h1/2 - h2/2
-            self.queryWindow.setGeometry(x2, y2, w2, h2)
-            self.queryWindow.exec_()
-            try:
-                download_time = self.queryWindow.download_time
-                file_path = self.queryWindow.file_path
-                average_speed = self.queryWindow.average_speed
-                self.successWindow = MySuccess(download_time, file_path, average_speed)
+            user = self.config_dict['CREDENTIALS'].get('user')
+            password = self.config_dict['CREDENTIALS'].get('password')
+            if not user or not password:
+                self.credentialsyWindow = MyCredentials(user, password)
                 x1, y1, w1, h1 = self.geometry().getRect()
-                _, _, w2, h2 = self.successWindow.geometry().getRect()
+                _, _, w2, h2 = self.credentialsyWindow.geometry().getRect()
                 x2 = x1 + w1/2 - w2/2
                 y2 = y1 + h1/2 - h2/2
-                self.successWindow.setGeometry(x2, y2, w2, h2)
-                self.successWindow.exec_()
-            except AttributeError:
-                pass
+                self.credentialsyWindow.setGeometry(x2, y2, w2, h2)
+                self.credentialsyWindow.exec_()
+                if self.credentialsyWindow.username and self.credentialsyWindow.password:
+                    user = self.credentialsyWindow.username
+                    password = self.credentialsyWindow.password
+            if user and password:
+                query, motu_url, folder, filename = self.prepare_query() 
+                query['action'] = str(self.sender().objectName())
+                self.queryWindow = MyQuery(query, motu_url, user, password, folder, filename)
+                x1, y1, w1, h1 = self.geometry().getRect()
+                _, _, w2, h2 = self.queryWindow.geometry().getRect()
+                x2 = x1 + w1/2 - w2/2
+                y2 = y1 + h1/2 - h2/2
+                self.queryWindow.setGeometry(x2, y2, w2, h2)
+                self.queryWindow.exec_()
+                try:
+                    download_time = self.queryWindow.download_time
+                    file_path = self.queryWindow.file_path
+                    average_speed = self.queryWindow.average_speed
+                    self.successWindow = MySuccess(download_time, file_path, average_speed)
+                    x1, y1, w1, h1 = self.geometry().getRect()
+                    _, _, w2, h2 = self.successWindow.geometry().getRect()
+                    x2 = x1 + w1/2 - w2/2
+                    y2 = y1 + h1/2 - h2/2
+                    self.successWindow.setGeometry(x2, y2, w2, h2)
+                    self.successWindow.exec_()
+                except AttributeError:
+                    pass
         else:
             if not product:
                 self.main_lb_5.setStyleSheet("color: rgb(200,0,0);")
@@ -512,12 +537,9 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     
     def prepare_query(self):
         logging.debug('mainwindow.py - prepare_query')
-        
         query = {}
-        
-        user, password, motu_url, service, product = None, None, None, None, None
+        motu_url, service, product, var, folder, filename, output = None, None, None, None, None, None, None
         lon_min, lon_max, lat_min, lat_max, date_min, date_max, depth_min, depth_max = None, None, None, None, None, None, None, None
-        var, folder, filename, output = None, None, None, None
         
         ### service
         service = str(self.main_cb_5.currentText()) + self.product_database[self.main_cb_5.currentText()]['suffixe']
@@ -525,12 +547,9 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         ### product
         product = str(self.main_cb_6.currentText())
         
-        ### password, user and url
-        user = self.config_dict['CREDENTIALS'].get('user')
-        password = self.config_dict['CREDENTIALS'].get('password')
+        ### url
         motu_url = self.config_dict['CREDENTIALS'].get('url')
-        
-        
+
         ### longitude and latitude
         if self.space_ln_north.text():
             lat_max = self.space_ln_north.text()
@@ -567,22 +586,17 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             if len(self.variables_cb) != checked_count:
                 var = var_tmp
         
-        
+        # prepare dictionary
         parameter_list = [service, product, lon_min, lon_max, lat_min, lat_max, 
                           date_min, date_max, depth_min, depth_max, var, output]
         name_list = ['service', 'product', 'x_lo', 'x_hi', 'y_lo', 'y_hi', 
                           't_lo', 't_hi','z_lo', 'z_hi', 'variable', 'output']
-        
         for index, parameter in enumerate(parameter_list):
             if parameter != None:
                 query[name_list[index]] = parameter
-    
         query['scriptVersion'] = '1.5.00'
         query['mode'] = 'status'
-        query['action'] = 'productdownload'
         
         logging.debug('mainwindow.py - prepare_query - query ready: ' + str(query))
-        return query, motu_url, user, password, folder, filename
-    
-    
+        return query, motu_url, folder, filename
     

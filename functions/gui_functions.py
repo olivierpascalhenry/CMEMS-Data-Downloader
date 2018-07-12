@@ -18,6 +18,7 @@ def info_button(self):
 
 
 def activate_type_cb(self):
+    logging.debug('gui_functions.py - activate_type_cb')
     deactivate_type_cb(self)
     deactivate_source_cb(self)
     deactivate_delivery_cb(self)
@@ -38,6 +39,7 @@ def activate_type_cb(self):
 
 
 def activate_source_cb(self):
+    logging.debug('gui_functions.py - activate_source_cb')
     deactivate_source_cb(self)
     deactivate_delivery_cb(self)
     deactivate_product_cb(self)
@@ -57,6 +59,7 @@ def activate_source_cb(self):
 
 
 def activate_delivery_cb(self):
+    logging.debug('gui_functions.py - activate_delivery_cb')
     deactivate_delivery_cb(self)
     deactivate_product_cb(self)
     deactivate_dataset_information(self)
@@ -75,6 +78,7 @@ def activate_delivery_cb(self):
 
 
 def activate_product_cb(self):
+    logging.debug('gui_functions.py - activate_product_cb')
     deactivate_product_cb(self)
     deactivate_dataset_information(self)
     try:
@@ -89,6 +93,7 @@ def activate_product_cb(self):
 
 
 def activate_dataset_information(self):
+    logging.debug('gui_functions.py - activate_dataset_information')
     deactivate_dataset_information(self)
     self.variables_cb.clear()
     if self.main_cb_5.currentText() != 'Make a choice...':
@@ -116,6 +121,7 @@ def activate_dataset_information(self):
             self.main_cb_6.currentIndexChanged.connect(lambda: populate_variable_list(self, product['variables']))
             self.main_cb_6.currentIndexChanged.connect(lambda: activate_depth_cb(self, product['information']['vertical_coverage']))
             self.main_cb_6.currentIndexChanged.connect(lambda: activate_area_ln(self, product['subset']))
+            self.main_cb_6.currentIndexChanged.connect(lambda: specific_period(self, self.main_cb_6.currentIndex(), product['swath_temporal']))
         else:
             self.main_cb_6.addItem(swath)
             populate_variable_list(self, product['variables'])
@@ -124,6 +130,7 @@ def activate_dataset_information(self):
 
 
 def populate_variable_list(self, variables):
+    logging.debug('gui_functions.py - populate_variable_list')
     clean_stylesheet_dataset(self)
     clean_stylesheet_variable(self)
     clear_layout(self.variables_vertical_layout)
@@ -163,6 +170,7 @@ def populate_variable_list(self, variables):
 
 
 def activate_depth_cb(self, depth):
+    logging.debug('gui_functions.py - activate_depth_cb')
     if self.main_cb_6.currentText() != 'Make a choice...' and self.main_cb_6.currentText() != 'No product selected...':
         if depth == 'surface':
             self.main_cb_7.clear()
@@ -174,15 +182,32 @@ def activate_depth_cb(self, depth):
 
 
 def activate_area_ln(self, subset):
+    logging.debug('gui_functions.py - activate_area_ln')
     if subset == 'geographical':
         self.space_ln_north.setEnabled(True)
         self.space_ln_south.setEnabled(True)
         self.space_ln_east.setEnabled(True)
         self.space_ln_west.setEnabled(True)
         self.earth_im.setEnabled(True)
-    
+
+
+def specific_period(self, i, swath_temporal):
+    logging.debug('gui_functions.py - specific_period')
+    if i > 0:
+        i -= 1
+        index = swath_temporal[i].find('to')
+        start = swath_temporal[i][:index]
+        end = swath_temporal[i][index+2:]
+        self.main_de_1.setDate(QtCore.QDate.fromString(start, QtCore.Qt.ISODate))
+        self.main_de_1.setMinimumDate(QtCore.QDate.fromString(start, QtCore.Qt.ISODate))
+        self.main_de_1.setMaximumDate(QtCore.QDate.fromString(end, QtCore.Qt.ISODate))
+        self.main_de_2.setDate(QtCore.QDate.fromString(end, QtCore.Qt.ISODate))
+        self.main_de_2.setMinimumDate(QtCore.QDate.fromString(start, QtCore.Qt.ISODate))
+        self.main_de_2.setMaximumDate(QtCore.QDate.fromString(end, QtCore.Qt.ISODate))
+
     
 def deactivate_area_ln(self):
+    logging.debug('gui_functions.py - deactivate_area_ln')
     self.space_ln_north.setText('')
     self.space_ln_south.setText('')
     self.space_ln_east.setText('')
@@ -195,6 +220,7 @@ def deactivate_area_ln(self):
 
 
 def deactivate_depth_cb(self):
+    logging.debug('gui_functions.py - deactivate_depth_cb')
     try:
         self.main_cb_7.currentIndexChanged.disconnect(self.set_modified)
         depth_signal = True
@@ -208,6 +234,7 @@ def deactivate_depth_cb(self):
 
 
 def deactivate_type_cb(self):
+    logging.debug('gui_functions.py - deactivate_type_cb')
     try:
         self.main_cb_2.currentIndexChanged.disconnect()
     except TypeError:
@@ -219,6 +246,7 @@ def deactivate_type_cb(self):
 
 
 def deactivate_source_cb(self):
+    logging.debug('gui_functions.py - deactivate_source_cb')
     try:
         self.main_cb_3.currentIndexChanged.disconnect()
     except TypeError:
@@ -230,6 +258,7 @@ def deactivate_source_cb(self):
 
 
 def deactivate_delivery_cb(self):
+    logging.debug('gui_functions.py - deactivate_delivery_cb')
     try:
         self.main_cb_4.currentIndexChanged.disconnect()
     except TypeError:
@@ -241,6 +270,7 @@ def deactivate_delivery_cb(self):
 
 
 def deactivate_product_cb(self):
+    logging.debug('gui_functions.py - deactivate_product_cb')
     try:
         self.main_cb_5.currentIndexChanged.disconnect()
     except TypeError:
@@ -252,6 +282,7 @@ def deactivate_product_cb(self):
 
 
 def deactivate_dataset_information(self):
+    logging.debug('gui_functions.py - deactivate_dataset_information')
     self.main_lb_7.setText('')
     try:
         self.main_cb_6.currentIndexChanged.disconnect()

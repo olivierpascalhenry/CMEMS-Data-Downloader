@@ -8,11 +8,7 @@ import sys
 import re
 import time
 from bs4 import BeautifulSoup
-from urllib.request import urlopen
-from urllib.parse import parse_qs, urlparse
-
 import urllib
-
 from hurry.filesize import size, alternative
 from PyQt5 import QtCore, Qt
 from distutils.version import LooseVersion
@@ -27,7 +23,7 @@ class CheckCMEMSDownloaderOnline(Qt.QThread):
     
     def __init__(self):
         Qt.QThread.__init__(self)
-        logging.debug('thread_functions.py - CheckCMEMSDownloaderOnline - __init__')
+        logging.info('thread_functions.py - CheckCMEMSDownloaderOnline - __init__')
     
     def run(self):
         logging.debug('thread_functions.py - CheckCMEMSDownloaderOnline - run')
@@ -57,6 +53,7 @@ class CheckCMEMSDownloaderOnline(Qt.QThread):
             logging.exception('thread_functions.py - CheckCMEMSDownloaderOnline - run - internet connection error - url ' + url)
     
     def stop(self):
+        logging.debug('thread_functions.py - CheckCMEMSDownloaderOnline - stop')
         self.terminate()
         
         
@@ -67,7 +64,7 @@ class DownloadFile(Qt.QThread):
     
     def __init__(self, url_name, update_file=None):
         Qt.QThread.__init__(self)
-        logging.debug('thread_functions.py - DownloadFile - __init__ - url_name ' + str(url_name)
+        logging.info('thread_functions.py - DownloadFile - __init__ - url_name ' + str(url_name)
                       + ' ; update_file ' + str(update_file))
         self.url_name = url_name
         self.update_file = update_file
@@ -81,11 +78,10 @@ class DownloadFile(Qt.QThread):
                 self.filename = self.filename[:21] + '[...]' + self.filename[-4:]
             elif platform.system() == 'Linux':
                 self.filename = self.filename[:21] + '[...]' + self.filename[-7:]
-            
         self.download_update.emit([0, 'Downloading %s...' % self.filename])
         opened_file = open(self.update_file, 'wb')
         try:
-            opened_url = urlopen(self.url_name, timeout=10)
+            opened_url = urllib.request.urlopen(self.url_name, timeout=10)
             totalFileSize = int(opened_url.info()['Content-Length'])
             bufferSize = 9192
             fileSize = 0
@@ -137,9 +133,11 @@ class CMEMSDataDownloadThread(Qt.QThread):
     
     def __init__(self, query, motu_url, user, password, out_folder, out_filename):
         Qt.QThread.__init__(self)
-        logging.debug('thread_functions.py - CMEMSDataDownloadThread - __init__')
+        logging.info('thread_functions.py - CMEMSDataDownloadThread - __init__')
         self.query = query
+        self.action = self.query['action']
         self.motu_url = motu_url
+        self.auth_url = ''
         self.user = user
         self.password = password
         if platform.system() == 'Windows':
@@ -156,102 +154,149 @@ class CMEMSDataDownloadThread(Qt.QThread):
     def run(self):
         logging.debug('thread_functions.py - CMEMSDataDownloadThread - run')
         try:
-            self.download_update.emit({'browser_text':'Welcome to the MOTU API.<br>Authentication pending...<br>',
+            if self.action == 'getSize':
+                self.download_update.emit({'browser_text':'Welcome to the MOTU API.<br>Authentication pending...<br>',
                                        'bar_text':'Authentication pending...',
                                        'progress':0})
-            service_url = self._auth_connexion(self.auth_url)
-            self.download_update.emit({'browser_text':'Authentication successfull.<br>Query is sent to the MOTU server.<br>',
-                                       'bar_text':'Sending query...',
-                                       'progress':0})
-            id_res = requests.get(service_url, headers=self.headers)
-            status = minidom.parseString(id_res.text).getElementsByTagName('statusModeResponse')[0].getAttribute('status')
-            id = minidom.parseString(id_res.text).getElementsByTagName('statusModeResponse')[0].getAttribute('requestId')
-            if status == "2":
-                message = minidom.parseString(id_res.text).getElementsByTagName('statusModeResponse')[0].getAttribute('msg')
-                status_url = None
-                logging.exception('thread_functions.py - ECMWFDataDownloadThread - run - Exception ' + message)
-                self.download_failed.emit(message)
+                service_url = self._auth_connexion(self.auth_url)
+                self.download_update.emit({'browser_text':'Authentication successfull.<br>Query is sent to the MOTU server.<br>',
+                                           'bar_text':'Sending query...',
+                                           'progress':0})
+                id_res = requests.get(service_url, headers=self.headers)
+                self.download_update.emit({'browser_text':'Query has been accepted and analyzed.<br>',
+                                               'bar_text':'Size recovered',
+                                               'progress':0})
+                _, _, size, max_size = self._check_query_size(id_res)
+                self.download_update.emit({'browser_text':('Size of the query: ' + size + '<br>Maximal size allowed: ' + max_size + '<br>'),
+                                           'bar_text':'Size recovered',
+                                           'progress':0})
+                self.download_done.emit({})
             else:
-                status_url = self.motu_url + '?action=getreqstatus&requestid=' + id + "&service=" + self.query['service'] + "&product=" + self.query['product']
-            if status_url is not None:
-                retry = 0
-                while True:
-                    service_url = self._auth_connexion(status_url)
-                    status_res = requests.get(service_url, headers=self.headers)
-                    for node in minidom.parseString(status_res.text).getElementsByTagName('statusModeResponse'):
-                        status = node.getAttribute('status')    
-                        download_url = node.getAttribute('remoteUri')
-                        message = node.getAttribute('msg')
-                    if status == "0" or status == "3":
-                        if retry == 0:
-                            self.download_update.emit({'browser_text':'Query has been accepted and is now queued.<br>',
-                                                       'bar_text':'Query queued...',
-                                                       'progress':0})
-                        time.sleep(5)
-                    else:
-                        break
-                    retry += 1
-                if status == "2": 
-                    logging.exception('thread_functions.py - ECMWFDataDownloadThread - run - Exception ' + message)
+                self.download_update.emit({'browser_text':'Welcome to the MOTU API.<br>Authentication pending...<br>',
+                                       'bar_text':'Authentication pending...',
+                                       'progress':0})
+                size_url = self.auth_url.replace('productdownload','getSize')
+                service_url = self._auth_connexion(size_url)
+                self.download_update.emit({'browser_text':'Authentication successfull.<br>Query is sent to the MOTU server.<br>',
+                                           'bar_text':'Sending query...',
+                                           'progress':0})
+                id_res = requests.get(service_url, headers=self.headers)
+                size, max_size, size2, max_size2 = self._check_query_size(id_res)
+                self.download_update.emit({'browser_text':('Size of the query: ' + size2 + '<br>Maximal size allowed: ' + max_size2 + '<br>'),
+                                           'bar_text':'Size recovered...',
+                                           'progress':0})
+                if float(size) > float(max_size):
+                    message = ('The requested query is excessing the official limit of the CMEMS server. In order to bypass the limited volume '
+                               + 'associated to a single request, you can:<ul><li>use multiple requests, hence splitting the data volume into '
+                               + 'smaller pieces</li><li>narrow the geographical and/or temporal extent to reduce the download size</li></ul>')
                     self.download_failed.emit(message)
-                elif status == "1": 
-                    text = 'The processing of the query is finished and the file is ready to be downloaded.<br>'
-                    self.download_update.emit({'browser_text':text,
-                                                'bar_text':'Ready to download...',
-                                                'progress':0})
-                    if '.zip' in download_url:
-                        self.out_filename += '.zip'
-                    elif '.nc' in download_url:
-                        self.out_filename += '.nc'
-                    final_res = requests.get(download_url, headers=self.headers, stream=True)
-                    status_code = final_res.status_code
-                    logging.debug('thread_functions.py - ECMWFDataDownloadThread - run - downloading - headers ' + str(final_res.headers))
-                    with open(self.out_folder + self.out_filename, 'wb') as f:
-                        start = time.time()
-                        total_length = int(final_res.headers.get('content-length'))
-                        downloaded = 0
-                        self.download_update.emit({'browser_text':'Downloading...',
-                                                           'bar_text':'Downloading...',
-                                                           'progress':0})
-                        self.download_update.emit({'browser_text':'Total size of the file: ' + self._set_size(total_length),
-                                                           'bar_text':'Downloading...',
-                                                           'progress':0})
-                        self.downloading = True
-                        download_start = datetime.now()
-                        for chunk in final_res.iter_content(chunk_size=1024):
+                else:
+                    service_url = self._auth_connexion(self.auth_url)
+                    id_res = requests.get(service_url, headers=self.headers)
+                    status = minidom.parseString(id_res.text).getElementsByTagName('statusModeResponse')[0].getAttribute('status')
+                    id = minidom.parseString(id_res.text).getElementsByTagName('statusModeResponse')[0].getAttribute('requestId')
+                    if status == "2":
+                        message = minidom.parseString(id_res.text).getElementsByTagName('statusModeResponse')[0].getAttribute('msg')
+                        status_url = None
+                        logging.exception('thread_functions.py - ECMWFDataDownloadThread - run - Exception ' + message)
+                        self.download_failed.emit(message)
+                    else:
+                        status_url = self.motu_url + '?action=getreqstatus&requestid=' + id + "&service=" + self.query['service'] + "&product=" + self.query['product']
+                    if status_url is not None:
+                        retry = 0
+                        while True:
                             if self.cancel:
                                 break
-                            downloaded += len(chunk)
-                            f.write(chunk)
-                            try:
-                                download_speed = self._set_size(downloaded / (time.time() - start)) + '/s'
-                            except ZeroDivisionError:
-                                download_speed = '0 KB/s'   
-                            progress = round(downloaded * 100 / total_length)
-                            bar_text = 'Downloading at ' + download_speed
-                            self.download_update.emit({'browser_text':'',
-                                                        'bar_text':bar_text,
-                                                        'progress':progress})
-                    f.close()
-                    if self.cancel:
-                        self.download_cancel.emit()
-                        try:
-                            os.remove(self.out_folder + self.out_filename)
-                        except Exception:
-                            logging.exception('thread_functions.py - ECMWFDataDownloadThread - run - Trying to remove aborted file')
-                    else:
-                        average_speed = self._set_size(total_length / (time.time() - start)) + '/s'
-                        download_time = datetime.now() - download_start
-                        final_dict = {'average_speed': average_speed,
-                                      'file_path': self.out_folder + self.out_filename,
-                                      'download_time': download_time}
-                        self.download_done.emit(final_dict)
+                            else:
+                                service_url = self._auth_connexion(status_url)
+                                status_res = requests.get(service_url, headers=self.headers)
+                                for node in minidom.parseString(status_res.text).getElementsByTagName('statusModeResponse'):
+                                    status = node.getAttribute('status')    
+                                    download_url = node.getAttribute('remoteUri')
+                                    message = node.getAttribute('msg')
+                                if status == "0" or status == "3":
+                                    if retry == 0:
+                                        self.download_update.emit({'browser_text':'Query has been accepted and is now queued.<br>',
+                                                                   'bar_text':'Query queued...',
+                                                                   'progress':0})
+                                    time.sleep(5)
+                                else:
+                                    break
+                                retry += 1
+                        if self.cancel:
+                            status == '4'
+                        if status == "2": 
+                            logging.exception('thread_functions.py - ECMWFDataDownloadThread - run - Exception ' + message)
+                            self.download_failed.emit(message)
+                        elif status == "1": 
+                            text = 'The processing of the query is finished and the file is ready to be downloaded.<br>'
+                            self.download_update.emit({'browser_text':text,
+                                                        'bar_text':'Ready to download...',
+                                                        'progress':0})
+                            if '.zip' in download_url:
+                                self.out_filename += '.zip'
+                            elif '.nc' in download_url:
+                                self.out_filename += '.nc'
+                            final_res = requests.get(download_url, headers=self.headers, stream=True)
+                            status_code = final_res.status_code
+                            logging.debug('thread_functions.py - ECMWFDataDownloadThread - run - downloading - headers ' + str(final_res.headers))
+                            with open(self.out_folder + self.out_filename, 'wb') as f:
+                                start = time.time()
+                                total_length = int(final_res.headers.get('content-length'))
+                                downloaded = 0
+                                self.download_update.emit({'browser_text':'Downloading...',
+                                                                   'bar_text':'Downloading...',
+                                                                   'progress':0})
+                                self.download_update.emit({'browser_text':'Total size of the file: ' + self._set_size(total_length),
+                                                                   'bar_text':'Downloading...',
+                                                                   'progress':0})
+                                self.downloading = True
+                                download_start = datetime.now()
+                                for chunk in final_res.iter_content(chunk_size=1024):
+                                    if self.cancel:
+                                        break
+                                    downloaded += len(chunk)
+                                    f.write(chunk)
+                                    try:
+                                        download_speed = self._set_size(downloaded / (time.time() - start)) + '/s'
+                                    except ZeroDivisionError:
+                                        download_speed = '0 KB/s'   
+                                    progress = round(downloaded * 100 / total_length)
+                                    bar_text = 'Downloading at ' + download_speed
+                                    self.download_update.emit({'browser_text':'',
+                                                                'bar_text':bar_text,
+                                                                'progress':progress})
+                            f.close()
+                            if self.cancel:
+                                self.download_cancel.emit()
+                                try:
+                                    os.remove(self.out_folder + self.out_filename)
+                                except Exception:
+                                    logging.exception('thread_functions.py - ECMWFDataDownloadThread - run - Trying to remove aborted file')
+                            else:
+                                average_speed = self._set_size(total_length / (time.time() - start)) + '/s'
+                                download_time = datetime.now() - download_start
+                                final_dict = {'average_speed': average_speed,
+                                              'file_path': self.out_folder + self.out_filename,
+                                              'download_time': download_time}
+                                self.download_done.emit(final_dict)
         except Exception:
             logging.exception('thread_functions.py - ECMWFDataDownloadThread - run - Exception')
             self.download_failed.emit('An exception occured during the processing and/or the download of the query. Please check the log to find '
                                       + 'more information about the exception.')
     
+    def _check_query_size(self, id_res):
+        logging.debug('thread_functions.py - CMEMSDataDownloadThread - _check_query_size')
+        size = minidom.parseString(id_res.text).getElementsByTagName('requestSize')[0].getAttribute('size')
+        max_size = minidom.parseString(id_res.text).getElementsByTagName('requestSize')[0].getAttribute('maxAllowedSize')
+        unit = minidom.parseString(id_res.text).getElementsByTagName('requestSize')[0].getAttribute('unit')
+        units = {'b':1024**0, 'kb':1024**1, 'mb':1024**2, 'gb':1024**3, 'tb':1024**4}
+        size2 = self._set_size(float(size) * units[unit])
+        max_size2 = self._set_size(float(max_size) * units[unit])
+        return size, max_size, size2, max_size2
+    
     def _set_size(self, bytes):
+        logging.debug('thread_functions.py - CMEMSDataDownloadThread - _set_size')
         suffixes = ['B', 'KB', 'MB', 'GB', 'TB', 'PB']
         i = 0
         while bytes >= 1024 and i < len(suffixes)-1:
@@ -261,6 +306,7 @@ class CMEMSDataDownloadThread(Qt.QThread):
         return '%s %s' % (f, suffixes[i])
     
     def _prepare_url_and_variables(self):
+        logging.debug('thread_functions.py - CMEMSDataDownloadThread - _prepare_url_and_variables')
         self.auth_url = self.motu_url + '?'
         for key, value in self.query.items():
             if isinstance(value, list):
@@ -271,6 +317,7 @@ class CMEMSDataDownloadThread(Qt.QThread):
         self.auth_url = self.auth_url[:-1]
     
     def _auth_connexion(self, url):
+        logging.debug('thread_functions.py - CMEMSDataDownloadThread - _auth_connexion')
         first_res = requests.get(url, headers=self.headers)
         cas_url = re.search('(.*)/login.*', first_res.url).group(1) + '/v1/tickets'
         payload = 'username=' + urllib.parse.quote(self.user, safe='') + '&password=' + urllib.parse.quote(self.password, safe='')
