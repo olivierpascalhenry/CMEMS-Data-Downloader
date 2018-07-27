@@ -1,9 +1,9 @@
 {
-    "file_version":"1.0",
+    "file_version":"1.1",
     "min_cdd_version":"0.8",
     "GLOBAL_ANALYSIS_FORECAST_BIO_001_014": {
                                             "filename": "GLOBAL_ANALYSIS_FORECAST_BIO_001_014.dat",
-                                            "version":"1.0"
+                                            "version":"1.1"
                                             },
     "GLOBAL_ANALYSIS_FORECAST_PHYS_001_015": {
                                             "filename": "GLOBAL_ANALYSIS_FORECAST_PHYS_001_015.dat",
@@ -52,5 +52,9 @@
     "WIND_GLO_WIND_L4_REP_OBSERVATIONS_012_003": {
                                             "filename": "WIND_GLO_WIND_L4_REP_OBSERVATIONS_012_003.dat",
                                             "version":"1.1"
-                                            },*
+                                            },
+    "SEALEVEL_ARC_PHY_L3_NRT_OBSERVATIONS_008_038": {
+                                            "filename": "SEALEVEL_ARC_PHY_L3_NRT_OBSERVATIONS_008_038.dat",
+                                            "version":"1.0"
+                                            }
 }
