@@ -15,9 +15,7 @@ from ui.Ui_selectionwindow import Ui_selectionWindow
 from ui.Ui_storewindow import Ui_storeWindow
 from ui.Ui_successwindow import Ui_successWindow
 from ui.Ui_credentialswindow import Ui_credentialsWindow
-'''
 from ui.Ui_expertwindow import Ui_expertWindow
-'''
 from PyQt5 import QtWidgets, QtCore, QtGui
 from functions.thread_functions import DownloadFile, CMEMSDataDownloadThread
 
@@ -107,25 +105,29 @@ class MyOptions(QtWidgets.QDialog, Ui_optionWindow):
                 widget.clicked.connect(lambda: self.info_button())
         self.cancel = True
         self.read_config_dict()
+        self.setTabOrder(self.ow_lineEdit_1,self.ow_lineEdit_2)
+        self.setTabOrder(self.ow_lineEdit_2,self.ow_lineEdit_3)
+        self.setTabOrder(self.ow_lineEdit_3,self.ow_lineEdit_4)
+        self.ow_lineEdit_1.setFocus()
     
     def read_config_dict(self):
         logging.debug('window_functions.py - MyOptions - read_config_dict')
         log_level = self.config_dict.get('LOG', 'level')
         log_path = self.config_dict.get('LOG', 'path')
+        check_database = self.config_dict['OPTIONS'].getboolean('check_database')
         check_update = self.config_dict['OPTIONS'].getboolean('check_update')
         display_api = self.config_dict['OPTIONS'].getboolean('display_api_info')
-        url = self.config_dict.get('CREDENTIALS', 'url')
         password = self.config_dict.get('CREDENTIALS', 'password')
         username = self.config_dict.get('CREDENTIALS', 'user')
         folder = self.config_dict.get('CREDENTIALS', 'folder')
         self.ow_comboBox_1.setCurrentIndex(self.ow_comboBox_1.findText(log_level))
         self.ow_lineEdit_1.setText(log_path)
-        self.ow_lineEdit_2.setText(url)
-        self.ow_lineEdit_3.setText(username)
-        self.ow_lineEdit_4.setText(password)
-        self.ow_lineEdit_5.setText(folder)
+        self.ow_lineEdit_2.setText(username)
+        self.ow_lineEdit_3.setText(password)
+        self.ow_lineEdit_4.setText(folder)
         self.ow_checkBox_1.setChecked(display_api)
         self.ow_checkBox_2.setChecked(check_update)
+        self.ow_checkBox_3.setChecked(check_database)
     
     def get_directory(self):
         logging.debug('window_functions.py - MyOptions - get_directory')
@@ -142,11 +144,11 @@ class MyOptions(QtWidgets.QDialog, Ui_optionWindow):
         self.config_dict.set('LOG', 'level', str(self.ow_comboBox_1.currentText()))
         self.config_dict.set('LOG', 'path', str(self.ow_lineEdit_1.text()))
         self.config_dict.set('OPTIONS', 'check_update', str(self.ow_checkBox_2.isChecked()))
+        self.config_dict.set('OPTIONS', 'check_database', str(self.ow_checkBox_3.isChecked()))
         self.config_dict.set('OPTIONS', 'display_api_info', str(self.ow_checkBox_1.isChecked()))
-        self.config_dict.set('CREDENTIALS', 'url', str(self.ow_lineEdit_2.text()))
-        self.config_dict.set('CREDENTIALS', 'password', str(self.ow_lineEdit_4.text()))
-        self.config_dict.set('CREDENTIALS', 'user', str(self.ow_lineEdit_3.text()))
-        self.config_dict.set('CREDENTIALS', 'folder', str(self.ow_lineEdit_5.text()))
+        self.config_dict.set('CREDENTIALS', 'password', str(self.ow_lineEdit_3.text()))
+        self.config_dict.set('CREDENTIALS', 'user', str(self.ow_lineEdit_2.text()))
+        self.config_dict.set('CREDENTIALS', 'folder', str(self.ow_lineEdit_4.text()))
         self.close_window()
     
     def info_button(self):
@@ -163,7 +165,7 @@ class MyOptions(QtWidgets.QDialog, Ui_optionWindow):
             self.infoWindow.exec_()
     
     def close_window(self):
-        logging.info('window_functions.py - MyOptions - closeWindow')
+        logging.info('window_functions.py - MyOptions - close_window')
         self.close()
 
 
@@ -251,7 +253,7 @@ class MySelect(QtWidgets.QDialog, Ui_selectionWindow):
         
         
 class MyQuery(QtWidgets.QDialog, Ui_downloadWindow):
-    def __init__(self, query, motu_url, user, password, folder, filename):
+    def __init__(self, query, motu_url, user, password, folder=None, filename=None):
         logging.info('window_functions.py - MyQuery - __init__')
         QtWidgets.QWidget.__init__(self)
         self.setupUi(self)
@@ -308,7 +310,7 @@ class MyQuery(QtWidgets.QDialog, Ui_downloadWindow):
         self.dw_label.setText('Download failed')
         self.update_browser(val)
         self.dw_button.setText('Quit')
-        self.dw_button.clicked.disconnect(self.cancel_window)
+        self.dw_button.clicked.disconnect(self.cancel_download)
         self.dw_button.clicked.connect(self.close)
     
     def download_done(self, val):
@@ -389,19 +391,33 @@ class MyCredentials(QtWidgets.QDialog, Ui_credentialsWindow):
         self.close()
         
         
-'''class MyExpert(QtWidgets.QDialog, Ui_expertWindow):
+class MyExpert(QtWidgets.QDialog, Ui_expertWindow):
     def __init__(self, info_text):
         logging.debug('window_functions.py - MyExpert - __init__')
         QtWidgets.QWidget.__init__(self)
         self.setupUi(self)
-        self.query = {}
         self.info_text = info_text
         self.cancel.clicked.connect(self.closeWindow)
         self.submit.clicked.connect(self.prepare_query)
-        all_info_boxes = self.findChildren(QtWidgets.QToolButton,)
+        self.setTabOrder(self.edit_1,self.edit_2)
+        self.setTabOrder(self.edit_2,self.edit_3)
+        self.setTabOrder(self.edit_3,self.edit_4)
+        self.setTabOrder(self.edit_4,self.edit_5)
+        self.setTabOrder(self.edit_5,self.edit_6)
+        self.setTabOrder(self.edit_6,self.edit_7)
+        self.setTabOrder(self.edit_7,self.edit_8)
+        self.setTabOrder(self.edit_8,self.edit_9)
+        self.setTabOrder(self.edit_9,self.edit_10)
+        self.setTabOrder(self.edit_10,self.edit_12)
+        self.setTabOrder(self.edit_12,self.edit_13)
+        self.edit_1.setFocus()
+        self.query = {}
+        self.filename = ''
+        
+        '''all_info_boxes = self.findChildren(QtWidgets.QToolButton,)
         for widget in all_info_boxes:
             if 'infoButton' in widget.objectName():
-                widget.clicked.connect(lambda: self.info_button())
+                widget.clicked.connect(lambda: self.info_button())'''
     
     def info_button(self):
         logging.debug('window_functions.py - MyExpert - info_button - self.sender().objectName() ' + self.sender().objectName())
@@ -422,33 +438,33 @@ class MyCredentials(QtWidgets.QDialog, Ui_credentialsWindow):
     
     def prepare_query(self):
         logging.debug('window_functions.py - MyExpert - prepare_query')
-        keyword_list = [self.main_ln_1,self.main_ln_2,self.main_ln_3,self.main_ln_4,self.main_ln_5,self.main_ln_6,self.main_ln_7,self.area_ln_1,
-                          self.area_ln_2,self.area_ln_3,self.area_ln_4,self.area_ln_5,self.area_ln_6,self.other_ln_1,self.other_ln_2,self.other_ln_3]
-        name_list = ['dataset','stream','type','class','expver','levtype','levelist','date','step','time','grid','area','param','target','format']
-        for index, keyword in enumerate(keyword_list):
-            try:
+        try:
+        
+            self.filename = str(self.edit_4.text())
+            
+            keyword_list = [self.edit_1, self.edit_2, self.edit_9, self.edit_10, self.edit_7, self.edit_8, 
+                              self.edit_5, self.edit_6, self.edit_12, self.edit_13, self.edit_3]
+            name_list = ['service', 'product', 'x_lo', 'x_hi', 'y_lo', 
+                         'y_hi', 't_lo', 't_hi','z_lo', 'z_hi', 'variable']
+            
+            for index, keyword in enumerate(keyword_list):
                 if keyword.text():
-                    self.query[name_list[index]] = keyword.text()
-            except AttributeError:
-                if keyword.toPlainText():
-                    string = keyword.toPlainText()
-                    i, j = -3, 0
-                    while j < len(string):
-                        j = string.find(': ', i + 3)
-                        keyword = string[i + 3:j]
-                        i = string.find(' ; ', j)
-                        if i != -1:
-                            value = string[j + 2:i]
-                            self.query[keyword] = value
-                        else:
-                            value = string[j + 2:]
-                            self.query[keyword] = value
-                            break
+                        
+                    if ',' in keyword.text():
+                        var_list = [x for x in keyword.text().split(',')]
+                        self.query[name_list[index]] = var_list
+                    else:
+                        self.query[name_list[index]] = keyword.text()
+            self.query['scriptVersion'] = '1.5.00'
+            self.query['mode'] = 'status'
+        except Exception:
+            self.query = {}
+            self.filename = ''
         self.closeWindow()
     
     def closeWindow(self):
-        logging.debug('window_functions.py - MyExpert - closeWindow')
-        self.close()'''
+        logging.debug('window_functions.py - MyExpert - closeWindow - query' + str(self.query))
+        self.close()
 
 
 class MySuccess(QtWidgets.QDialog, Ui_successWindow):

@@ -49,8 +49,9 @@ def save_xml_query(self, out_file_name):
     ############################
     depth = add_element(doc, "Depth", doc_root)
     if self.main_cb_7.currentText() != 'Make a choice...' and self.main_cb_7.currentText() != 'No depth...':
-        add_element(doc, "DepthMin", depth, '')
-        add_element(doc, "DepthMax", depth, self.main_cb_7.currentText())
+        add_element(doc, "DepthMin", depth, self.main_cb_7.currentText())
+    if self.main_cb_8.currentText() != 'Make a choice...' and self.main_cb_8.currentText() != 'No depth...':
+        add_element(doc, "DepthMax", depth, self.main_cb_8.currentText())
     
     
     ############################
@@ -129,10 +130,13 @@ def open_xml_query(self, file_name):
         ############################
         # depth
         ############################
+        depth_min = get_element_value(get_element(doc, "Depth"), "DepthMin")
         depth_max = get_element_value(get_element(doc, "Depth"), "DepthMax")
-        if self.main_cb_7.isEnabled() and depth_max:
-            self.main_cb_7.setCurrentIndex(self.main_cb_7.findText(depth_max))
-            
+        if self.main_cb_7.isEnabled() and depth_min:
+            self.main_cb_7.setCurrentIndex(self.main_cb_7.findText(depth_min))
+        if self.main_cb_8.isEnabled() and depth_max:
+            self.main_cb_8.setCurrentIndex(self.main_cb_8.findText(depth_max))
+        
         
         ############################
         # area

@@ -1,0 +1,27 @@
+version=1.0
+creation_date=2018-07-18
+server_url=http://nrt.cmems-du.eu/oceanotron/SOS/default
+ftp_url=None
+domain=Global
+type=Biogeochemistry
+source=In situ
+mode=Near real time
+product=INSITU_GLO_NRT_OBSERVATIONS_013_030
+short_description=For the Global Ocean- The In Situ Thematic Assembly Centre (INS TAC) integrates near real-time in situ in situ observation data. These data are collected from main global networks (Argo, GOSUD, OceanSITES, GTS) completed by European data provided by EUROGOOS regional systems and national data providers assembled by the In Situ TAC regional components. The data are quality controlled using automated procedures and assessed using statistical analysis residuals. It is updated continuously and provides observations with 24-48 hours from acquisition in average.
+description=Short description:<br>For the Global Ocean- The In Situ Thematic Assembly Centre (INS TAC) integrates near real-time in situ in situ observation data. These data are collected from main global networks (Argo, GOSUD, OceanSITES, GTS) completed by European data provided by EUROGOOS regional systems and national data providers assembled by the In Situ TAC regional components. The data are quality controlled using automated procedures and assessed using statistical analysis residuals. It is updated continuously and provides observations with 24-48 hours from acquisition in average.<br><br>Detailed description:<br>Ocean circulation models need information on the interior of the ocean to be able to generate accurate forecast. This information is only available from in-situ measurements. However this information is acquired all around the world and not easily accessible to operational users. Therefore, In Situ Thematic Assembly Centre (INS-TAC), by connecting to a lot of international networks, collects, controls and disseminates the relevant in-situ data to operational users and research community. It also integrates the in situ data collected by the regional components of the INS-TAC. The INS-TAC portal is updated continuously with the observations which have never been disseminated in previous release or have been updated. The latest month of data is available in the "latest" directory, while the data are then accumulated month by month on the same portal.<br><br>Processing information:<br>The product is the homogeneous aggregation of observation data coming from various in-situ sources, quality controlled according to standardized procedures that have been defined in collaboration with EUROGOOS, SeaDataNet and international programs such as Argo, GOSUD or OceanSITES. Duplicate observations have been removed. The data are coming from the following platforms:<ol type="1"><li>Profile data from Argo profiling floats including Euro-Argo, CTD and XBT from research vessels or vessels of opportunity, mooring from OceanSITES including EuroSites and National systems, profiles from Gliders including EGO , from sea mammals as well as profile data from GTS (Global Telecommunication System in BUOY, BATHY, and TESAC format). MEDS / DFO (Canada) provides an integrated access to the data circulating on the GTS and Meteo-France a single access point to the GTS.</li><li>along the track data from thermosalinograph European Ferrybox vessels and drifting buoys directly submitted or through the GTS with the contribution of MEDS/DFO (Canada).</li><li>Timeseries from fixed stations mainly in European seas.</li><li>sea level from EUROGOOS ROOSesThe reference level of the measurements is immersion (in meters) or pressure (in decibars). The data are available in the same format on a unique portal develop jointly with EurOGOOS for the European Seas.</li></ol>Quality/accuracy/calibration information:<br>On each profile or underway data individual automatic tests (peak detection, ....) and statistical tests (comparison with climatology and neighbouring measurements) are performed. On doubtful data visual control by ocean experts is performed. As a result of these tests, quality control flags are assigned to each measurement and included in the product. The data format and Quality Control procedures for Temperature, Salinity, Current, Sea Level ,Wave and some biogeochemical parameters are documented at CMEMS INS-TAC Documentation.<br><br>Suitability, Expected type of users / uses:<br>The product is designed for assimilation into operational models operated by ocean forecasting centres or for scientists interested in near real time products. These users need data aggregated and quality controlled in a reliable and documented manner. As the different releases of the product are not archived by INS TAC, users have to manage their own in-situ data archive if they need it. Only the best copy of the data is archived at the INS TAC.
+resolution=undefined
+temporal_resolution=instantaneous
+level=L2
+dataset_type=Point, Trajectory, Profile
+vertical=from -6000 to 0 (discrete levels)
+swath_vertical=None
+temporal=from 2018-02-12T00:00:00Z to Present
+swath_temporal=None
+swath_temporal_resolution=None
+production=INS-IFREMER-BREST-FR, INS-NIVA-BERGEN-NO
+image=None
+variables=sea_water_temperature,sea_water_practical_salinity,sea_surface_wave_significant_height,sea_surface_wave_mean_period,mole_concentration_of_dissolved_molecular_oxygen_in_sea_water,sea_surface_height_above_sea_level
+subset=geographical
+swath=INS-CORIOLIS-GLO-NRT-OBS_POINTSERIES_LATEST,INS-CORIOLIS-GLO-NRT-OBS_PROFILE_LATEST,INS-CORIOLIS-GLO-NRT-OBS_TRAJECTORIES_LATEST
+suffix=-TDS
+other_parameters=None

@@ -13,7 +13,7 @@ from ui._version import _downloader_version, _eclipse_version, _py_version, _qt_
 from functions.material_functions import info_button_text, object_init, dataset_data_information
 from functions.gui_functions import activate_type_cb, activate_source_cb
 from functions.window_functions import MyAbout, MyOptions, MyInfo, MyApi, MyWarningUpdate, MyUpdate, MyProduct, MyQuery, MyWarning, MySelect, MySuccess
-from functions.window_functions import MyCredentials
+from functions.window_functions import MyCredentials, MyExpert
 from functions.xml_functions import save_xml_query, open_xml_query
 from ui.Ui_mainwindow import Ui_MainWindow
 from functions.thread_functions import CMEMSDataDownloadThread, CheckCMEMSDownloaderOnline
@@ -37,6 +37,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.main_cb_5.setItemDelegate(itemDelegate)
         self.main_cb_6.setItemDelegate(itemDelegate)
         self.main_cb_7.setItemDelegate(itemDelegate)
+        self.main_cb_8.setItemDelegate(itemDelegate)
         self.main_cb_1.currentIndexChanged.connect(lambda: activate_type_cb(self))
         self.productdownload.clicked.connect(self.launch_query)
         self.getSize.clicked.connect(self.launch_query)
@@ -47,6 +48,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.product_info_button.clicked.connect(self.product_information)
         self.main_cb_6.currentIndexChanged.connect(self.set_modified)
         self.main_cb_7.currentIndexChanged.connect(self.set_modified)
+        self.main_cb_8.currentIndexChanged.connect(self.set_modified)
         self.space_ln_north.textChanged.connect(self.set_modified)
         self.space_ln_south.textChanged.connect(self.set_modified)
         self.space_ln_west.textChanged.connect(self.set_modified)
@@ -111,7 +113,18 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 open_xml_query(self, filename)
         
     def open_expert_mode(self):
-        print('no function yet')
+        logging.debug('mainwindow.py - open_expert_mode')
+        self.expertWindow = MyExpert(self.info_button_text_dict)
+        x1, y1, w1, h1 = self.geometry().getRect()
+        _, _, w2, h2 = self.expertWindow.geometry().getRect()
+        x2 = x1 + w1/2 - w2/2
+        y2 = y1 + h1/2 - h2/2
+        self.expertWindow.setGeometry(x2, y2, w2, h2)
+        self.expertWindow.exec_()
+        query, filename = self.expertWindow.query, self.expertWindow.filename
+        
+        if query and filename:
+            self.launch_query(query, filename)
         
     def open_about(self):
         logging.debug('mainwindow.py - open_about')
@@ -190,7 +203,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         database_path = 'database//'
         if os.path.isdir(database_path):
             for file in os.listdir(database_path):
-                if os.path.isfile(os.path.join(database_path, file)) and file[-4:] == '.dat':
+                if os.path.isfile(os.path.join(database_path, file)) and file[-4:] == '.dat' and file != 'PRODUCT_DATABASE.dat':
                     domain, data_type, source, mode, product, short_description, description, resolution = None, None, None, None, None, None, None, None
                     temporal_resolution, level, data_type, vertical, temporal, production, image, variables = None, None, None, None, None, None, None, None
                     subset, swath, suffixe = None, None, None
@@ -202,6 +215,10 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                             parameter = line[:index]
                             value = line[index+1:].replace('\n','')
                             if parameter != 'version' and parameter != 'creation_date':
+                                if parameter == 'server_url':
+                                    server_url = value
+                                if parameter == 'ftp_url':
+                                    ftp_url = value
                                 if parameter == 'domain':
                                     domain = value
                                 if parameter == 'type':
@@ -226,6 +243,27 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                                     dataset_type = value
                                 if parameter == 'vertical':
                                     vertical = value
+                                if parameter == 'swath_vertical':
+                                    swath_vertical_tmp = value
+                                    if swath_vertical_tmp == 'None':
+                                        swath_vertical = None
+                                    else:
+                                        swath_vertical = []
+                                        if '|' in swath_vertical_tmp:
+                                            swath_vertical_tmp = swath_vertical_tmp.split('|')
+                                            for swath in swath_vertical_tmp:
+                                                if 'to' in swath:
+                                                    index = swath.find('to')
+                                                    start = swath[:index].split('/')
+                                                    end = swath[index+2:].split('/')
+                                                    swath_vertical.append([start, end])
+                                                else:
+                                                    swath_vertical.append([swath, swath])
+                                        else:
+                                            index = swath_vertical_tmp.find('to')
+                                            start = swath_vertical_tmp[:index].split('/')
+                                            end = swath_vertical_tmp[index+2:].split('/')
+                                            swath_vertical.append([start, end])
                                 if parameter == 'temporal':
                                     temporal = value
                                 if parameter == 'production':
@@ -242,9 +280,13 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                                             for index, var in enumerate(variables):
                                                 if ','in var:
                                                     var = var.split(',')
-                                                variables[index] = var
+                                                else:
+                                                    var = [var]
+                                                variables[index] = sorted(var)
                                         elif ',' in variables:
-                                            variables = variables.split(',')
+                                            variables = sorted(variables.split(','))
+                                        else:
+                                            variables = [variables]
                                 if parameter == 'subset':
                                     subset = value
                                     if subset == 'None':
@@ -257,6 +299,10 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                                     swath_temporal = value
                                     if ',' in swath_temporal:
                                         swath_temporal = swath_temporal.split(',')
+                                if parameter == 'swath_temporal_resolution':
+                                    swath_temporal_resolution = value
+                                    if ',' in swath_temporal_resolution:
+                                        swath_temporal_resolution = swath_temporal_resolution.split(',')
                                 if parameter == 'suffix':
                                     suffixe = value
                     f.close()
@@ -295,8 +341,11 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                     self.product_database[product]['subset'] = subset
                     self.product_database[product]['swath'] = swath
                     self.product_database[product]['swath_temporal'] = swath_temporal
+                    self.product_database[product]['swath_vertical'] = swath_vertical
                     self.product_database[product]['suffixe'] = suffixe
                     self.product_database[product]['tree'] = [domain, data_type, source, mode]
+                    self.product_database[product]['server_url'] = server_url
+                    self.product_database[product]['ftp_url'] = ftp_url
                     domain_list = []
                     for key, _ in self.dataset_database.items():
                         domain_list.append(key)
@@ -316,10 +365,67 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             self.productWindow.setGeometry(x2, y2, w2, h2)
             self.productWindow.exec_()
     
-    def launch_query(self):
+    def launch_query(self, query=None, filename=None):
         logging.info('mainwindow.py - launch_query')
-        product, dataset, variable = self.check_product_dataset()
-        if product and dataset and variable:
+        
+        
+        if query == None and filename == None:
+            product, dataset, variable = self.check_product_dataset()
+            if product and dataset and variable:
+                user = self.config_dict['CREDENTIALS'].get('user')
+                password = self.config_dict['CREDENTIALS'].get('password')
+                if not user or not password:
+                    self.credentialsyWindow = MyCredentials(user, password)
+                    x1, y1, w1, h1 = self.geometry().getRect()
+                    _, _, w2, h2 = self.credentialsyWindow.geometry().getRect()
+                    x2 = x1 + w1/2 - w2/2
+                    y2 = y1 + h1/2 - h2/2
+                    self.credentialsyWindow.setGeometry(x2, y2, w2, h2)
+                    self.credentialsyWindow.exec_()
+                    if self.credentialsyWindow.username and self.credentialsyWindow.password:
+                        user = self.credentialsyWindow.username
+                        password = self.credentialsyWindow.password
+                if user and password:
+                    query, motu_url, folder, filename = self.prepare_query() 
+                    query['action'] = str(self.sender().objectName())
+                    self.queryWindow = MyQuery(query, motu_url, user, password, folder, filename)
+                    x1, y1, w1, h1 = self.geometry().getRect()
+                    _, _, w2, h2 = self.queryWindow.geometry().getRect()
+                    x2 = x1 + w1/2 - w2/2
+                    y2 = y1 + h1/2 - h2/2
+                    self.queryWindow.setGeometry(x2, y2, w2, h2)
+                    self.queryWindow.exec_()
+                    try:
+                        download_time = self.queryWindow.download_time
+                        file_path = self.queryWindow.file_path
+                        average_speed = self.queryWindow.average_speed
+                        self.successWindow = MySuccess(download_time, file_path, average_speed)
+                        x1, y1, w1, h1 = self.geometry().getRect()
+                        _, _, w2, h2 = self.successWindow.geometry().getRect()
+                        x2 = x1 + w1/2 - w2/2
+                        y2 = y1 + h1/2 - h2/2
+                        self.successWindow.setGeometry(x2, y2, w2, h2)
+                        self.successWindow.exec_()
+                    except AttributeError:
+                        pass
+            else:
+                if not product:
+                    self.main_lb_5.setStyleSheet("color: rgb(200,0,0);")
+                    self.tabWidget.tabBar().setTabTextColor(0, QtGui.QColor(200,0,0))
+                if not dataset:
+                    self.main_lb_8.setStyleSheet("color: rgb(200,0,0);")
+                    self.tabWidget.tabBar().setTabTextColor(1, QtGui.QColor(200,0,0))
+                if not variable:
+                    self.main_lb_10.setStyleSheet("color: rgb(200,0,0);")
+                    self.tabWidget.tabBar().setTabTextColor(1, QtGui.QColor(200,0,0))
+                self.selectionWindow = MySelect()
+                x1, y1, w1, h1 = self.geometry().getRect()
+                _, _, w2, h2 = self.selectionWindow.geometry().getRect()
+                self.selectionWindow.setGeometry(x1 + w1/2 - w2/2, y1 + h1/2 - h2/2, w2, h2)
+                self.selectionWindow.setMinimumSize(QtCore.QSize(500, self.selectionWindow.sizeHint().height()))
+                self.selectionWindow.setMaximumSize(QtCore.QSize(500, self.selectionWindow.sizeHint().height()))
+                self.selectionWindow.exec_()
+        else:
             user = self.config_dict['CREDENTIALS'].get('user')
             password = self.config_dict['CREDENTIALS'].get('password')
             if not user or not password:
@@ -334,8 +440,9 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                     user = self.credentialsyWindow.username
                     password = self.credentialsyWindow.password
             if user and password:
-                query, motu_url, folder, filename = self.prepare_query() 
-                query['action'] = str(self.sender().objectName())
+                folder = self.config_dict['CREDENTIALS'].get('folder')
+                motu_url = self.config_dict['CREDENTIALS'].get('url')
+                query['action'] = 'productdownload'
                 self.queryWindow = MyQuery(query, motu_url, user, password, folder, filename)
                 x1, y1, w1, h1 = self.geometry().getRect()
                 _, _, w2, h2 = self.queryWindow.geometry().getRect()
@@ -356,24 +463,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                     self.successWindow.exec_()
                 except AttributeError:
                     pass
-        else:
-            if not product:
-                self.main_lb_5.setStyleSheet("color: rgb(200,0,0);")
-                self.tabWidget.tabBar().setTabTextColor(0, QtGui.QColor(200,0,0))
-            if not dataset:
-                self.main_lb_8.setStyleSheet("color: rgb(200,0,0);")
-                self.tabWidget.tabBar().setTabTextColor(1, QtGui.QColor(200,0,0))
-            if not variable:
-                self.main_lb_10.setStyleSheet("color: rgb(200,0,0);")
-                self.tabWidget.tabBar().setTabTextColor(1, QtGui.QColor(200,0,0))
-            self.selectionWindow = MySelect()
-            x1, y1, w1, h1 = self.geometry().getRect()
-            _, _, w2, h2 = self.selectionWindow.geometry().getRect()
-            self.selectionWindow.setGeometry(x1 + w1/2 - w2/2, y1 + h1/2 - h2/2, w2, h2)
-            self.selectionWindow.setMinimumSize(QtCore.QSize(500, self.selectionWindow.sizeHint().height()))
-            self.selectionWindow.setMaximumSize(QtCore.QSize(500, self.selectionWindow.sizeHint().height()))
-            self.selectionWindow.exec_()
-    
     
     def check_downloader_update(self):
         logging.debug('mainwindow.py - check_downloader_update')
@@ -548,7 +637,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         product = str(self.main_cb_6.currentText())
         
         ### url
-        motu_url = self.config_dict['CREDENTIALS'].get('url')
+        motu_url = self.product_database[self.main_cb_5.currentText()]['server_url']
 
         ### longitude and latitude
         if self.space_ln_north.text():
@@ -561,9 +650,9 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             lon_max = self.space_ln_east.text()
         
         ### depth
-        '''depth_text = self.main_cb_7.currentText()
-        if depth_text != 'Make a choice...' and depth_text != 'No depth...' and depth_text != 'surface':
-            depth_max = str(self.main_cb_7.currentText())'''
+        if self.main_cb_7.isEnabled():
+            if self.main_cb_7.currentText() != 'Make a choice...' and self.main_cb_8.currentText() != 'Make a choice...':
+                depth_min, depth_max = self.main_cb_7.currentText(), self.main_cb_8.currentText()
         
         ### date
         date_min = self.main_de_1.date().toString(QtCore.Qt.ISODate)
@@ -599,4 +688,16 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         
         logging.debug('mainwindow.py - prepare_query - query ready: ' + str(query))
         return query, motu_url, folder, filename
+    
+    
+    
+    ### snippet to read a file on github
+    '''import requests
+    import base64
+    url = 'https://api.github.com/repos/olivierpascalhenry/CMEMS-Data-Downloader/contents/database/SEALEVEL_GLO_PHY_L3_REP_OBSERVATIONS_008_045.dat'
+    test_json = requests.get(url=url).json()
+    text = test_json['content']
+    print(base64.b64decode(text).decode('utf-8'))'''
+    
+    
     

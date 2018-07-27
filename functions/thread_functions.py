@@ -131,7 +131,7 @@ class CMEMSDataDownloadThread(Qt.QThread):
     download_done = QtCore.pyqtSignal(dict)
     download_failed = QtCore.pyqtSignal(str)
     
-    def __init__(self, query, motu_url, user, password, out_folder, out_filename):
+    def __init__(self, query, motu_url, user, password, out_folder=None, out_filename=None):
         Qt.QThread.__init__(self)
         logging.info('thread_functions.py - CMEMSDataDownloadThread - __init__')
         self.query = query
@@ -140,16 +140,18 @@ class CMEMSDataDownloadThread(Qt.QThread):
         self.auth_url = ''
         self.user = user
         self.password = password
-        if platform.system() == 'Windows':
-            self.out_folder = out_folder + '\\'
-        else:
-            self.out_folder = out_folder + '/'
-        self.out_filename = out_filename
+        if out_folder is not None:
+            if platform.system() == 'Windows':
+                self.out_folder = out_folder + '\\'
+            else:
+                self.out_folder = out_folder + '/'
+        if out_filename is not None:
+            self.out_filename = out_filename
         self.headers = {'X-Client-Id': 'motu-client-python', 'X-Client-Version': '1.5.00'}
         self.error = ''
         self.cancel = False
         self.downloading = False
-        self._prepare_url_and_variables()
+        
     
     def run(self):
         logging.debug('thread_functions.py - CMEMSDataDownloadThread - run')
@@ -158,6 +160,7 @@ class CMEMSDataDownloadThread(Qt.QThread):
                 self.download_update.emit({'browser_text':'Welcome to the MOTU API.<br>Authentication pending...<br>',
                                        'bar_text':'Authentication pending...',
                                        'progress':0})
+                self._prepare_url_and_variables()
                 service_url = self._auth_connexion(self.auth_url)
                 self.download_update.emit({'browser_text':'Authentication successfull.<br>Query is sent to the MOTU server.<br>',
                                            'bar_text':'Sending query...',
@@ -175,6 +178,7 @@ class CMEMSDataDownloadThread(Qt.QThread):
                 self.download_update.emit({'browser_text':'Welcome to the MOTU API.<br>Authentication pending...<br>',
                                        'bar_text':'Authentication pending...',
                                        'progress':0})
+                self._prepare_url_and_variables()
                 size_url = self.auth_url.replace('productdownload','getSize')
                 service_url = self._auth_connexion(size_url)
                 self.download_update.emit({'browser_text':'Authentication successfull.<br>Query is sent to the MOTU server.<br>',
@@ -193,6 +197,10 @@ class CMEMSDataDownloadThread(Qt.QThread):
                 else:
                     service_url = self._auth_connexion(self.auth_url)
                     id_res = requests.get(service_url, headers=self.headers)
+                    
+                    print(id_res.text)
+                    print(id_res.status_code)
+                    
                     status = minidom.parseString(id_res.text).getElementsByTagName('statusModeResponse')[0].getAttribute('status')
                     id = minidom.parseString(id_res.text).getElementsByTagName('statusModeResponse')[0].getAttribute('requestId')
                     if status == "2":
@@ -315,6 +323,7 @@ class CMEMSDataDownloadThread(Qt.QThread):
             else:
                 self.auth_url += key + '=' + value + '&'
         self.auth_url = self.auth_url[:-1]
+        logging.debug('thread_functions.py - CMEMSDataDownloadThread - _prepare_url_and_variables - self.auth_url ' + self.auth_url)
     
     def _auth_connexion(self, url):
         logging.debug('thread_functions.py - CMEMSDataDownloadThread - _auth_connexion')

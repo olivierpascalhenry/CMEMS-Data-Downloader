@@ -6,14 +6,45 @@ CHANGELOG
 To do list:
 -----------
   
-  - check new products in CDD github repository. (v0.8)
-  - add products. (v0.8)
-  - tweak GUI and functions if it is necessary for new products (ex: depth). (v0.8)
-  - add expert window. (v0.8)
+  - check new products in CDD github repository. (v0.9)
+  - add products. (v0.8, v0.9, v1.0, ...)
+  - prepare product template (v1.0)
   - track last bugs, check stability. (v0.9)
   - prepare documentation and text for info buttons. (v1.0)
+  - propose a download by FTP for a complete product (v1.2)
+  - change QdateEdit to temporal step if swath_temporal_resolution in database (v1.1)
+  - check : TDS dataset can be subseted (netcdf), DGF not (ZIP)
+
+  
+To fix list:
+------------
 
 
+July 27 2018, Release version 0.8.0
+===================================
+Version for testing purposes.
+
+  MODIFIED:
+    - the variables are now sorted when creating the database from all .dat files.
+    - the GUI and different functions have been modified to handle depth levels.
+    - depth levels are now integrated into a query if a depth_min and depth_max parameters are available.
+    - as the url to download products can be different depending on who provides a product, the server and ftp url is now coded in the database files.
+    - if "Present" or "Present+x" or "Present + x" is in the temporal_coverage and/or in swath_temporal parameters, the GUI takes into account "Present" as today (as a date), and "+" as a offset (in term of day) to add to the today date.
+    
+  ADDED:
+    - an expert window has been added, to let the user writes what he wants for each keyword.
+    - swath_temporal_resolution has been added in the database to inform the user about a different temporal resolution for each dataset.
+    - other_parameters has been added in the database if specific controls are needed for a particular product.
+    - a file 'PRODUCT_DATABASE.dat' with data about products (file name and file version) has been added.
+    
+  FIXED:
+    - an issue with focus has been fixed in the expert window.
+    - an issue with focus has been fixed in the option window.
+    - a wrong signal was disconnected in the download thread, it has been fixed.
+    - when the variable list is long enough to force the gui to create a vertical slider, all checkboxes are too close to each other, sometimes overlapping. It has been fixed.
+    - the QDateEdit elements in the "Time / Space and File" section weren't cleared well when a new date was entered. It has been fixed.
+  
+  
 July 12 2018, Release version 0.7.0
 ===================================
 Version for testing purposes.

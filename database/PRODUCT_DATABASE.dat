@@ -1,0 +1,56 @@
+{
+    "file_version":"1.0",
+    "min_cdd_version":"0.8",
+    "GLOBAL_ANALYSIS_FORECAST_BIO_001_014": {
+                                            "filename": "GLOBAL_ANALYSIS_FORECAST_BIO_001_014.dat",
+                                            "version":"1.0"
+                                            },
+    "GLOBAL_ANALYSIS_FORECAST_PHYS_001_015": {
+                                            "filename": "GLOBAL_ANALYSIS_FORECAST_PHYS_001_015.dat",
+                                            "version":"1.1"
+                                            },
+    "GLOBAL_REANALYSIS_PHY_001_025": {
+                                            "filename": "GLOBAL_REANALYSIS_PHY_001_025.dat",
+                                            "version":"1.1"
+                                            },
+    "INSITU_GLO_TS_OA_NRT_OBSERVATIONS_013_002_a": {
+                                            "filename": "INSITU_GLO_TS_OA_NRT_OBSERVATIONS_013_002_a.dat",
+                                            "version":"1.1"
+                                            },
+    "OCEANCOLOUR_GLO_OPTICS_L3_REP_OBSERVATIONS_009_064": {
+                                            "filename": "OCEANCOLOUR_GLO_OPTICS_L3_REP_OBSERVATIONS_009_064.dat",
+                                            "version":"1.0"
+                                            },
+    "SEAICE_GLO_SEAICE_L4_REP_OBSERVATIONS_011_009": {
+                                            "filename": "SEAICE_GLO_SEAICE_L4_REP_OBSERVATIONS_011_009.dat",
+                                            "version":"1.1"
+                                            },
+    "SEALEVEL_GLO_PHY_L3_NRT_OBSERVATIONS_008_044": {
+                                            "filename": "SEALEVEL_GLO_PHY_L3_NRT_OBSERVATIONS_008_044.dat",
+                                            "version":"1.0"
+                                            },
+    "SEALEVEL_GLO_PHY_L3_REP_OBSERVATIONS_008_045": {
+                                            "filename": "SEALEVEL_GLO_PHY_L3_REP_OBSERVATIONS_008_045.dat",
+                                            "version":"1.1"
+                                            },
+    "SEALEVEL_GLO_PHY_L4_REP_OBSERVATIONS_008_047": {
+                                            "filename": "SEALEVEL_GLO_PHY_L4_REP_OBSERVATIONS_008_047.dat",
+                                            "version":"1.1"
+                                            },
+    "SST_GLO_SST_L4_REP_OBSERVATIONS_010_011": {
+                                            "filename": "SST_GLO_SST_L4_REP_OBSERVATIONS_010_011.dat",
+                                            "version":"1.1"
+                                            },
+    "SST_GLO_SST_L4_REP_OBSERVATIONS_010_024": {
+                                            "filename": "SST_GLO_SST_L4_REP_OBSERVATIONS_010_024.dat",
+                                            "version":"1.1"
+                                            },
+    "WIND_GLO_WIND_L3_REP_OBSERVATIONS_012_005": {
+                                            "filename": "WIND_GLO_WIND_L3_REP_OBSERVATIONS_012_005.dat",
+                                            "version":"1.1"
+                                            },
+    "WIND_GLO_WIND_L4_REP_OBSERVATIONS_012_003": {
+                                            "filename": "WIND_GLO_WIND_L4_REP_OBSERVATIONS_012_003.dat",
+                                            "version":"1.1"
+                                            },*
+}

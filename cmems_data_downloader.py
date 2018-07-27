@@ -22,17 +22,25 @@ def launch_data_downloader(path):
                               'path': ''
                               }
         config_dict['OPTIONS'] = {'language':'english',
-                                  'check_update':'True',
+                                  'check_update':'False',
+                                  'check_database':'False',
                                   'display_api_info':'True'
                                   }
-        config_dict['CREDENTIALS'] = {'url':'http://my.cmems-du.eu/motu-web/Motu',
-                                      'password':'',
+        config_dict['CREDENTIALS'] = {'password':'',
                                       'user':'',
                                       'folder':''
                                       }
         with open(os.path.join(path, 'cmems_downloader.ini'), 'w') as configfile:
             config_dict.write(configfile)
     config_dict.read(os.path.join(path, 'cmems_downloader.ini'))
+    if not config_dict['OPTIONS'].get('check_database'):
+        config_dict.set('OPTIONS', 'check_database', 'False')
+        with open(os.path.join(path, 'cmems_downloader.ini'), 'w') as configfile:
+            config_dict.write(configfile)
+    if config_dict['CREDENTIALS'].get('url'):
+        config_dict.remove_option('CREDENTIALS', 'url')
+        with open(os.path.join(path, 'cmems_downloader.ini'), 'w') as configfile:
+            config_dict.write(configfile)
     path_exist = True
     if not config_dict.get('LOG', 'path'):
         log_filename = os.path.join(path, 'cmems_downloader_log.out')

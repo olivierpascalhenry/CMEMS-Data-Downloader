@@ -27,8 +27,8 @@ class Ui_MainWindow(object):
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setAutoFillBackground(False)
         self.centralwidget.setObjectName("centralwidget")
-        self.gridLayout_2 = QtWidgets.QGridLayout(self.centralwidget)
-        self.gridLayout_2.setObjectName("gridLayout_2")
+        self.gridLayout_7 = QtWidgets.QGridLayout(self.centralwidget)
+        self.gridLayout_7.setObjectName("gridLayout_7")
         self.tabWidget = QtWidgets.QTabWidget(self.centralwidget)
         self.tabWidget.setEnabled(True)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
@@ -1192,7 +1192,7 @@ class Ui_MainWindow(object):
         self.variables_scroll_area.setWidgetResizable(True)
         self.variables_scroll_area.setObjectName("variables_scroll_area")
         self.scrollAreaWidgetContents_6 = QtWidgets.QWidget()
-        self.scrollAreaWidgetContents_6.setGeometry(QtCore.QRect(0, 0, 1000, 373))
+        self.scrollAreaWidgetContents_6.setGeometry(QtCore.QRect(0, 0, 1000, 497))
         self.scrollAreaWidgetContents_6.setObjectName("scrollAreaWidgetContents_6")
         self.gridLayout_5 = QtWidgets.QGridLayout(self.scrollAreaWidgetContents_6)
         self.gridLayout_5.setContentsMargins(0, 0, 0, 0)
@@ -1815,6 +1815,8 @@ class Ui_MainWindow(object):
         self.horizontalLayout_14.setObjectName("horizontalLayout_14")
         spacerItem40 = QtWidgets.QSpacerItem(20, 20, QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout_14.addItem(spacerItem40)
+        self.gridLayout_2 = QtWidgets.QGridLayout()
+        self.gridLayout_2.setObjectName("gridLayout_2")
         self.main_lb_15 = QtWidgets.QLabel(self.scrollAreaWidgetContents_3)
         self.main_lb_15.setEnabled(True)
         self.main_lb_15.setMinimumSize(QtCore.QSize(0, 27))
@@ -1828,7 +1830,7 @@ class Ui_MainWindow(object):
         font.setStyleStrategy(QtGui.QFont.PreferAntialias)
         self.main_lb_15.setFont(font)
         self.main_lb_15.setObjectName("main_lb_15")
-        self.horizontalLayout_14.addWidget(self.main_lb_15)
+        self.gridLayout_2.addWidget(self.main_lb_15, 0, 0, 1, 1)
         self.main_cb_7 = QtWidgets.QComboBox(self.scrollAreaWidgetContents_3)
         self.main_cb_7.setEnabled(False)
         self.main_cb_7.setMinimumSize(QtCore.QSize(160, 27))
@@ -1890,7 +1892,84 @@ class Ui_MainWindow(object):
         self.main_cb_7.setMaxVisibleItems(12)
         self.main_cb_7.setObjectName("main_cb_7")
         self.main_cb_7.addItem("")
-        self.horizontalLayout_14.addWidget(self.main_cb_7)
+        self.gridLayout_2.addWidget(self.main_cb_7, 0, 1, 1, 1)
+        self.main_lb_17 = QtWidgets.QLabel(self.scrollAreaWidgetContents_3)
+        self.main_lb_17.setEnabled(True)
+        self.main_lb_17.setMinimumSize(QtCore.QSize(0, 27))
+        self.main_lb_17.setMaximumSize(QtCore.QSize(16777215, 27))
+        font = QtGui.QFont()
+        font.setFamily("fonts/SourceSansPro-Regular.ttf")
+        font.setPointSize(10)
+        font.setBold(False)
+        font.setWeight(50)
+        font.setKerning(True)
+        font.setStyleStrategy(QtGui.QFont.PreferAntialias)
+        self.main_lb_17.setFont(font)
+        self.main_lb_17.setObjectName("main_lb_17")
+        self.gridLayout_2.addWidget(self.main_lb_17, 1, 0, 1, 1)
+        self.main_cb_8 = QtWidgets.QComboBox(self.scrollAreaWidgetContents_3)
+        self.main_cb_8.setEnabled(False)
+        self.main_cb_8.setMinimumSize(QtCore.QSize(160, 27))
+        self.main_cb_8.setMaximumSize(QtCore.QSize(160, 27))
+        font = QtGui.QFont()
+        font.setFamily("fonts/SourceSansPro-Regular.ttf")
+        font.setPointSize(9)
+        font.setBold(False)
+        font.setWeight(50)
+        font.setKerning(True)
+        font.setStyleStrategy(QtGui.QFont.PreferAntialias)
+        self.main_cb_8.setFont(font)
+        self.main_cb_8.setStyleSheet("QComboBox {\n"
+"    border: 1px solid #acacac;\n"
+"    border-radius: 1px;\n"
+"    padding-left: 5px;\n"
+"    background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, \n"
+"                                stop: 0 #f0f0f0, stop: 1 #e5e5e5);\n"
+"}\n"
+"\n"
+"QComboBox:disabled {\n"
+"    background-color:  rgb(200,200,200);\n"
+"}\n"
+"\n"
+"QComboBox:hover {\n"
+"    border: 1px solid #7eb4ea;\n"
+"    border-radius: 1px;\n"
+"    background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, \n"
+"                                stop: 0 #ecf4fc, stop: 1 #dcecfc);\n"
+"}\n"
+"\n"
+"QComboBox::drop-down {\n"
+"    subcontrol-origin: padding;\n"
+"    subcontrol-position: top right;\n"
+"    width: 27px;\n"
+"    border-left-width: 1px;\n"
+"    border-left-color: darkgray;\n"
+"    border-left-style: solid;\n"
+"    border-top-right-radius: 3px;\n"
+"    border-bottom-right-radius: 3px;\n"
+"}\n"
+"\n"
+"QComboBox::down-arrow {\n"
+"    image: url(icons/down_arrow_icon.svg); \n"
+"    width: 16px;\n"
+"    height: 16px\n"
+"}\n"
+"\n"
+"QComboBox QAbstractItemView {\n"
+"    selection-background-color: rgb(200,200,200);\n"
+"    selection-color: black;\n"
+"    background: #f0f0f0;\n"
+"    border: 0px solid #f0f0f0;\n"
+"}\n"
+"\n"
+"QComboBox QAbstractItemView::item {\n"
+"    margin: 5px 5px 5px 5px;\n"
+"}")
+        self.main_cb_8.setMaxVisibleItems(12)
+        self.main_cb_8.setObjectName("main_cb_8")
+        self.main_cb_8.addItem("")
+        self.gridLayout_2.addWidget(self.main_cb_8, 1, 1, 1, 1)
+        self.horizontalLayout_14.addLayout(self.gridLayout_2)
         spacerItem41 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout_14.addItem(spacerItem41)
         self.verticalLayout_6.addLayout(self.horizontalLayout_14)
@@ -2181,9 +2260,9 @@ class Ui_MainWindow(object):
         self.spacetime_scroll_area.setWidget(self.scrollAreaWidgetContents_3)
         self.gridLayout_3.addWidget(self.spacetime_scroll_area, 0, 0, 1, 1)
         self.tabWidget.addTab(self.tabWidgetPage3, "")
-        self.gridLayout_2.addWidget(self.tabWidget, 0, 0, 1, 1)
+        self.gridLayout_7.addWidget(self.tabWidget, 0, 0, 1, 1)
         spacerItem63 = QtWidgets.QSpacerItem(20, 5, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Fixed)
-        self.gridLayout_2.addItem(spacerItem63, 1, 0, 1, 1)
+        self.gridLayout_7.addItem(spacerItem63, 1, 0, 1, 1)
         self.horizontalLayout = QtWidgets.QHBoxLayout()
         self.horizontalLayout.setObjectName("horizontalLayout")
         spacerItem64 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
@@ -2268,7 +2347,7 @@ class Ui_MainWindow(object):
         self.horizontalLayout.addWidget(self.getSize)
         spacerItem66 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout.addItem(spacerItem66)
-        self.gridLayout_2.addLayout(self.horizontalLayout, 2, 0, 1, 1)
+        self.gridLayout_7.addLayout(self.horizontalLayout, 2, 0, 1, 1)
         MainWindow.setCentralWidget(self.centralwidget)
         self.toolBar = QtWidgets.QToolBar(MainWindow)
         self.toolBar.setMovable(False)
@@ -2370,6 +2449,7 @@ class Ui_MainWindow(object):
         self.main_cb_5.setCurrentIndex(0)
         self.main_cb_6.setCurrentIndex(0)
         self.main_cb_7.setCurrentIndex(0)
+        self.main_cb_8.setCurrentIndex(0)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
@@ -2402,8 +2482,10 @@ class Ui_MainWindow(object):
         self.main_lb_14.setText(_translate("MainWindow", "to"))
         self.main_de_2.setDisplayFormat(_translate("MainWindow", "yyyy-MM-dd"))
         self.main_lb_12.setText(_translate("MainWindow", "Depth:"))
-        self.main_lb_15.setText(_translate("MainWindow", "end depth:"))
+        self.main_lb_15.setText(_translate("MainWindow", "start depth:"))
         self.main_cb_7.setItemText(0, _translate("MainWindow", "No depth..."))
+        self.main_lb_17.setText(_translate("MainWindow", "end depth:"))
+        self.main_cb_8.setItemText(0, _translate("MainWindow", "No depth..."))
         self.main_lb_16.setText(_translate("MainWindow", "File name:"))
         self.main_lb_9.setText(_translate("MainWindow", "Regional coverage:"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tabWidgetPage3), _translate("MainWindow", "Time / Space and File"))

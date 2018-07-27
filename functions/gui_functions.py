@@ -1,4 +1,5 @@
 import logging
+import datetime
 from PyQt5 import QtWidgets, QtGui, QtCore
 from functions.window_functions import MyInfo
 
@@ -103,15 +104,23 @@ def activate_dataset_information(self):
                             + '<p align="justify">' + product['information']['short_description'] + '</p>')
         self.main_lb_7.setText(information_text)
         swath, period = product['swath'], product['information']['temporal_coverage']
-        start, end = period[5:15], period[29:39]
+        if 'Present' in period:
+            start, end = period[5:15], period[29:]
+            if '+' in end:
+                end = datetime.datetime.now() + datetime.timedelta(days=int(end[end.find('+') + 2:]))
+            else:
+                end = datetime.datetime.now()
+            end = end.strftime('%Y-%m-%d')
+        else:
+            start, end = period[5:15], period[29:39]
         self.main_de_1.setEnabled(True)
         self.main_de_2.setEnabled(True)
-        self.main_de_1.setDate(QtCore.QDate.fromString(start, QtCore.Qt.ISODate))
         self.main_de_1.setMinimumDate(QtCore.QDate.fromString(start, QtCore.Qt.ISODate))
         self.main_de_1.setMaximumDate(QtCore.QDate.fromString(end, QtCore.Qt.ISODate))
-        self.main_de_2.setDate(QtCore.QDate.fromString(end, QtCore.Qt.ISODate))
+        self.main_de_1.setDate(QtCore.QDate.fromString(start, QtCore.Qt.ISODate))
         self.main_de_2.setMinimumDate(QtCore.QDate.fromString(start, QtCore.Qt.ISODate))
         self.main_de_2.setMaximumDate(QtCore.QDate.fromString(end, QtCore.Qt.ISODate))
+        self.main_de_2.setDate(QtCore.QDate.fromString(end, QtCore.Qt.ISODate))
         self.main_cb_6.clear()
         self.main_cb_6.setEnabled(True)
         if isinstance(swath, list):
@@ -119,13 +128,14 @@ def activate_dataset_information(self):
             self.main_cb_6.addItems(swath)
             clear_layout(self.variables_vertical_layout)
             self.main_cb_6.currentIndexChanged.connect(lambda: populate_variable_list(self, product['variables']))
-            self.main_cb_6.currentIndexChanged.connect(lambda: activate_depth_cb(self, product['information']['vertical_coverage']))
+            self.main_cb_6.currentIndexChanged.connect(lambda: activate_depth_cb(self, product['information']['vertical_coverage'], 
+                                                                                 self.main_cb_6.currentIndex(), product['swath_vertical']))
             self.main_cb_6.currentIndexChanged.connect(lambda: activate_area_ln(self, product['subset']))
             self.main_cb_6.currentIndexChanged.connect(lambda: specific_period(self, self.main_cb_6.currentIndex(), product['swath_temporal']))
         else:
             self.main_cb_6.addItem(swath)
             populate_variable_list(self, product['variables'])
-            activate_depth_cb(self, product['information']['vertical_coverage'])
+            activate_depth_cb(self, product['information']['vertical_coverage'], self.main_cb_6.currentIndex(), product['swath_vertical'])
             activate_area_ln(self, product['subset'])
 
 
@@ -149,16 +159,19 @@ def populate_variable_list(self, variables):
                 variables = [variables]
             self.variables_cb.clear()
             var_num = 0
+            tab_index = self.tabWidget.currentIndex()
+            self.tabWidget.setCurrentIndex(1)
             for var in variables:
                 self.variables_cb.append(QtWidgets.QCheckBox())
                 self.variables_cb[var_num].setMinimumSize(QtCore.QSize(0, 27))
                 self.variables_cb[var_num].setMaximumSize(QtCore.QSize(16777215, 27))
                 self.variables_cb[var_num].setFont(font)
                 self.variables_cb[var_num].setObjectName('variables_cb_' + str(var_num))
-                self.variables_cb[var_num].setText(self.variables_name[var])
+                self.variables_cb[var_num].setText(self.variables_name[var] + ' (' + var + ')')
                 self.variables_cb[var_num].toggled.connect(lambda: clean_stylesheet_variable(self))
                 self.variables_vertical_layout.addWidget(self.variables_cb[var_num])
                 var_num += 1
+            self.tabWidget.setCurrentIndex(tab_index)
         else:
             label = QtWidgets.QLabel()
             label.setMinimumSize(QtCore.QSize(0, 27))
@@ -169,16 +182,34 @@ def populate_variable_list(self, variables):
             self.variables_vertical_layout.addWidget(label)
 
 
-def activate_depth_cb(self, depth):
+def activate_depth_cb(self, depth, product_index, swath_vertical):
     logging.debug('gui_functions.py - activate_depth_cb')
     if self.main_cb_6.currentText() != 'Make a choice...' and self.main_cb_6.currentText() != 'No product selected...':
-        if depth == 'surface':
-            self.main_cb_7.clear()
-            self.main_cb_7.addItem('surface')
+        if swath_vertical == None:
+            if depth == 'surface':
+                self.main_cb_7.clear()
+                self.main_cb_7.addItem('surface')
+                self.main_cb_8.clear()
+                self.main_cb_8.addItem('surface')
         else:
-            self.main_cb_7.setEnabled(True)
+            if len(swath_vertical) > 1:
+                start = swath_vertical[product_index - 1][0]
+                end = swath_vertical[product_index - 1][1]
+            else:
+                start = swath_vertical[0][0]
+                end = swath_vertical[0][1]
             self.main_cb_7.clear()
-            self.main_cb_7.addItem('Make a choice...')
+            self.main_cb_8.clear()
+            if isinstance(start, list):
+                self.main_cb_7.setEnabled(True)
+                self.main_cb_8.setEnabled(True)
+                self.main_cb_7.addItem('Make a choice...')
+                self.main_cb_8.addItem('Make a choice...')
+                self.main_cb_7.addItems(start)
+                self.main_cb_8.addItems(end)
+            else:
+                self.main_cb_7.addItem(start)
+                self.main_cb_8.addItem(end)
 
 
 def activate_area_ln(self, subset):
@@ -193,17 +224,26 @@ def activate_area_ln(self, subset):
 
 def specific_period(self, i, swath_temporal):
     logging.debug('gui_functions.py - specific_period')
+    
+    print(i, swath_temporal)
+    
     if i > 0:
         i -= 1
         index = swath_temporal[i].find('to')
         start = swath_temporal[i][:index]
         end = swath_temporal[i][index+2:]
-        self.main_de_1.setDate(QtCore.QDate.fromString(start, QtCore.Qt.ISODate))
+        if 'Present' in end:
+            if '+' in end:
+                end = datetime.datetime.now() + datetime.timedelta(days=int(end[end.find('+') + 1:]))
+            else:
+                end = datetime.datetime.now()
+            end = end.strftime('%Y-%m-%d')
         self.main_de_1.setMinimumDate(QtCore.QDate.fromString(start, QtCore.Qt.ISODate))
         self.main_de_1.setMaximumDate(QtCore.QDate.fromString(end, QtCore.Qt.ISODate))
-        self.main_de_2.setDate(QtCore.QDate.fromString(end, QtCore.Qt.ISODate))
+        self.main_de_1.setDate(QtCore.QDate.fromString(start, QtCore.Qt.ISODate))
         self.main_de_2.setMinimumDate(QtCore.QDate.fromString(start, QtCore.Qt.ISODate))
         self.main_de_2.setMaximumDate(QtCore.QDate.fromString(end, QtCore.Qt.ISODate))
+        self.main_de_2.setDate(QtCore.QDate.fromString(end, QtCore.Qt.ISODate))
 
     
 def deactivate_area_ln(self):
@@ -223,14 +263,19 @@ def deactivate_depth_cb(self):
     logging.debug('gui_functions.py - deactivate_depth_cb')
     try:
         self.main_cb_7.currentIndexChanged.disconnect(self.set_modified)
+        self.main_cb_8.currentIndexChanged.disconnect(self.set_modified)
         depth_signal = True
     except TypeError:
         depth_signal = False
     self.main_cb_7.setEnabled(False)
     self.main_cb_7.clear()
     self.main_cb_7.addItem('No depth...')
+    self.main_cb_8.setEnabled(False)
+    self.main_cb_8.clear()
+    self.main_cb_8.addItem('No depth...')
     if depth_signal:
         self.main_cb_7.currentIndexChanged.connect(self.set_modified)
+        self.main_cb_8.currentIndexChanged.connect(self.set_modified)
 
 
 def deactivate_type_cb(self):
@@ -292,9 +337,11 @@ def deactivate_dataset_information(self):
     self.main_cb_6.addItem('No product selected...')
     self.main_cb_6.setCurrentIndex(0)
     self.main_cb_6.setEnabled(False)
-    self.main_de_1.setMinimumDate(QtCore.QDate.fromString('1979-01-01', QtCore.Qt.ISODate))
+    self.main_de_1.setMinimumDate(QtCore.QDate.fromString('1579-01-01', QtCore.Qt.ISODate))
+    self.main_de_2.setMaximumDate(QtCore.QDate.fromString('2518-01-01', QtCore.Qt.ISODate))
     self.main_de_1.setDate(QtCore.QDate.fromString('1979-01-01', QtCore.Qt.ISODate))
-    self.main_de_2.setMaximumDate(QtCore.QDate.fromString('2018-01-01', QtCore.Qt.ISODate))
+    self.main_de_1.setMinimumDate(QtCore.QDate.fromString('1579-01-01', QtCore.Qt.ISODate))
+    self.main_de_2.setMaximumDate(QtCore.QDate.fromString('2518-01-01', QtCore.Qt.ISODate))
     self.main_de_2.setDate(QtCore.QDate.fromString('2018-01-01', QtCore.Qt.ISODate))
     self.main_de_1.setEnabled(False)
     self.main_de_2.setEnabled(False)
