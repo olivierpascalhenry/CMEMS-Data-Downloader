@@ -13,10 +13,10 @@ from ui._version import _downloader_version, _eclipse_version, _py_version, _qt_
 from functions.material_functions import info_button_text, object_init, dataset_data_information
 from functions.gui_functions import activate_type_cb, activate_source_cb
 from functions.window_functions import MyAbout, MyOptions, MyInfo, MyApi, MyWarningUpdate, MyUpdate, MyProduct, MyQuery, MyWarning, MySelect, MySuccess
-from functions.window_functions import MyCredentials, MyExpert
+from functions.window_functions import MyCredentials, MyExpert, MyDatabaseUpdate
 from functions.xml_functions import save_xml_query, open_xml_query
 from ui.Ui_mainwindow import Ui_MainWindow
-from functions.thread_functions import CMEMSDataDownloadThread, CheckCMEMSDownloaderOnline
+from functions.thread_functions import CMEMSDataDownloadThread, CheckCMEMSDownloaderOnline, CheckDatabaseVersion
 
 
 class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
@@ -38,13 +38,13 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.main_cb_6.setItemDelegate(itemDelegate)
         self.main_cb_7.setItemDelegate(itemDelegate)
         self.main_cb_8.setItemDelegate(itemDelegate)
-        self.main_cb_1.currentIndexChanged.connect(lambda: activate_type_cb(self))
-        self.productdownload.clicked.connect(self.launch_query)
-        self.getSize.clicked.connect(self.launch_query)
+        self.productdownload.clicked.connect(lambda: self.launch_query())
+        self.getSize.clicked.connect(lambda: self.launch_query())
         self.api_information()
         self.check_downloader_update()
         self.check_file_folder()
         self.prepare_datasets_database()
+        self.main_cb_1.currentIndexChanged.connect(lambda: activate_type_cb(self))
         self.product_info_button.clicked.connect(self.product_information)
         self.main_cb_6.currentIndexChanged.connect(self.set_modified)
         self.main_cb_7.currentIndexChanged.connect(self.set_modified)
@@ -86,7 +86,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     
     @QtCore.pyqtSlot()
     def on_actionUpdate_triggered(self):
-        self.download_and_install_downloader_update()
+        self.download_and_install_update()
     
     def save_document(self):
         logging.debug('mainwindow.py - save_document')
@@ -122,7 +122,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.expertWindow.setGeometry(x2, y2, w2, h2)
         self.expertWindow.exec_()
         query, filename = self.expertWindow.query, self.expertWindow.filename
-        
         if query and filename:
             self.launch_query(query, filename)
         
@@ -200,159 +199,158 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             
     def prepare_datasets_database(self):
         logging.debug('mainwindow.py - prepare_datasets_database')
-        database_path = 'database//'
-        if os.path.isdir(database_path):
-            for file in os.listdir(database_path):
-                if os.path.isfile(os.path.join(database_path, file)) and file[-4:] == '.dat' and file != 'PRODUCT_DATABASE.dat':
-                    domain, data_type, source, mode, product, short_description, description, resolution = None, None, None, None, None, None, None, None
-                    temporal_resolution, level, data_type, vertical, temporal, production, image, variables = None, None, None, None, None, None, None, None
-                    subset, swath, suffixe = None, None, None
-                    name = file[:-4]
-                    f = open(database_path + file, 'r', encoding='utf-8')
-                    for line in f:
-                        if line[:3] != '###':
-                            index = line.find('=')
-                            parameter = line[:index]
-                            value = line[index+1:].replace('\n','')
-                            if parameter != 'version' and parameter != 'creation_date':
-                                if parameter == 'server_url':
-                                    server_url = value
-                                if parameter == 'ftp_url':
-                                    ftp_url = value
-                                if parameter == 'domain':
-                                    domain = value
-                                if parameter == 'type':
-                                    data_type = value
-                                if parameter == 'source':
-                                    source = value
-                                if parameter == 'mode':
-                                    mode = value
-                                if parameter == 'product':
-                                    product = value
-                                if parameter == 'short_description':
-                                    short_description = value
-                                if parameter == 'description':
-                                    description = value
-                                if parameter == 'resolution':
-                                    resolution = value
-                                if parameter == 'temporal_resolution':
-                                    temporal_resolution = value
-                                if parameter == 'level':
-                                    level = value
-                                if parameter == 'dataset_type':
-                                    dataset_type = value
-                                if parameter == 'vertical':
-                                    vertical = value
-                                if parameter == 'swath_vertical':
-                                    swath_vertical_tmp = value
-                                    if swath_vertical_tmp == 'None':
-                                        swath_vertical = None
-                                    else:
-                                        swath_vertical = []
-                                        if '|' in swath_vertical_tmp:
-                                            swath_vertical_tmp = swath_vertical_tmp.split('|')
-                                            for swath in swath_vertical_tmp:
-                                                if 'to' in swath:
-                                                    index = swath.find('to')
-                                                    start = swath[:index].split('/')
-                                                    end = swath[index+2:].split('/')
-                                                    swath_vertical.append([start, end])
-                                                else:
-                                                    swath_vertical.append([swath, swath])
+        database_path = 'database/'
+        try:
+            if os.path.isdir(database_path):
+                self.product_database, self.dataset_database = {}, {}
+                for file in os.listdir(database_path):
+                    if os.path.isfile(os.path.join(database_path, file)) and file[-4:] == '.dat' and file != 'PRODUCT_DATABASE.dat':
+                        domain, data_type, source, mode, product, short_description, description, resolution = None, None, None, None, None, None, None, None
+                        temporal_resolution, level, data_type, vertical, temporal, production, image, variables = None, None, None, None, None, None, None, None
+                        subset, swath, suffix = None, None, None
+                        name = file[:-4]
+                        f = open(database_path + file, 'r', encoding='utf-8')
+                        for line in f:
+                            if line[:3] != '###':
+                                index = line.find('=')
+                                parameter = line[:index]
+                                value = line[index+1:].replace('\n','')
+                                if parameter != 'version' and parameter != 'creation_date':
+                                    if parameter == 'server_url':
+                                        server_url = value
+                                    if parameter == 'ftp_url':
+                                        ftp_url = value
+                                    if parameter == 'domain':
+                                        domain = value
+                                    if parameter == 'type':
+                                        data_type = value
+                                    if parameter == 'source':
+                                        source = value
+                                    if parameter == 'mode':
+                                        mode = value
+                                    if parameter == 'product':
+                                        product = value
+                                    if parameter == 'short_description':
+                                        short_description = value
+                                    if parameter == 'description':
+                                        description = value
+                                    if parameter == 'resolution':
+                                        resolution = value
+                                    if parameter == 'temporal_resolution':
+                                        temporal_resolution = value
+                                    if parameter == 'level':
+                                        level = value
+                                    if parameter == 'dataset_type':
+                                        dataset_type = value
+                                    if parameter == 'vertical':
+                                        vertical = value
+                                    if parameter == 'swath_vertical':
+                                        swath_vertical_tmp = value
+                                        if swath_vertical_tmp == 'None':
+                                            swath_vertical = None
                                         else:
-                                            index = swath_vertical_tmp.find('to')
-                                            start = swath_vertical_tmp[:index].split('/')
-                                            end = swath_vertical_tmp[index+2:].split('/')
-                                            swath_vertical.append([start, end])
-                                if parameter == 'temporal':
-                                    temporal = value
-                                if parameter == 'production':
-                                    production = value
-                                if parameter == 'image':
-                                    image = value
-                                if parameter == 'variables':
-                                    variables = value
-                                    if variables == 'None':
-                                        variables = None
-                                    else:
-                                        if '|' in variables:
-                                            variables = variables.split('|')
-                                            for index, var in enumerate(variables):
-                                                if ','in var:
-                                                    var = var.split(',')
-                                                else:
-                                                    var = [var]
-                                                variables[index] = sorted(var)
-                                        elif ',' in variables:
-                                            variables = sorted(variables.split(','))
+                                            swath_vertical = []
+                                            if '|' in swath_vertical_tmp:
+                                                swath_vertical_tmp = swath_vertical_tmp.split('|')
+                                                for swath in swath_vertical_tmp:
+                                                    if 'to' in swath:
+                                                        index = swath.find('to')
+                                                        start = swath[:index].split('/')
+                                                        end = swath[index+2:].split('/')
+                                                        swath_vertical.append([start, end])
+                                                    else:
+                                                        swath_vertical.append([swath, swath])
+                                            else:
+                                                index = swath_vertical_tmp.find('to')
+                                                start = swath_vertical_tmp[:index].split('/')
+                                                end = swath_vertical_tmp[index+2:].split('/')
+                                                swath_vertical.append([start, end])
+                                    if parameter == 'temporal':
+                                        temporal = value
+                                    if parameter == 'production':
+                                        production = value
+                                    if parameter == 'image':
+                                        image = value
+                                    if parameter == 'variables':
+                                        variables = value
+                                        if variables == 'None':
+                                            variables = None
                                         else:
-                                            variables = [variables]
-                                if parameter == 'subset':
-                                    subset = value
-                                    if subset == 'None':
-                                        subset = None
-                                if parameter == 'swath':
-                                    swath = value
-                                    if ',' in swath:
-                                        swath = swath.split(',')
-                                if parameter == 'swath_temporal':
-                                    swath_temporal = value
-                                    if ',' in swath_temporal:
-                                        swath_temporal = swath_temporal.split(',')
-                                if parameter == 'swath_temporal_resolution':
-                                    swath_temporal_resolution = value
-                                    if ',' in swath_temporal_resolution:
-                                        swath_temporal_resolution = swath_temporal_resolution.split(',')
-                                if parameter == 'suffix':
-                                    suffixe = value
-                    f.close()
-                    try:
-                        self.dataset_database[domain]
-                    except KeyError:
-                        self.dataset_database[domain] = {}
-                    try:
-                        self.dataset_database[domain][data_type]
-                    except KeyError:
-                        self.dataset_database[domain][data_type] = {}
-                    try:
-                        self.dataset_database[domain][data_type][source]
-                    except KeyError:
-                        self.dataset_database[domain][data_type][source] = {}
-                    try:
-                        self.dataset_database[domain][data_type][source][mode]
-                    except KeyError:
-                        self.dataset_database[domain][data_type][source][mode] = []
-                    self.dataset_database[domain][data_type][source][mode].append(product)
-                    try:
-                        self.product_database[product]
-                    except KeyError:
-                        self.product_database[product] = {}
-                    self.product_database[product]['information'] = {'short_description':short_description,
-                                                                        'description':description,
-                                                                        'spatial_resolution':resolution,
-                                                                        'temporal_resolution':temporal_resolution,
-                                                                        'level':level,
-                                                                        'product_type':dataset_type,
-                                                                        'vertical_coverage':vertical,
-                                                                        'temporal_coverage':temporal,
-                                                                        'production':production,
-                                                                        'image':image}
-                    self.product_database[product]['variables'] = variables
-                    self.product_database[product]['subset'] = subset
-                    self.product_database[product]['swath'] = swath
-                    self.product_database[product]['swath_temporal'] = swath_temporal
-                    self.product_database[product]['swath_vertical'] = swath_vertical
-                    self.product_database[product]['suffixe'] = suffixe
-                    self.product_database[product]['tree'] = [domain, data_type, source, mode]
-                    self.product_database[product]['server_url'] = server_url
-                    self.product_database[product]['ftp_url'] = ftp_url
-                    domain_list = []
-                    for key, _ in self.dataset_database.items():
-                        domain_list.append(key)
-                    self.main_cb_1.clear()
-                    self.main_cb_1.addItem('Make a choice...')
-                    self.main_cb_1.addItems(sorted(domain_list))
-                    logging.debug('mainwindow.py - prepare_datasets_database - database ready')
+                                            if '|' in variables:
+                                                variables = variables.split('|')
+                                                for index, var in enumerate(variables):
+                                                    if ','in var:
+                                                        var = var.split(',')
+                                                    else:
+                                                        var = [var]
+                                                    variables[index] = sorted(var)
+                                            elif ',' in variables:
+                                                variables = sorted(variables.split(','))
+                                            else:
+                                                variables = [variables]
+                                    if parameter == 'swath':
+                                        swath = value
+                                        if ',' in swath:
+                                            swath = swath.split(',')
+                                    if parameter == 'swath_temporal':
+                                        swath_temporal = value
+                                        if ',' in swath_temporal:
+                                            swath_temporal = swath_temporal.split(',')
+                                    if parameter == 'swath_temporal_resolution':
+                                        swath_temporal_resolution = value
+                                        if ',' in swath_temporal_resolution:
+                                            swath_temporal_resolution = swath_temporal_resolution.split(',')
+                                    if parameter == 'suffix':
+                                        suffix = value
+                        f.close()
+                        try:
+                            self.dataset_database[domain]
+                        except KeyError:
+                            self.dataset_database[domain] = {}
+                        try:
+                            self.dataset_database[domain][data_type]
+                        except KeyError:
+                            self.dataset_database[domain][data_type] = {}
+                        try:
+                            self.dataset_database[domain][data_type][source]
+                        except KeyError:
+                            self.dataset_database[domain][data_type][source] = {}
+                        try:
+                            self.dataset_database[domain][data_type][source][mode]
+                        except KeyError:
+                            self.dataset_database[domain][data_type][source][mode] = []
+                        self.dataset_database[domain][data_type][source][mode].append(product)
+                        try:
+                            self.product_database[product]
+                        except KeyError:
+                            self.product_database[product] = {}
+                        self.product_database[product]['information'] = {'short_description':short_description,
+                                                                            'description':description,
+                                                                            'spatial_resolution':resolution,
+                                                                            'temporal_resolution':temporal_resolution,
+                                                                            'level':level,
+                                                                            'product_type':dataset_type,
+                                                                            'vertical_coverage':vertical,
+                                                                            'temporal_coverage':temporal,
+                                                                            'production':production,
+                                                                            'image':image}
+                        self.product_database[product]['variables'] = variables
+                        self.product_database[product]['swath'] = swath
+                        self.product_database[product]['swath_temporal'] = swath_temporal
+                        self.product_database[product]['swath_vertical'] = swath_vertical
+                        self.product_database[product]['suffix'] = suffix
+                        self.product_database[product]['tree'] = [domain, data_type, source, mode]
+                        self.product_database[product]['server_url'] = server_url
+                        self.product_database[product]['ftp_url'] = ftp_url
+                domain_list = []
+                for key, _ in self.dataset_database.items():
+                    domain_list.append(key)
+                self.main_cb_1.clear()
+                self.main_cb_1.addItem('Make a choice...')
+                self.main_cb_1.addItems(sorted(domain_list))
+                logging.debug('mainwindow.py - prepare_datasets_database - database ready')
+        except Exception:
+            logging.exception('An exception occured during the reading of the .dat files')
     
     def product_information(self):
         logging.debug('mainwindow.py - product_information')
@@ -367,9 +365,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     
     def launch_query(self, query=None, filename=None):
         logging.info('mainwindow.py - launch_query')
-        
-        
-        if query == None and filename == None:
+        if query is None and filename is None:
             product, dataset, variable = self.check_product_dataset()
             if product and dataset and variable:
                 user = self.config_dict['CREDENTIALS'].get('user')
@@ -442,6 +438,9 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             if user and password:
                 folder = self.config_dict['CREDENTIALS'].get('folder')
                 motu_url = self.config_dict['CREDENTIALS'].get('url')
+                
+                print(query)
+                
                 query['action'] = 'productdownload'
                 self.queryWindow = MyQuery(query, motu_url, user, password, folder, filename)
                 x1, y1, w1, h1 = self.geometry().getRect()
@@ -466,26 +465,32 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     
     def check_downloader_update(self):
         logging.debug('mainwindow.py - check_downloader_update')
+        self.actionUpdate.setEnabled(False)
+        icon = QtGui.QIcon()
+        icon.addPixmap(QtGui.QPixmap("icons/cmems_data_downloader_icon.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.actionUpdate.setIcon(icon)
+        self.actionUpdate.setToolTip('')
+        
         if self.config_dict['OPTIONS'].getboolean('check_update'):
             self.check_downloader = CheckCMEMSDownloaderOnline()
             self.check_downloader.start()
             self.check_downloader.finished.connect(self.parse_downloader_update)
         else:
-            self.actionUpdate.setEnabled(False)
-            icon = QtGui.QIcon()
-            icon.addPixmap(QtGui.QPixmap("icons/cmems_data_downloader_icon.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
-            self.actionUpdate.setIcon(icon)
-            self.actionUpdate.setToolTip('')
             logging.info('mainwindow.py - check_downloader_update - from options, no update check')
                     
     def parse_downloader_update(self, val):
         logging.debug('mainwindow.py - parse_downloader_update - val ' + str(val))
         if val == 'no new version':
-            self.actionUpdate.setEnabled(False)
-            icon = QtGui.QIcon()
-            icon.addPixmap(QtGui.QPixmap("icons/cmems_data_downloader_icon.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
-            self.actionUpdate.setIcon(icon)
-            self.actionUpdate.setToolTip('No update available !')
+            if self.config_dict['OPTIONS'].getboolean('check_database'):
+                self.check_database = CheckDatabaseVersion()
+                self.check_database.start()
+                self.check_database.finished.connect(self.parse_database_update)
+            else:
+                self.actionUpdate.setEnabled(False)
+                icon = QtGui.QIcon()
+                icon.addPixmap(QtGui.QPixmap("icons/cmems_data_downloader_icon.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+                self.actionUpdate.setIcon(icon)
+                self.actionUpdate.setToolTip('No update available !')
         elif 'http' in val:
             self.actionUpdate.setEnabled(True)
             icon = QtGui.QIcon()
@@ -497,58 +502,85 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 self.actionUpdate.setToolTip('A new update is available for CMEMS Data Downloader ! Click here to download it.')
             self.link_latest_version = val
     
-    def download_and_install_downloader_update(self):
-        logging.debug('mainwindow.py - download_and_install_downloader_update - link_latest_version ' + str(self.link_latest_version))
+    def download_and_install_update(self):
+        logging.debug('mainwindow.py - download_and_install_update - link_latest_version ' + str(self.link_latest_version))
         if self.link_latest_version:
-            frozen = False
-            height = 250
-            if getattr(sys, 'frozen', False) :
-                frozen = True
-                height = 200
-            self.updateWindow = MyWarningUpdate(frozen)
-            x1, y1, w1, h1 = self.geometry().getRect()
-            _, _, w2, h2 = self.updateWindow.geometry().getRect()
-            x2 = x1 + w1/2 - w2/2
-            y2 = y1 + h1/2 - h2/2
-            self.updateWindow.setGeometry(x2, y2, w2, h2)
-            self.updateWindow.setMinimumSize(QtCore.QSize(600, height))
-            self.updateWindow.setMaximumSize(QtCore.QSize(600, height))
-            self.updateWindow.exec_()
-            try:
-                if self.updateWindow.buttonName == 'update_button':
-                    if getattr(sys, 'frozen', False) :
-                        temp_folder = tempfile.gettempdir()
-                    else:
-                        temp_folder = os.path.expanduser("~")+"/Downloads/"
-                    self.downloadWindow = MyUpdate(self.link_latest_version, temp_folder)
-                    x1, y1, w1, h1 = self.geometry().getRect()
-                    _, _, w2, h2 = self.downloadWindow.geometry().getRect()
-                    x2 = x1 + w1/2 - w2/2
-                    y2 = y1 + h1/2 - h2/2
-                    self.downloadWindow.setGeometry(x2, y2, w2, h2)
-                    self.downloadWindow.setMinimumSize(QtCore.QSize(500, self.downloadWindow.sizeHint().height()))
-                    self.downloadWindow.setMaximumSize(QtCore.QSize(500, self.downloadWindow.sizeHint().height()))
-                    self.downloadWindow.exec_()
-                    logging.debug('mainwindow.py - download_and_install_downloader_update - download finished')
-                    if not self.downloadWindow.cancel:
+            if isinstance(self.link_latest_version, dict):
+                self.downloadWindow = MyDatabaseUpdate(self.link_latest_version)
+                x1, y1, w1, h1 = self.geometry().getRect()
+                _, _, w2, h2 = self.downloadWindow.geometry().getRect()
+                x2 = x1 + w1/2 - w2/2
+                y2 = y1 + h1/2 - h2/2
+                self.downloadWindow.setGeometry(x2, y2, w2, h2)
+                self.downloadWindow.setMinimumSize(QtCore.QSize(500, self.downloadWindow.sizeHint().height()))
+                self.downloadWindow.setMaximumSize(QtCore.QSize(500, self.downloadWindow.sizeHint().height()))
+                self.downloadWindow.exec_()
+                if self.downloadWindow.done:
+                    self.prepare_datasets_database()
+                    self.actionUpdate.setEnabled(False)
+                    icon = QtGui.QIcon()
+                    icon.addPixmap(QtGui.QPixmap("icons/cmems_data_downloader_icon.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+                    self.actionUpdate.setIcon(icon)
+                    self.actionUpdate.setToolTip('')
+            else:
+                frozen = False
+                height = 250
+                if getattr(sys, 'frozen', False) :
+                    frozen = True
+                    height = 200
+                self.updateWindow = MyWarningUpdate(frozen)
+                x1, y1, w1, h1 = self.geometry().getRect()
+                _, _, w2, h2 = self.updateWindow.geometry().getRect()
+                x2 = x1 + w1/2 - w2/2
+                y2 = y1 + h1/2 - h2/2
+                self.updateWindow.setGeometry(x2, y2, w2, h2)
+                self.updateWindow.setMinimumSize(QtCore.QSize(600, height))
+                self.updateWindow.setMaximumSize(QtCore.QSize(600, height))
+                self.updateWindow.exec_()
+                try:
+                    if self.updateWindow.buttonName == 'update_button':
                         if getattr(sys, 'frozen', False) :
-                            filename = self.link_latest_version[self.link_latest_version.rfind('/')+1:]
-                            if platform.system() == 'Windows':
-                                os.startfile(temp_folder + '\\' + filename)
-                                time.sleep(0.1)
-                                self.close()
-                            elif platform.system() == 'Linux':
-                                shutil.copy('functions/unzip_update.py', temp_folder)
-                                install_folder = self.config_path + '/test/'
-                                command = 'python3 ' + temp_folder + '/unzip_update.py ' + temp_folder + '/' + filename + ' ' + install_folder
-                                os.system('x-terminal-emulator -e ' + command)
-                                time.sleep(0.1)
-                                self.close()
+                            temp_folder = tempfile.gettempdir()
                         else:
-                            time.sleep(0.1)
-                            self.close()
-            except AttributeError:
-                pass
+                            temp_folder = os.path.expanduser("~")+"/Downloads/"
+                        self.downloadWindow = MyUpdate(self.link_latest_version, temp_folder)
+                        x1, y1, w1, h1 = self.geometry().getRect()
+                        _, _, w2, h2 = self.downloadWindow.geometry().getRect()
+                        x2 = x1 + w1/2 - w2/2
+                        y2 = y1 + h1/2 - h2/2
+                        self.downloadWindow.setGeometry(x2, y2, w2, h2)
+                        self.downloadWindow.setMinimumSize(QtCore.QSize(500, self.downloadWindow.sizeHint().height()))
+                        self.downloadWindow.setMaximumSize(QtCore.QSize(500, self.downloadWindow.sizeHint().height()))
+                        self.downloadWindow.exec_()
+                        logging.debug('mainwindow.py - download_and_install_downloader_update - download finished')
+                        if not self.downloadWindow.cancel:
+                            if getattr(sys, 'frozen', False) :
+                                filename = self.link_latest_version[self.link_latest_version.rfind('/')+1:]
+                                if platform.system() == 'Windows':
+                                    os.startfile(temp_folder + '\\' + filename)
+                                    time.sleep(0.1)
+                                    self.close()
+                                elif platform.system() == 'Linux':
+                                    shutil.copy('functions/unzip_update.py', temp_folder)
+                                    install_folder = self.config_path + '/'
+                                    command = 'python3 ' + temp_folder + '/unzip_update.py ' + temp_folder + '/' + filename + ' ' + install_folder
+                                    os.system('x-terminal-emulator -e ' + command)
+                                    time.sleep(0.1)
+                                    self.close()
+                            else:
+                                time.sleep(0.1)
+                                self.close()
+                except AttributeError:
+                    pass
+    
+    def parse_database_update(self, val):
+        if val:
+            self.actionUpdate.setEnabled(True)
+            icon = QtGui.QIcon()
+            icon.addPixmap(QtGui.QPixmap("icons/cmems_data_downloader_update_icon.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+            self.actionUpdate.setIcon(icon)
+            self.actionUpdate.setToolTip('New products are available for the product database. Click here to download them automatically.')
+            self.link_latest_version = val
     
     def get_file_name(self, action):
         logging.debug('mainwindow.py - get_file_name')
@@ -631,7 +663,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         lon_min, lon_max, lat_min, lat_max, date_min, date_max, depth_min, depth_max = None, None, None, None, None, None, None, None
         
         ### service
-        service = str(self.main_cb_5.currentText()) + self.product_database[self.main_cb_5.currentText()]['suffixe']
+        service = str(self.main_cb_5.currentText()) + self.product_database[self.main_cb_5.currentText()]['suffix']
         
         ### product
         product = str(self.main_cb_6.currentText())
@@ -670,7 +702,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             for cb in self.variables_cb:
                 if cb.isChecked():
                     checked_count +=1
-                    var_tmp.append(var_names[cb.text()])
+                    var_tmp.append(var_names[cb.text()[:cb.text().find('(') - 1]])
         if var_tmp:
             if len(self.variables_cb) != checked_count:
                 var = var_tmp
@@ -692,12 +724,18 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     
     
     ### snippet to read a file on github
-    '''import requests
-    import base64
-    url = 'https://api.github.com/repos/olivierpascalhenry/CMEMS-Data-Downloader/contents/database/SEALEVEL_GLO_PHY_L3_REP_OBSERVATIONS_008_045.dat'
-    test_json = requests.get(url=url).json()
-    text = test_json['content']
-    print(base64.b64decode(text).decode('utf-8'))'''
+    def check_database(self):
+        import requests
+        import base64
+        import json
+        url = 'https://api.github.com/repos/olivierpascalhenry/CMEMS-Data-Downloader/contents/database/PRODUCT_DATABASE.dat'
+        test_json = requests.get(url=url).json()
+        text = test_json['content']
     
-    
+        product_database = json.loads(base64.b64decode(text).decode('utf-8'))
+        
+        
+        print(product_database)
+        
+        
     

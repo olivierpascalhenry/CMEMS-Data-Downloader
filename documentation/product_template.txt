@@ -19,6 +19,5 @@ swath_temporal_resolution=mm
 production=INS-IFREMER-BREST-FR
 image=None
 variables=bottomT|uo,vo|siconc,sithick,usi,vsi|mlotst|so|zos|thetao|uo,vo|zos|thetao
-subset=geographical
 swath=CORIOLIS-GLOBAL-NRTOA-OBS_TIME_SERIE
 suffix=-TDS

@@ -7,8 +7,13 @@ import platform
 import sys
 import re
 import time
-from bs4 import BeautifulSoup
+import base64
+import json
 import urllib
+import hashlib
+import tempfile
+import shutil
+from bs4 import BeautifulSoup
 from hurry.filesize import size, alternative
 from PyQt5 import QtCore, Qt
 from distutils.version import LooseVersion
@@ -38,7 +43,6 @@ class CheckCMEMSDownloaderOnline(Qt.QThread):
                     format = '.tar.gz'
             else:
                 format = 'sources.zip'
-                
             if LooseVersion(_downloader_version) < LooseVersion(json_object['tag_name']):
                 assets = json_object['assets']
                 download_url = 'no new version'
@@ -51,11 +55,42 @@ class CheckCMEMSDownloaderOnline(Qt.QThread):
                 self.finished.emit('no new version')
         except Exception:
             logging.exception('thread_functions.py - CheckCMEMSDownloaderOnline - run - internet connection error - url ' + url)
-    
+
     def stop(self):
         logging.debug('thread_functions.py - CheckCMEMSDownloaderOnline - stop')
         self.terminate()
+
+
+class CheckDatabaseVersion(Qt.QThread):
+    finished = QtCore.pyqtSignal(dict)
+    
+    def __init__(self):
+        Qt.QThread.__init__(self)
+        logging.info('thread_functions.py - CheckDatabaseVersion - __init__')
+    
+    def run(self):
+        logging.debug('thread_functions.py - CheckDatabaseVersion - run')
+        database_folder = 'https://api.github.com/repos/olivierpascalhenry/CMEMS-Data-Downloader/contents/database/'
+        online_database = {}
+        local_database = {}
+        missing_updated_product = {}
+        for file in requests.get(url=database_folder).json():
+            if file['name'][-4:] == '.dat':
+                if not os.path.isfile('database/' + file['name']):
+                    logging.debug('thread_functions.py - CheckDatabaseVersion - run - product ' + file['name'] + ' is missing.')
+                    missing_updated_product[file['name']] = {'download_url': file['download_url'], 'sha': file['sha']}
+                else:
+                    f = open('database/' + file['name'],'rb').read()
+                    local_sha = hashlib.sha1(bytes('blob ' + str(len(f)) + '\0', 'utf-8') + f).hexdigest()
+                    if local_sha != file['sha']:
+                        logging.debug('thread_functions.py - CheckDatabaseVersion - run - SHA failed for product ' + file['name'])
+                        missing_updated_product[file['name']] = {'download_url': file['download_url'], 'sha': file['sha']}
+                
+        self.finished.emit(missing_updated_product)
         
+    def stop(self):
+        logging.debug('thread_functions.py - CheckDatabaseVersion - stop')
+        self.terminate()
         
 class DownloadFile(Qt.QThread):
     download_update = QtCore.pyqtSignal(list)
@@ -124,7 +159,95 @@ class DownloadFile(Qt.QThread):
     def stop(self):
         logging.debug('thread_functions.py - DownloadFile - stop')
         self.terminate()
+
+
+class DownloadProducts(Qt.QThread):
+    download_update = QtCore.pyqtSignal(list)
+    download_done = QtCore.pyqtSignal(bool)
+    download_failed = QtCore.pyqtSignal()
+    
+    def __init__(self, product_list):
+        Qt.QThread.__init__(self)
+        logging.info('thread_functions.py - DownloadProducts - __init__')
+        self.product_list = product_list
+        self.database_folder = 'database/'
+        self.temp_folder = tempfile.mkdtemp() + '/'
+        self.cancel = False
         
+    def run(self):
+        logging.debug('thread_functions.py - DownloadProducts - run - download started')
+        failed_sha = False
+        for product, info in self.product_list.items():
+            logging.debug('thread_functions.py - DownloadProducts - run - downloading ' + product)
+            self.download_update.emit([0, 'Downloading %s...' % (product)])
+            opened_file = open(self.temp_folder + product, 'wb')
+            try:
+                opened_url = urllib.request.urlopen(info['download_url'], timeout=10)
+                totalFileSize = int(opened_url.info()['Content-Length'])
+                bufferSize = 1024
+                fileSize = 0
+                start = time.time()
+                while True:
+                    if self.cancel:
+                        break
+                    buffer = opened_url.read(bufferSize)
+                    if not buffer:
+                        break
+                    fileSize += len(buffer)
+                    opened_file.write(buffer)
+                    try:
+                        download_speed = self._set_size(fileSize/(time.time() - start)) + '/s'
+                    except ZeroDivisionError:
+                        download_speed = '0 /s'
+                    self.download_update.emit([round(fileSize * 100 / totalFileSize), 'Downloading %s at %s' % (product, download_speed)])
+                opened_file.close()
+                
+                if not self.cancel:
+                    f = open(self.temp_folder + product,'rb').read()
+                    local_sha = hashlib.sha1(bytes('blob ' + str(len(f)) + '\0', 'utf-8') + f).hexdigest()
+                    if info['sha'] != local_sha:
+                        logging.info('thread_functions.py - DownloadProducts - run - the file ' + product + ' failed the SHA check and is now '
+                                     + 'deleted.')
+                        failed_sha = True
+                        os.remove(self.temp_folder + product)
+                else:
+                    logging.debug('thread_functions.py - DownloadProducts - run - download canceled')
+                    break
+            except Exception:
+                logging.exception('thread_functions.py - DownloadProducts - run - connexion issue ; download_url ' + info['download_url'])
+                opened_file.close()
+                self.download_failed.emit()
+        if not self.cancel:
+            logging.debug('thread_functions.py - DownloadProducts - run - download finished')
+            self._transfert_files()
+            self.download_done.emit(failed_sha)
+    
+    def _set_size(self, bytes):
+        suffixes = ['B', 'KB', 'MB', 'GB', 'TB', 'PB']
+        i = 0
+        while bytes >= 1024 and i < len(suffixes)-1:
+            bytes /= 1024.
+            i += 1
+        f = ('%.2f' % bytes).rstrip('0').rstrip('.')
+        return '%s %s' % (f, suffixes[i])
+    
+    def _transfert_files(self):
+        for file in os.listdir(self.temp_folder):
+            if '.dat' in file:
+                try:
+                    shutil.move(self.temp_folder + file, self.database_folder + file)
+                except Exception:
+                    logging.exception('thread_functions.py - DownloadProducts - run - an issue occured during the transfert of the file ' + file)
+        shutil.rmtree(self.temp_folder)
+    
+    def cancel_download(self):
+        logging.debug('thread_functions.py - DownloadProducts - cancel_download')
+        self.cancel = True
+    
+    def stop(self):
+        logging.debug('thread_functions.py - DownloadProducts - stop')
+        self.terminate()
+
         
 class CMEMSDataDownloadThread(Qt.QThread):
     download_update = QtCore.pyqtSignal(dict)
@@ -197,10 +320,6 @@ class CMEMSDataDownloadThread(Qt.QThread):
                 else:
                     service_url = self._auth_connexion(self.auth_url)
                     id_res = requests.get(service_url, headers=self.headers)
-                    
-                    print(id_res.text)
-                    print(id_res.status_code)
-                    
                     status = minidom.parseString(id_res.text).getElementsByTagName('statusModeResponse')[0].getAttribute('status')
                     id = minidom.parseString(id_res.text).getElementsByTagName('statusModeResponse')[0].getAttribute('requestId')
                     if status == "2":
@@ -298,16 +417,16 @@ class CMEMSDataDownloadThread(Qt.QThread):
         size = minidom.parseString(id_res.text).getElementsByTagName('requestSize')[0].getAttribute('size')
         max_size = minidom.parseString(id_res.text).getElementsByTagName('requestSize')[0].getAttribute('maxAllowedSize')
         unit = minidom.parseString(id_res.text).getElementsByTagName('requestSize')[0].getAttribute('unit')
-        units = {'b':1024**0, 'kb':1024**1, 'mb':1024**2, 'gb':1024**3, 'tb':1024**4}
+        units = {'b':1024**0, 'kb':1024**1, 'mb':1024**2, 'gb':1024**3, 'tb':1024**4,
+                   'B':1024**0, 'kB':1024**1, 'mB':1024**2, 'gB':1024**3, 'tB':1024**4}
         size2 = self._set_size(float(size) * units[unit])
         max_size2 = self._set_size(float(max_size) * units[unit])
         return size, max_size, size2, max_size2
     
     def _set_size(self, bytes):
-        logging.debug('thread_functions.py - CMEMSDataDownloadThread - _set_size')
         suffixes = ['B', 'KB', 'MB', 'GB', 'TB', 'PB']
         i = 0
-        while bytes >= 1024 and i < len(suffixes)-1:
+        while bytes >= 1024 and i < len(suffixes) - 1:
             bytes /= 1024.
             i += 1
         f = ('%.2f' % bytes).rstrip('0').rstrip('.')

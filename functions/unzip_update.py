@@ -69,7 +69,10 @@ try:
     files = os.listdir(tmp_folder)
     for f in files:
         logging.info('---> ' + tmp_folder + f)
-        shutil.move(tmp_folder + f, dest_folder + f)
+        if os.path.isdir(tmp_folder + f):
+            copy_tree(tmp_folder + f, dest_folder + f)
+        else:
+            shutil.move(tmp_folder + f, dest_folder + f)
     logging.info('installing finished...')
 except Exception:
     logging.exception('an exception occured during installation')

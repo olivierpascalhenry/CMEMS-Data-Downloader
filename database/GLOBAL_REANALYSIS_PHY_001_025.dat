@@ -1,4 +1,4 @@
-version=1.1
+version=1.2
 creation_date=2018-07-16
 server_url=http://my.cmems-du.eu/motu-web/Motu
 ftp_url=ftp://my.cmems-du.eu/Core/
@@ -21,7 +21,6 @@ swath_temporal_resolution=dm,mm
 production=GLO-MERCATOR-TOULOUSE-FR
 image=None
 variables=temperature,bottomT,salinity,ssh,u,v,mlp,fice,hice,uice,vice
-subset=geographical
 swath=dataset-global-reanalysis-phy-001-025-ran-fr-glorys2v4-daily,global-reanalysis-phy-001-025-monthly
 suffix=-TDS
 other_parameters=None

@@ -1,4 +1,4 @@
-version=1.0
+version=1.1
 creation_date=2018-07-18
 server_url=http://nrt.cmems-du.eu/oceanotron/SOS/default
 ftp_url=None
@@ -21,7 +21,6 @@ swath_temporal_resolution=None
 production=INS-IFREMER-BREST-FR, INS-NIVA-BERGEN-NO
 image=None
 variables=sea_water_temperature,sea_water_practical_salinity,sea_surface_wave_significant_height,sea_surface_wave_mean_period,mole_concentration_of_dissolved_molecular_oxygen_in_sea_water,sea_surface_height_above_sea_level
-subset=geographical
 swath=INS-CORIOLIS-GLO-NRT-OBS_POINTSERIES_LATEST,INS-CORIOLIS-GLO-NRT-OBS_PROFILE_LATEST,INS-CORIOLIS-GLO-NRT-OBS_TRAJECTORIES_LATEST
 suffix=-TDS
 other_parameters=None

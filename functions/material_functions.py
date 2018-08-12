@@ -5,8 +5,6 @@ from PyQt5 import QtWidgets
 def object_init(self):
     logging.debug('material_functions.py - object_init')
     self.modified = False
-    self.product_database = {}
-    self.dataset_database = {}
     self.variables_cb = []
 
 
@@ -134,7 +132,31 @@ def dataset_data_information(self):
                            'RRS490':'Sea surface reflectance defined as the ratio of water-leaving radiance to surface irradiance at 490 nm',
                            'RRS510':'Sea surface reflectance defined as the ratio of water-leaving radiance to surface irradiance at 510 nm',
                            'RRS555':'Sea surface reflectance defined as the ratio of water-leaving radiance to surface irradiance at 555 nm',
-                           'RRS670':'Sea surface reflectance defined as the ratio of water-leaving radiance to surface irradiance at 670 nm'
+                           'RRS670':'Sea surface reflectance defined as the ratio of water-leaving radiance to surface irradiance at 670 nm',
+                           'thetao_cglo':'C-GLORS Potential Temperature',
+                           'thetao_foam':'FOAM/GloSea Potential Temperature',
+                           'thetao_glor':'GLORYS2V4 Potential Temperature',
+                           'thetao_mean':'Mean of Input Analyses Potential Temperatures',
+                           'thetao_oras':'ORAS5 Potential Temperature',
+                           'thetao_std':'Standard Deviation of Input Analyses Potential Temperatures',
+                           'so_cglo':'C-GLORS Salinity',
+                           'so_foam':'FOAM/GloSea Salinity',
+                           'so_glor':'GLORYS2V4 Salinity',
+                           'so_mean':'Mean of Input Analyses Salinities',
+                           'so_oras':'ORAS5 Salinity',
+                           'so_std':'Standard Deviation of Input Analyses Salinities',
+                           'uo_cglo':'C-GLORS Eastward Velocity',
+                           'uo_foam':'FOAM/GloSea Eastward Velocity',
+                           'uo_glor':'GLORYS2V4 Eastward Velocity',
+                           'uo_mean':'Mean of Input Analyses Eastward Velocities',
+                           'uo_oras':'ORAS5 Eastward Velocity',
+                           'uo_std':'Standard Deviation of Input Analyses Eastward Velocities',
+                           'vo_cglo':'C-GLORS Northward Velocity',
+                           'vo_foam':'FOAM/GloSea Northward Velocity',
+                           'vo_glor':'GLORYS2V4 Northward Velocity',
+                           'vo_mean':'Mean of Input Analyses Northward Velocities',
+                           'vo_oras':'ORAS5 Northward Velocity',
+                           'vo_std':'Standard Deviation of Input Analyses Northward Velocities'
                            }
 
 

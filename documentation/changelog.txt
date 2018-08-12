@@ -6,19 +6,39 @@ CHANGELOG
 To do list:
 -----------
   
-  - check new products in CDD github repository. (v0.9)
   - add products. (v0.8, v0.9, v1.0, ...)
   - prepare product template (v1.0)
-  - track last bugs, check stability. (v0.9)
+  - track last bugs, check stability. (v1.0)
   - prepare documentation and text for info buttons. (v1.0)
   - propose a download by FTP for a complete product (v1.2)
   - change QdateEdit to temporal step if swath_temporal_resolution in database (v1.1)
-  - check : TDS dataset can be subseted (netcdf), DGF not (ZIP)
 
   
 To fix list:
 ------------
 
+  
+August 12 2018, Release version 0.9.0
+=====================================
+Version for testing purposes.
+
+  FIXED:
+    - few issues with the udpate system on linux have been fixed.
+    - an issue was fixed in the creation of the database from .dat files.
+    - once an update of the database has been performed, the update icon should be deactivated. It has been fixed.
+    - fixed an issue with signal connexion and the function associated with the creation of a query.
+    - fixed an issue between file size 'b' and 'B'.
+  
+  ADDED:
+    - CDD can now check new product files in its GitHub repository. If new products have been found, CDD will inform the user that he can download them automatically.
+    - if a product is missing from the database (has been deleted inadvertently), it will be automatically downloaded from its repository on github during an update of the database.
+    - each product downloaded from the database folder on GitHub is checked based on its SHA checksum. If the test is a success, each product is transfered in the CDD database directory. If the test fails, a warning is displayed at the end of the process and the wrong product file is deleted.
+    
+  MODIFIED:
+    - the number of request to the GitHub API has been reduced to only two per update check (software + database).
+    - the system to update the database has been changed. PRODUCT_DATABASE.dat has been removed. Update of the database is now based on the existence of a file and its SHA.
+    - in all database files, subset is now directed by TDS/DGF parameter.
+  
 
 July 27 2018, Release version 0.8.0
 ===================================

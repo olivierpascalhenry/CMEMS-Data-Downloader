@@ -1,4 +1,4 @@
-version=1.0
+version=1.1
 creation_date=2018-07-27
 server_url=http://nrt.cmems-du.eu/motu-web/Motu
 ftp_url=ftp://nrt.cmems-du.eu/Core/
@@ -21,7 +21,6 @@ swath_temporal_resolution=None
 production=SL-CLS-TOULOUSE-FR
 image=None
 variables=None
-subset=None
 swath=dataset-duacs-nrt-arctic-al-phy-l3,dataset-duacs-nrt-arctic-c2-phy-l3,dataset-duacs-nrt-arctic-j2g-phy-l3,dataset-duacs-nrt-arctic-j2n-phy-l3,dataset-duacs-nrt-arctic-j3-phy-l3,dataset-duacs-nrt-arctic-s3a-phy-l3
 suffix=-DGF
 other_parameters=None

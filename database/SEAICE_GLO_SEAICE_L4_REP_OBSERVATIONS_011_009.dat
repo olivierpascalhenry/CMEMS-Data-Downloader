@@ -1,4 +1,4 @@
-version=1.1
+version=1.0
 creation_date=2018-07-16
 server_url=http://my.cmems-du.eu/motu-web/Motu
 ftp_url=ftp://my.cmems-du.eu/Core/
@@ -21,7 +21,6 @@ swath_temporal_resolution=None
 production=SIW-METNO-OSLO-NO
 image=None
 variables=ice_conc,status_flag,standard_error,Lambert_Azimuthal_Grid,lon,time_bnds,algorithm_standard_error,smearing_standard_error,lat|ice_conc,status_flag,standard_error,Polar_Stereographic_Grid,lon,time_bnds,algorithm_standard_error,smearing_standard_error,lat|ice_conc,status_flag,standard_error,Lambert_Azimuthal_Grid,lon,time_bnds,algorithm_standard_error,smearing_standard_error,lat|ice_conc,status_flag,standard_error,Polar_Stereographic_Grid,lon,time_bnds,algorithm_standard_error,smearing_standard_error,lat
-subset=geographical
 swath=METNO-GLO-SEAICE_CONC_CONT_TIMESERIES-NH-LA-OBS,METNO-GLO-SEAICE_CONC_CONT_TIMESERIES-NH-POL-OBS,METNO-GLO-SEAICE_CONC_CONT_TIMESERIES-SH-LA-OBS,METNO-GLO-SEAICE_CONC_CONT_TIMESERIES-SH-POL-OBS
 suffix=-TDS
 other_parameters=None

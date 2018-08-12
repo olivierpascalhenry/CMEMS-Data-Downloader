@@ -17,7 +17,7 @@ from ui.Ui_successwindow import Ui_successWindow
 from ui.Ui_credentialswindow import Ui_credentialsWindow
 from ui.Ui_expertwindow import Ui_expertWindow
 from PyQt5 import QtWidgets, QtCore, QtGui
-from functions.thread_functions import DownloadFile, CMEMSDataDownloadThread
+from functions.thread_functions import DownloadFile, CMEMSDataDownloadThread, DownloadProducts
 
 
 class MyInfo(QtWidgets.QDialog, Ui_infoWindow):
@@ -217,6 +217,68 @@ class MyUpdate(QtWidgets.QDialog, Ui_storeWindow):
         self.thread.download_update.disconnect(self.update_progress_bar)
         if self.cancel:
             os.remove(self.update_file)
+
+
+class MyDatabaseUpdate(QtWidgets.QDialog, Ui_storeWindow):
+    def __init__(self, product_list):
+        logging.info('window_functions.py - MyDatabaseUpdate - __init__')
+        QtWidgets.QWidget.__init__(self)
+        self.setupUi(self)
+        self.product_list = product_list
+        #self.sw_button.clicked.connect(self.cancel_download)
+        self.cancel = False
+        self.done = False
+        self.download_database()
+        
+    
+    def update_progress_bar(self, val):
+        if isinstance(val, list):
+            self.progressBar.setValue(val[0])
+            self.sw_label.setText(val[1])
+        else:
+            self.progressBar.setValue(val)
+    
+    def download_database(self):
+        logging.debug('window_functions.py - MyDatabaseUpdate - download_database')
+        self.thread = DownloadProducts(self.product_list)
+        self.thread.download_update.connect(self.update_progress_bar)
+        self.thread.download_done.connect(self.download_done)
+        self.thread.download_failed.connect(self.download_failed)
+        self.thread.start()
+
+    def cancel_download(self):
+        logging.debug('window_functions.py - MyDatabaseUpdate - cancel_download')
+        self.thread.cancel_download()
+        self.cancel = True
+        time.sleep(0.25)
+        self.close()
+        
+    def download_failed(self):
+        logging.debug('window_functions.py - MyDatabaseUpdate - download_failed')
+        self.update_progress_bar(0)
+        self.sw_label.setText('Download failed')
+        self.cancel_download()
+    
+    def download_done(self, val):
+        logging.debug('window_functions.py - MyDatabaseUpdate - download_done')
+        self.done = True
+        if val:
+            text = ('During the update of the product database, one or more files were considered as corrupted and were not included in the '
+                    + 'database. Please restart CDD and launch a new update procedure to update again the database.')
+            self.infoWindow = MyInfo(text)
+            _, _, w, h = QtWidgets.QDesktopWidget().screenGeometry(-1).getRect()
+            _, _, w2, h2 = self.infoWindow.geometry().getRect()
+            self.infoWindow.setGeometry(w/2 - w2/2, h/2 - h2/2, 450, self.infoWindow.sizeHint().height())
+            self.infoWindow.setMinimumSize(QtCore.QSize(450, self.infoWindow.sizeHint().height()))
+            self.infoWindow.setMaximumSize(QtCore.QSize(450, self.infoWindow.sizeHint().height()))
+            self.infoWindow.exec_()
+        self.close()
+    
+    def closeEvent(self, event):
+        logging.info('window_functions.py - MyDatabaseUpdate - closeEvent')
+        if self.cancel:
+            pass
+            #os.remove(self.update_file)
 
 
 class MyWarningUpdate(QtWidgets.QDialog, Ui_updateWindow):

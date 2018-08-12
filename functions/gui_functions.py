@@ -130,13 +130,13 @@ def activate_dataset_information(self):
             self.main_cb_6.currentIndexChanged.connect(lambda: populate_variable_list(self, product['variables']))
             self.main_cb_6.currentIndexChanged.connect(lambda: activate_depth_cb(self, product['information']['vertical_coverage'], 
                                                                                  self.main_cb_6.currentIndex(), product['swath_vertical']))
-            self.main_cb_6.currentIndexChanged.connect(lambda: activate_area_ln(self, product['subset']))
+            self.main_cb_6.currentIndexChanged.connect(lambda: activate_area_ln(self, product['suffix']))
             self.main_cb_6.currentIndexChanged.connect(lambda: specific_period(self, self.main_cb_6.currentIndex(), product['swath_temporal']))
         else:
             self.main_cb_6.addItem(swath)
             populate_variable_list(self, product['variables'])
             activate_depth_cb(self, product['information']['vertical_coverage'], self.main_cb_6.currentIndex(), product['swath_vertical'])
-            activate_area_ln(self, product['subset'])
+            activate_area_ln(self, product['suffix'])
 
 
 def populate_variable_list(self, variables):
@@ -212,9 +212,9 @@ def activate_depth_cb(self, depth, product_index, swath_vertical):
                 self.main_cb_8.addItem(end)
 
 
-def activate_area_ln(self, subset):
+def activate_area_ln(self, suffix):
     logging.debug('gui_functions.py - activate_area_ln')
-    if subset == 'geographical':
+    if 'TDS' in suffix:
         self.space_ln_north.setEnabled(True)
         self.space_ln_south.setEnabled(True)
         self.space_ln_east.setEnabled(True)
