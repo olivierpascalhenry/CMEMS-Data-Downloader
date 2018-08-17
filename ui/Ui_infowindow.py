@@ -11,9 +11,9 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_infoWindow(object):
     def setupUi(self, infoWindow):
         infoWindow.setObjectName("infoWindow")
-        infoWindow.resize(450, 180)
-        infoWindow.setMinimumSize(QtCore.QSize(450, 180))
-        infoWindow.setMaximumSize(QtCore.QSize(452, 16777215))
+        infoWindow.resize(550, 200)
+        infoWindow.setMinimumSize(QtCore.QSize(550, 0))
+        infoWindow.setMaximumSize(QtCore.QSize(550, 16777215))
         font = QtGui.QFont()
         font.setFamily("fonts/SourceSansPro-Regular.ttf")
         font.setPointSize(10)
@@ -76,7 +76,7 @@ class Ui_infoWindow(object):
         self.verticalLayout_2.addItem(spacerItem2)
         self.horizontalLayout_2 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_2.setObjectName("horizontalLayout_2")
-        spacerItem3 = QtWidgets.QSpacerItem(20, 20, QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Minimum)
+        spacerItem3 = QtWidgets.QSpacerItem(20, 20, QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Expanding)
         self.horizontalLayout_2.addItem(spacerItem3)
         self.iw_okButton = QtWidgets.QToolButton(infoWindow)
         self.iw_okButton.setMinimumSize(QtCore.QSize(90, 27))

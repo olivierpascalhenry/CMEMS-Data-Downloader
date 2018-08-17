@@ -18,7 +18,7 @@ def launch_data_downloader(path):
     splash.show()
     config_dict = configparser.ConfigParser()
     if not os.path.exists(os.path.join(path, 'cmems_downloader.ini')):
-        config_dict['LOG'] = {'level': 'DEBUG',
+        config_dict['LOG'] = {'level': 'INFO',
                               'path': ''
                               }
         config_dict['OPTIONS'] = {'language':'english',

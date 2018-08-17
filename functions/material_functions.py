@@ -10,7 +10,51 @@ def object_init(self):
 
 def info_button_text(self):
     logging.debug('material_functions.py - info_button_text')
-    self.info_button_text_dict = {}
+    self.info_button_list = [self.info_bt_1,self.info_bt_2,self.info_bt_3,self.info_bt_4,self.info_bt_5,self.info_bt_6,self.info_bt_7]
+    self.info_button_text_dict = {'info_bt_1':('All products are read when the software starts to create a database and are classified based '
+                                               + 'on a domain, a type, a source and a mode. First, select a domain, then a type, and so on. '
+                                               + 'Once it is done, available products are displayed in the last combobox in the right part '
+                                               + 'of the GUI. Select one of them to populate all other tabs.'),
+                                  'info_bt_2':('All datasets available in a product are listed here once a product is selected. If each dataset '
+                                               + 'involves a different temporal/spatial/vertical coverage and/or variables, the GUI will be '
+                                               + 'updated based on information found in the database. Select a dataset to display a list of '
+                                               + 'variables available in the dataset.'),
+                                  'info_bt_3':('The following section is dedicated to all variables included in a product and linked to a part'
+                                               + 'icular dataset. For few products and datasets, there is no possibility to select variables. '
+                                               + 'In that case, a warning message is displayed. If no variable is selected by the user, all '
+                                               + 'variables in the dataset will be downloaded.'),
+                                  'info_bt_4':('The user has the possibility to select a temporal coverage for its query. Based on the temporal '
+                                               + 'coverage of the selected product, the following section can be modified according to the '
+                                               + 'temporal coverage of the selected dataset if it exists.'),
+                                  'info_bt_5':('The vertical coverage depends on a dataset. It can cover surface, a whole water column, or '
+                                               + 'different depths. For products/datasets with depths, if no depths are selected, the software '
+                                               + 'will download the whole vertical coverage.'),
+                                  'info_bt_6':('If a product/dataset is subsetable, the following section is activated and it is possible to select '
+                                               + 'an area by entering max and min longitude/latitude. This section doesn\'t take into account '
+                                               + 'min and max longitude/latitude registered in the product/dataset webpage yet.'),
+                                  'info_bt_7':('The user has the possibility to give a name to the file donwloaded by the software.'),
+                                  'ow_infoButton_1':('The user can change here the verbose level of the logging system. If an issue is '
+                                                     + 'noticed, it is a good idea to change the level to DEBUG and send the log '
+                                                     + 'file to the developer.'),
+                                  'ow_infoButton_2':('The path where to save the log file, for those who appreciate to keep all '
+                                                     + 'their logs at the same place. A reboot of the software is necessary if the '
+                                                     + 'location of the log file is changed.'),
+                                  'ow_infoButton_3':('A personal account on CMEMS website is necessary to use the software and the CMEMS '
+                                                     + 'MOTU api. Once the account is created, the username has to be entered here. For '
+                                                     + 'those who don\'t want to store their credentials, it is possible to enter them in '
+                                                     + 'a dedicated window just before submitting a query, and leaving the username and '
+                                                     + 'password fields empty.'),
+                                  'ow_infoButton_4':('A personal account on CMEMS website is necessary to use the software and the CMEMS '
+                                                     + 'MOTU api. Once the account is created, the password has to be entered here. For '
+                                                     + 'those who don\'t want to store their credentials, it is possible to enter them in '
+                                                     + 'a dedicated window just before submitting a query, and leaving the username and '
+                                                     + 'password fields empty.'),
+                                  'ow_infoButton_5':'A folder where to save the file/data downloaded on ECMWF server.',
+                                  'ow_infoButton_6':('If checked, CMEMS Data Downloader displays information about the CMEMS MOTU API '
+                                                     + 'at startup.'),
+                                  'ow_infoButton_7':'Activate this option to allow CMEMS Data Downloader to check for an update online.',
+                                  'ow_infoButton_8':'Activate this option to allow CMEMS Data Downloader to check for the product database updates.',
+                                  }
 
 
 def dataset_data_information(self):
@@ -160,11 +204,15 @@ def dataset_data_information(self):
                            }
 
 
-    self.temporal_step_name = {'dm':'daily mean',
-                               'mm':'monthly mean',
-                               'sm':'seasonal mean',
+
+
+
+    self.temporal_step_name = {'dm':'daily-mean',
+                               'mm':'monthly-mean',
+                               'sm':'seasonal-mean',
                                'ir':'irregular',
-                               'hi':'hourly instantaneous',
+                               'hi':'hourly-instantaneous',
                                'in':'instantaneous',
-                               'di':'daily instantaneous'
+                               'di':'daily-instantaneous',
+                               'hm':'hourly-mean'
                                }

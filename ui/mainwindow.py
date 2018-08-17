@@ -8,12 +8,13 @@ import shutil
 import subprocess
 import sys
 import ast
+import datetime
 from PyQt5 import QtCore, QtWidgets, QtGui
 from ui._version import _downloader_version, _eclipse_version, _py_version, _qt_version
 from functions.material_functions import info_button_text, object_init, dataset_data_information
-from functions.gui_functions import activate_type_cb, activate_source_cb
+from functions.gui_functions import activate_type_cb, activate_source_cb, info_button, display_calendar
 from functions.window_functions import MyAbout, MyOptions, MyInfo, MyApi, MyWarningUpdate, MyUpdate, MyProduct, MyQuery, MyWarning, MySelect, MySuccess
-from functions.window_functions import MyCredentials, MyExpert, MyDatabaseUpdate
+from functions.window_functions import MyCredentials, MyExpert, MyDatabaseUpdate, MyDayCalendar
 from functions.xml_functions import save_xml_query, open_xml_query
 from ui.Ui_mainwindow import Ui_MainWindow
 from functions.thread_functions import CMEMSDataDownloadThread, CheckCMEMSDownloaderOnline, CheckDatabaseVersion
@@ -56,6 +57,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.main_ln_1.textChanged.connect(self.set_modified)
         self.main_de_1.dateChanged.connect(self.set_modified)
         self.main_de_2.dateChanged.connect(self.set_modified)
+        for button in self.info_button_list:
+            button.clicked.connect(lambda: info_button(self))
         self.make_window_title()
         logging.info('mainwindow.py - UI initialized ...')
         logging.info('*****************************************')
@@ -217,7 +220,10 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                                 value = line[index+1:].replace('\n','')
                                 if parameter != 'version' and parameter != 'creation_date':
                                     if parameter == 'server_url':
-                                        server_url = value
+                                        if value == 'None':
+                                            server_url = None
+                                        else:
+                                            server_url = value
                                     if parameter == 'ftp_url':
                                         ftp_url = value
                                     if parameter == 'domain':
@@ -337,6 +343,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                         self.product_database[product]['variables'] = variables
                         self.product_database[product]['swath'] = swath
                         self.product_database[product]['swath_temporal'] = swath_temporal
+                        self.product_database[product]['swath_temporal_resolution'] = swath_temporal_resolution
                         self.product_database[product]['swath_vertical'] = swath_vertical
                         self.product_database[product]['suffix'] = suffix
                         self.product_database[product]['tree'] = [domain, data_type, source, mode]
@@ -366,61 +373,76 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     def launch_query(self, query=None, filename=None):
         logging.info('mainwindow.py - launch_query')
         if query is None and filename is None:
-            product, dataset, variable = self.check_product_dataset()
-            if product and dataset and variable:
-                user = self.config_dict['CREDENTIALS'].get('user')
-                password = self.config_dict['CREDENTIALS'].get('password')
-                if not user or not password:
-                    self.credentialsyWindow = MyCredentials(user, password)
-                    x1, y1, w1, h1 = self.geometry().getRect()
-                    _, _, w2, h2 = self.credentialsyWindow.geometry().getRect()
-                    x2 = x1 + w1/2 - w2/2
-                    y2 = y1 + h1/2 - h2/2
-                    self.credentialsyWindow.setGeometry(x2, y2, w2, h2)
-                    self.credentialsyWindow.exec_()
-                    if self.credentialsyWindow.username and self.credentialsyWindow.password:
-                        user = self.credentialsyWindow.username
-                        password = self.credentialsyWindow.password
-                if user and password:
-                    query, motu_url, folder, filename = self.prepare_query() 
-                    query['action'] = str(self.sender().objectName())
-                    self.queryWindow = MyQuery(query, motu_url, user, password, folder, filename)
-                    x1, y1, w1, h1 = self.geometry().getRect()
-                    _, _, w2, h2 = self.queryWindow.geometry().getRect()
-                    x2 = x1 + w1/2 - w2/2
-                    y2 = y1 + h1/2 - h2/2
-                    self.queryWindow.setGeometry(x2, y2, w2, h2)
-                    self.queryWindow.exec_()
-                    try:
-                        download_time = self.queryWindow.download_time
-                        file_path = self.queryWindow.file_path
-                        average_speed = self.queryWindow.average_speed
-                        self.successWindow = MySuccess(download_time, file_path, average_speed)
+            
+            print(self.product_database[self.main_cb_5.currentText()]['server_url'])
+            
+            if self.product_database[self.main_cb_5.currentText()]['server_url'] is None:
+                text = ('There is no server url associated to the current product, thus it is impossible to download it with the MOTU API.'
+                        + 'In the mean time,  an FTP url exists, and in the next software versions, downloads with FTP will be possible. '
+                        + 'Please, use the CMEMS website to download the current product.')
+                self.infoWindow = MyInfo(text)
+                x1, y1, w1, h1 = self.geometry().getRect()
+                _, _, w2, h2 = self.infoWindow.geometry().getRect()
+                x2 = x1 + w1/2 - w2/2
+                y2 = y1 + h1/2 - h2/2
+                self.infoWindow.move(x2, y2)
+                self.infoWindow.exec_()
+            else:
+                product, dataset, variable = self.check_product_dataset()
+                if product and dataset and variable:
+                    user = self.config_dict['CREDENTIALS'].get('user')
+                    password = self.config_dict['CREDENTIALS'].get('password')
+                    if not user or not password:
+                        self.credentialsyWindow = MyCredentials(user, password)
                         x1, y1, w1, h1 = self.geometry().getRect()
-                        _, _, w2, h2 = self.successWindow.geometry().getRect()
+                        _, _, w2, h2 = self.credentialsyWindow.geometry().getRect()
                         x2 = x1 + w1/2 - w2/2
                         y2 = y1 + h1/2 - h2/2
-                        self.successWindow.setGeometry(x2, y2, w2, h2)
-                        self.successWindow.exec_()
-                    except AttributeError:
-                        pass
-            else:
-                if not product:
-                    self.main_lb_5.setStyleSheet("color: rgb(200,0,0);")
-                    self.tabWidget.tabBar().setTabTextColor(0, QtGui.QColor(200,0,0))
-                if not dataset:
-                    self.main_lb_8.setStyleSheet("color: rgb(200,0,0);")
-                    self.tabWidget.tabBar().setTabTextColor(1, QtGui.QColor(200,0,0))
-                if not variable:
-                    self.main_lb_10.setStyleSheet("color: rgb(200,0,0);")
-                    self.tabWidget.tabBar().setTabTextColor(1, QtGui.QColor(200,0,0))
-                self.selectionWindow = MySelect()
-                x1, y1, w1, h1 = self.geometry().getRect()
-                _, _, w2, h2 = self.selectionWindow.geometry().getRect()
-                self.selectionWindow.setGeometry(x1 + w1/2 - w2/2, y1 + h1/2 - h2/2, w2, h2)
-                self.selectionWindow.setMinimumSize(QtCore.QSize(500, self.selectionWindow.sizeHint().height()))
-                self.selectionWindow.setMaximumSize(QtCore.QSize(500, self.selectionWindow.sizeHint().height()))
-                self.selectionWindow.exec_()
+                        self.credentialsyWindow.setGeometry(x2, y2, w2, h2)
+                        self.credentialsyWindow.exec_()
+                        if self.credentialsyWindow.username and self.credentialsyWindow.password:
+                            user = self.credentialsyWindow.username
+                            password = self.credentialsyWindow.password
+                    if user and password:
+                        query, motu_url, folder, filename = self.prepare_query() 
+                        query['action'] = str(self.sender().objectName())
+                        self.queryWindow = MyQuery(query, motu_url, user, password, folder, filename)
+                        x1, y1, w1, h1 = self.geometry().getRect()
+                        _, _, w2, h2 = self.queryWindow.geometry().getRect()
+                        x2 = x1 + w1/2 - w2/2
+                        y2 = y1 + h1/2 - h2/2
+                        self.queryWindow.setGeometry(x2, y2, w2, h2)
+                        self.queryWindow.exec_()
+                        try:
+                            download_time = self.queryWindow.download_time
+                            file_path = self.queryWindow.file_path
+                            average_speed = self.queryWindow.average_speed
+                            self.successWindow = MySuccess(download_time, file_path, average_speed)
+                            x1, y1, w1, h1 = self.geometry().getRect()
+                            _, _, w2, h2 = self.successWindow.geometry().getRect()
+                            x2 = x1 + w1/2 - w2/2
+                            y2 = y1 + h1/2 - h2/2
+                            self.successWindow.setGeometry(x2, y2, w2, h2)
+                            self.successWindow.exec_()
+                        except AttributeError:
+                            pass
+                else:
+                    if not product:
+                        self.main_lb_5.setStyleSheet("color: rgb(200,0,0);")
+                        self.tabWidget.tabBar().setTabTextColor(0, QtGui.QColor(200,0,0))
+                    if not dataset:
+                        self.main_lb_8.setStyleSheet("color: rgb(200,0,0);")
+                        self.tabWidget.tabBar().setTabTextColor(1, QtGui.QColor(200,0,0))
+                    if not variable:
+                        self.main_lb_10.setStyleSheet("color: rgb(200,0,0);")
+                        self.tabWidget.tabBar().setTabTextColor(1, QtGui.QColor(200,0,0))
+                    self.selectionWindow = MySelect()
+                    x1, y1, w1, h1 = self.geometry().getRect()
+                    _, _, w2, h2 = self.selectionWindow.geometry().getRect()
+                    self.selectionWindow.setGeometry(x1 + w1/2 - w2/2, y1 + h1/2 - h2/2, w2, h2)
+                    self.selectionWindow.setMinimumSize(QtCore.QSize(500, self.selectionWindow.sizeHint().height()))
+                    self.selectionWindow.setMaximumSize(QtCore.QSize(500, self.selectionWindow.sizeHint().height()))
+                    self.selectionWindow.exec_()
         else:
             user = self.config_dict['CREDENTIALS'].get('user')
             password = self.config_dict['CREDENTIALS'].get('password')
@@ -438,9 +460,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             if user and password:
                 folder = self.config_dict['CREDENTIALS'].get('folder')
                 motu_url = self.config_dict['CREDENTIALS'].get('url')
-                
-                print(query)
-                
                 query['action'] = 'productdownload'
                 self.queryWindow = MyQuery(query, motu_url, user, password, folder, filename)
                 x1, y1, w1, h1 = self.geometry().getRect()
@@ -470,7 +489,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         icon.addPixmap(QtGui.QPixmap("icons/cmems_data_downloader_icon.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.actionUpdate.setIcon(icon)
         self.actionUpdate.setToolTip('')
-        
         if self.config_dict['OPTIONS'].getboolean('check_update'):
             self.check_downloader = CheckCMEMSDownloaderOnline()
             self.check_downloader.start()
@@ -691,7 +709,17 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         date_max = self.main_de_2.date().toString(QtCore.Qt.ISODate)
         
         # filename and folder
-        filename = str(self.main_ln_1.text())
+        if self.main_ln_1.text():
+            filename = str(self.main_ln_1.text())
+        else:
+            now = datetime.datetime.now()
+            y = str(now.year)
+            m = str(now.month)
+            d = str(now.day)
+            h = str(now.hour)
+            mn = str(now.minute)
+            s = str(now.second)
+            filename = 'query_' + y + '-' + m + '-' + d + 'T' + h + '-' + mn + '-' + s
         folder = self.config_dict['CREDENTIALS'].get('folder')
         
         # variables
@@ -720,22 +748,4 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         
         logging.debug('mainwindow.py - prepare_query - query ready: ' + str(query))
         return query, motu_url, folder, filename
-    
-    
-    
-    ### snippet to read a file on github
-    def check_database(self):
-        import requests
-        import base64
-        import json
-        url = 'https://api.github.com/repos/olivierpascalhenry/CMEMS-Data-Downloader/contents/database/PRODUCT_DATABASE.dat'
-        test_json = requests.get(url=url).json()
-        text = test_json['content']
-    
-        product_database = json.loads(base64.b64decode(text).decode('utf-8'))
-        
-        
-        print(product_database)
-        
-        
     

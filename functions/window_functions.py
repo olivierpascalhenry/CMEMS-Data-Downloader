@@ -3,6 +3,10 @@ import os
 import time
 import platform
 import subprocess
+import datetime
+from calendar import monthrange
+from ui.Ui_calendardwindow import Ui_calendardWindow
+from ui.Ui_calendarmwindow import Ui_calendarmWindow
 from ui.Ui_infowindow import Ui_infoWindow
 from ui.Ui_productwindow import Ui_productWindow
 from ui.Ui_aboutlogwindow import Ui_aboutlogWindow
@@ -18,6 +22,206 @@ from ui.Ui_credentialswindow import Ui_credentialsWindow
 from ui.Ui_expertwindow import Ui_expertWindow
 from PyQt5 import QtWidgets, QtCore, QtGui
 from functions.thread_functions import DownloadFile, CMEMSDataDownloadThread, DownloadProducts
+
+
+class MyDayCalendar(QtWidgets.QDialog, Ui_calendardWindow):
+    def __init__(self, object_date, min_date, max_date):
+        logging.info('window_functions.py - MyDayCalendar - __init__')
+        QtWidgets.QWidget.__init__(self)
+        self.setupUi(self)
+        itemDelegate = QtWidgets.QStyledItemDelegate()
+        self.month_cb.setItemDelegate(itemDelegate)
+        self.current_year = int(object_date[:4])
+        self.current_month = int(object_date[5:7])
+        self.current_day = int(object_date[8:])
+        self.old_year = int(object_date[:4])
+        self.old_month = int(object_date[5:7])
+        self.old_day = int(object_date[8:])
+        self.min = datetime.datetime(int(min_date[:4]), int(min_date[5:7]), int(min_date[8:]))
+        self.max = datetime.datetime(int(max_date[:4]), int(max_date[5:7]), int(max_date[8:]))
+        self.year = None
+        self.month = None
+        self.day = None
+        self.past_button.clicked.connect(self.minus_month)
+        self.future_button.clicked.connect(self.plus_month)
+        self.year_sb.valueChanged.connect(self.year_changed)
+        self.month_cb.currentIndexChanged.connect(self.month_changed)
+        self.table.cellClicked.connect(self.set_date)
+        self.display_date()
+    
+    def minus_month(self):
+        logging.debug('window_functions.py - MyDayCalendar - minus_month')
+        self.current_month -= 1
+        if self.current_month == 0:
+            self.current_year -= 1
+            self.current_month = 12
+        self.display_date()
+    
+    def plus_month(self):
+        logging.debug('window_functions.py - MyDayCalendar - plus_month')
+        self.current_month += 1
+        if self.current_month == 13:
+            self.current_year += 1
+            self.current_month = 1
+        self.display_date()
+    
+    def year_changed(self, val):
+        logging.debug('window_functions.py - MyDayCalendar - year_changed')
+        self.current_year = val
+        self.parse_days()
+    
+    def month_changed(self, val):
+        logging.debug('window_functions.py - MyDayCalendar - month_changed')
+        self.current_month = val + 1
+        self.parse_days()
+    
+    def display_date(self):
+        logging.debug('window_functions.py - MyDayCalendar - display_date')
+        self.year_sb.valueChanged.disconnect(self.year_changed)
+        self.month_cb.currentIndexChanged.disconnect(self.month_changed)
+        self.year_sb.setValue(self.current_year)
+        self.month_cb.setCurrentIndex(self.current_month - 1)
+        self.year_sb.valueChanged.connect(self.year_changed)
+        self.month_cb.currentIndexChanged.connect(self.month_changed)
+        self.parse_days()
+    
+    def parse_days(self):
+        logging.debug('window_functions.py - MyDayCalendar - parse_days')
+        day = 1
+        start = datetime.date(self.current_year, self.current_month, 1).weekday()
+        _, number_days = monthrange(self.current_year, self.current_month)
+        end = datetime.date(self.current_year, self.current_month, number_days).weekday()
+        for col in range(0, 7):
+            self.table.item(1,col).setSelected(False)
+            self.table.item(1,col).setText('')
+            self.table.item(1,col).setBackground(QtGui.QColor(240, 240, 240))
+            if col < start:
+                self.table.item(1,col).setBackground(QtGui.QColor(230, 230, 230))
+                self.table.item(1,col).setFlags(QtCore.Qt.ItemIsUserCheckable|QtCore.Qt.ItemIsEnabled)
+            else:
+                self.table.item(1,col).setText(str(day))
+                current = datetime.datetime(self.current_year, self.current_month, day)
+                if current < self.min or current > self.max:
+                    self.table.item(1,col).setBackground(QtGui.QColor(230, 230, 230))
+                    self.table.item(1,col).setFlags(QtCore.Qt.ItemIsUserCheckable|QtCore.Qt.ItemIsEnabled)
+                else:
+                    self.table.item(1,col).setFlags(QtCore.Qt.ItemIsUserCheckable|QtCore.Qt.ItemIsEnabled|QtCore.Qt.ItemIsSelectable)
+                if self.current_year == self.old_year and self.current_month == self.old_month and self.current_day == day:
+                    self.table.item(1,col).setSelected(True)
+                day += 1
+        for row in range(2, 7):
+            for col in range(0, 7):
+                self.table.item(row,col).setSelected(False)
+                self.table.item(row,col).setText('')
+                self.table.item(row,col).setBackground(QtGui.QColor(240, 240, 240))
+                if day > number_days:
+                    self.table.item(row,col).setBackground(QtGui.QColor(230, 230, 230))
+                    self.table.item(row,col).setFlags(QtCore.Qt.ItemIsUserCheckable|QtCore.Qt.ItemIsEnabled)
+                else:
+                    self.table.item(row,col).setText(str(day))
+                    current = datetime.datetime(self.current_year, self.current_month, day)
+                    if current < self.min or current > self.max:
+                        self.table.item(row,col).setBackground(QtGui.QColor(230, 230, 230))
+                        self.table.item(row,col).setFlags(QtCore.Qt.ItemIsUserCheckable|QtCore.Qt.ItemIsEnabled)
+                    else:
+                        self.table.item(row,col).setFlags(QtCore.Qt.ItemIsUserCheckable|QtCore.Qt.ItemIsEnabled|QtCore.Qt.ItemIsSelectable)
+                    if self.current_year == self.old_year and self.current_month == self.old_month and self.current_day == day:
+                        self.table.item(row,col).setSelected(True)
+                    day += 1
+    
+    def set_date(self, row, col):
+        logging.debug('window_functions.py - MyDayCalendar - set_date')
+        if self.table.item(row, col).isSelected():
+            self.year = self.current_year
+            self.month = self.current_month
+            self.day = int(self.table.item(row, col).text())
+            time.sleep(0.15)
+            self.closeWindow()
+        
+    def closeWindow(self):
+        logging.info('window_functions.py - MyDayCalendar - closeWindow')
+        self.close()
+
+
+class MyMonthCalendar(QtWidgets.QDialog, Ui_calendarmWindow):
+    def __init__(self, object_date, min_date, max_date):
+        logging.info('window_functions.py - MyMonthCalendar - __init__')
+        QtWidgets.QWidget.__init__(self)
+        self.setupUi(self)
+        self.current_year = int(object_date[:4])
+        self.current_month = int(object_date[5:7])
+        self.current_day = int(object_date[8:])
+        self.old_year = int(object_date[:4])
+        self.min = datetime.datetime(int(min_date[:4]), int(min_date[5:7]), int(min_date[8:]))
+        self.max = datetime.datetime(int(max_date[:4]), int(max_date[5:7]), int(max_date[8:]))
+        self.year = None
+        self.month = None
+        self.day = None
+        self.month_numbers = {'January':1, 'February':2, 'March':3, 'April':4, 'May':5, 'June':6,
+                              'July':7, 'August':8, 'September':9, 'October':10, 'November':11, 'December':12}
+        self.month_names = {1:'January', 2:'February', 3:'March', 4:'April', 5:'May', 6:'June',
+                            7:'July', 8:'August', 9:'September', 10:'October', 11:'November', 12:'December'}
+        self.year_sb.valueChanged.connect(self.year_changed)
+        self.display_year()
+        self.set_month()
+        self.past_button.clicked.connect(self.minus_year)
+        self.future_button.clicked.connect(self.plus_year)
+        self.tableWidget.cellClicked.connect(self.set_date)
+        
+    def minus_year(self):
+        logging.debug('window_functions.py - MyDayCalendar - minus_year')
+        self.current_year -= 1
+        self.display_year()
+    
+    def plus_year(self):
+        logging.debug('window_functions.py - MyDayCalendar - plus_year')
+        self.current_year += 1
+        self.display_year()
+    
+    def year_changed(self, val):
+        logging.debug('window_functions.py - MyDayCalendar - year_changed')
+        self.current_year = val
+    
+    def display_year(self):
+        logging.debug('window_functions.py - MyDayCalendar - display_year')
+        self.year_sb.setValue(self.current_year)
+        for row in range(3):
+            for col in range(4):
+                self.tableWidget.item(row,col).setSelected(False)
+                self.tableWidget.item(row,col).setBackground(QtGui.QColor(240, 240, 240))
+                self.tableWidget.item(row,col).setFlags(QtCore.Qt.ItemIsUserCheckable|QtCore.Qt.ItemIsEnabled|QtCore.Qt.ItemIsSelectable)
+                current = datetime.datetime(self.current_year, self.month_numbers[self.tableWidget.item(row, col).text()], self.current_day)
+                if current < self.min or current > self.max:
+                    self.tableWidget.item(row,col).setBackground(QtGui.QColor(230, 230, 230))
+                    self.tableWidget.item(row,col).setFlags(QtCore.Qt.ItemIsUserCheckable|QtCore.Qt.ItemIsEnabled)
+                if self.current_year == self.old_year and self.tableWidget.item(row, col).text() == self.month_names[self.current_month]:
+                    self.tableWidget.item(row,col).setSelected(True)
+    
+    def set_month(self):
+        logging.debug('window_functions.py - MyDayCalendar - set_month')
+        found = False
+        for row in range(3):
+            for col in range(4):
+                if self.month_names[self.current_month] == self.tableWidget.item(row,col).text():
+                    self.tableWidget.item(row,col).setSelected(True)
+                    found = True
+                if found:
+                    break
+            if found:
+                break  
+    
+    def set_date(self, row, col):
+        logging.debug('window_functions.py - MyDayCalendar - set_date')
+        if self.tableWidget.item(row, col).isSelected():
+            self.year = self.current_year
+            self.month = self.month_numbers[self.tableWidget.item(row, col).text()]
+            self.day = self.current_day
+            time.sleep(0.15)
+            self.closeWindow()
+        
+    def closeWindow(self):
+        logging.info('window_functions.py - MyMonthCalendar - closeWindow')
+        self.close()
 
 
 class MyInfo(QtWidgets.QDialog, Ui_infoWindow):
@@ -99,7 +303,7 @@ class MyOptions(QtWidgets.QDialog, Ui_optionWindow):
         self.ow_cancelButton.clicked.connect(self.close_window)
         self.ow_openButton_1.clicked.connect(self.get_directory)
         self.ow_openButton_2.clicked.connect(self.get_directory)
-        all_info_boxes = self.findChildren(QtWidgets.QToolButton,)
+        all_info_boxes = self.findChildren(QtWidgets.QToolButton)
         for widget in all_info_boxes:
             if 'infoButton' in widget.objectName():
                 widget.clicked.connect(lambda: self.info_button())
@@ -154,14 +358,8 @@ class MyOptions(QtWidgets.QDialog, Ui_optionWindow):
     def info_button(self):
         logging.debug('window_functions.py - MyOptions - info_button - self.sender().objectName() ' + self.sender().objectName())
         if 'infoButton' in self.sender().objectName():
-            x = QtGui.QCursor.pos().x()
-            y = QtGui.QCursor.pos().y()
-            x = x - 175
-            y = y + 50
             self.infoWindow = MyInfo(self.info_text[self.sender().objectName()])
-            self.infoWindow.setMinimumSize(QtCore.QSize(450, self.infoWindow.sizeHint().height()))
-            self.infoWindow.setMaximumSize(QtCore.QSize(450, self.infoWindow.sizeHint().height()))
-            self.infoWindow.setGeometry(x, y, 450, self.infoWindow.sizeHint().height())
+            self.infoWindow.move(QtGui.QCursor.pos().x() - 275, QtGui.QCursor.pos().y() + 20)
             self.infoWindow.exec_()
     
     def close_window(self):
@@ -225,11 +423,9 @@ class MyDatabaseUpdate(QtWidgets.QDialog, Ui_storeWindow):
         QtWidgets.QWidget.__init__(self)
         self.setupUi(self)
         self.product_list = product_list
-        #self.sw_button.clicked.connect(self.cancel_download)
         self.cancel = False
         self.done = False
         self.download_database()
-        
     
     def update_progress_bar(self, val):
         if isinstance(val, list):
@@ -278,7 +474,6 @@ class MyDatabaseUpdate(QtWidgets.QDialog, Ui_storeWindow):
         logging.info('window_functions.py - MyDatabaseUpdate - closeEvent')
         if self.cancel:
             pass
-            #os.remove(self.update_file)
 
 
 class MyWarningUpdate(QtWidgets.QDialog, Ui_updateWindow):
@@ -501,17 +696,13 @@ class MyExpert(QtWidgets.QDialog, Ui_expertWindow):
     def prepare_query(self):
         logging.debug('window_functions.py - MyExpert - prepare_query')
         try:
-        
             self.filename = str(self.edit_4.text())
-            
             keyword_list = [self.edit_1, self.edit_2, self.edit_9, self.edit_10, self.edit_7, self.edit_8, 
                               self.edit_5, self.edit_6, self.edit_12, self.edit_13, self.edit_3]
             name_list = ['service', 'product', 'x_lo', 'x_hi', 'y_lo', 
                          'y_hi', 't_lo', 't_hi','z_lo', 'z_hi', 'variable']
-            
             for index, keyword in enumerate(keyword_list):
                 if keyword.text():
-                        
                     if ',' in keyword.text():
                         var_list = [x for x in keyword.text().split(',')]
                         self.query[name_list[index]] = var_list

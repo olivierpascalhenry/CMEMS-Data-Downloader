@@ -1192,7 +1192,7 @@ class Ui_MainWindow(object):
         self.variables_scroll_area.setWidgetResizable(True)
         self.variables_scroll_area.setObjectName("variables_scroll_area")
         self.scrollAreaWidgetContents_6 = QtWidgets.QWidget()
-        self.scrollAreaWidgetContents_6.setGeometry(QtCore.QRect(0, 0, 1000, 497))
+        self.scrollAreaWidgetContents_6.setGeometry(QtCore.QRect(0, 0, 1000, 373))
         self.scrollAreaWidgetContents_6.setObjectName("scrollAreaWidgetContents_6")
         self.gridLayout_5 = QtWidgets.QGridLayout(self.scrollAreaWidgetContents_6)
         self.gridLayout_5.setContentsMargins(0, 0, 0, 0)
@@ -1635,10 +1635,13 @@ class Ui_MainWindow(object):
         self.main_lb_13.setFont(font)
         self.main_lb_13.setObjectName("main_lb_13")
         self.horizontalLayout_12.addWidget(self.main_lb_13)
+        self.horizontalLayout_19 = QtWidgets.QHBoxLayout()
+        self.horizontalLayout_19.setSpacing(0)
+        self.horizontalLayout_19.setObjectName("horizontalLayout_19")
         self.main_de_1 = QtWidgets.QDateEdit(self.scrollAreaWidgetContents_3)
         self.main_de_1.setEnabled(False)
-        self.main_de_1.setMinimumSize(QtCore.QSize(130, 27))
-        self.main_de_1.setMaximumSize(QtCore.QSize(130, 27))
+        self.main_de_1.setMinimumSize(QtCore.QSize(0, 27))
+        self.main_de_1.setMaximumSize(QtCore.QSize(16777215, 27))
         font = QtGui.QFont()
         font.setFamily("fonts/SourceSansPro-Regular.ttf")
         font.setPointSize(9)
@@ -1648,6 +1651,7 @@ class Ui_MainWindow(object):
         self.main_de_1.setFont(font)
         self.main_de_1.setStyleSheet("QDateEdit {\n"
 "    border: 1px solid #acacac;\n"
+"    border-right: 0px solid #acacac;\n"
 "    border-radius: 1px;\n"
 "    padding-left: 5px;\n"
 "    background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, \n"
@@ -1660,6 +1664,7 @@ class Ui_MainWindow(object):
 "\n"
 "QDateEdit:hover {\n"
 "    border: 1px solid #7eb4ea;\n"
+"    border-right: 0px solid #7eb4ea;\n"
 "    border-radius: 1px;\n"
 "    background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, \n"
 "                                stop: 0 #ecf4fc, stop: 1 #dcecfc);\n"
@@ -1683,14 +1688,52 @@ class Ui_MainWindow(object):
 "}")
         self.main_de_1.setFrame(False)
         self.main_de_1.setAlignment(QtCore.Qt.AlignCenter)
+        self.main_de_1.setButtonSymbols(QtWidgets.QAbstractSpinBox.NoButtons)
         self.main_de_1.setAccelerated(True)
+        self.main_de_1.setProperty("showGroupSeparator", False)
         self.main_de_1.setDateTime(QtCore.QDateTime(QtCore.QDate(1979, 1, 1), QtCore.QTime(23, 0, 0)))
         self.main_de_1.setCurrentSection(QtWidgets.QDateTimeEdit.YearSection)
-        self.main_de_1.setCalendarPopup(True)
+        self.main_de_1.setCalendarPopup(False)
         self.main_de_1.setTimeSpec(QtCore.Qt.UTC)
         self.main_de_1.setDate(QtCore.QDate(1979, 1, 1))
         self.main_de_1.setObjectName("main_de_1")
-        self.horizontalLayout_12.addWidget(self.main_de_1)
+        self.horizontalLayout_19.addWidget(self.main_de_1)
+        self.date_bt_1 = QtWidgets.QToolButton(self.scrollAreaWidgetContents_3)
+        self.date_bt_1.setEnabled(False)
+        self.date_bt_1.setMinimumSize(QtCore.QSize(30, 27))
+        self.date_bt_1.setMaximumSize(QtCore.QSize(30, 27))
+        self.date_bt_1.setStyleSheet("QToolButton {\n"
+"    border: 1px solid #acacac;\n"
+"    background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, \n"
+"                                stop: 0 #f0f0f0, stop: 1 #e5e5e5);\n"
+"    width: 27px;\n"
+"    height: 27px;\n"
+"}\n"
+"\n"
+"QToolButton:disabled {\n"
+"    background-color:  rgb(200,200,200);\n"
+"}\n"
+"\n"
+"QToolButton:hover {\n"
+"    border: 1px solid #7eb4ea;\n"
+"    border-radius: 1px;\n"
+"    background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, \n"
+"                                stop: 0 #ecf4fc, stop: 1 #dcecfc);\n"
+"}\n"
+"\n"
+"\n"
+"QToolButton:flat {\n"
+"    border: none;\n"
+"}")
+        self.date_bt_1.setText("")
+        icon2 = QtGui.QIcon()
+        icon2.addPixmap(QtGui.QPixmap("icons/down_arrow_icon.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.date_bt_1.setIcon(icon2)
+        self.date_bt_1.setIconSize(QtCore.QSize(20, 20))
+        self.date_bt_1.setAutoRaise(False)
+        self.date_bt_1.setObjectName("date_bt_1")
+        self.horizontalLayout_19.addWidget(self.date_bt_1)
+        self.horizontalLayout_12.addLayout(self.horizontalLayout_19)
         self.main_lb_14 = QtWidgets.QLabel(self.scrollAreaWidgetContents_3)
         self.main_lb_14.setEnabled(True)
         self.main_lb_14.setMinimumSize(QtCore.QSize(0, 27))
@@ -1705,10 +1748,13 @@ class Ui_MainWindow(object):
         self.main_lb_14.setFont(font)
         self.main_lb_14.setObjectName("main_lb_14")
         self.horizontalLayout_12.addWidget(self.main_lb_14)
+        self.horizontalLayout_20 = QtWidgets.QHBoxLayout()
+        self.horizontalLayout_20.setSpacing(0)
+        self.horizontalLayout_20.setObjectName("horizontalLayout_20")
         self.main_de_2 = QtWidgets.QDateEdit(self.scrollAreaWidgetContents_3)
         self.main_de_2.setEnabled(False)
-        self.main_de_2.setMinimumSize(QtCore.QSize(130, 27))
-        self.main_de_2.setMaximumSize(QtCore.QSize(130, 27))
+        self.main_de_2.setMinimumSize(QtCore.QSize(0, 27))
+        self.main_de_2.setMaximumSize(QtCore.QSize(16777215, 27))
         font = QtGui.QFont()
         font.setFamily("fonts/SourceSansPro-Regular.ttf")
         font.setPointSize(9)
@@ -1718,6 +1764,7 @@ class Ui_MainWindow(object):
         self.main_de_2.setFont(font)
         self.main_de_2.setStyleSheet("QDateEdit {\n"
 "    border: 1px solid #acacac;\n"
+"    border-right: 0px solid #acacac;\n"
 "    border-radius: 1px;\n"
 "    padding-left: 5px;\n"
 "    background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, \n"
@@ -1730,6 +1777,7 @@ class Ui_MainWindow(object):
 "\n"
 "QDateEdit:hover {\n"
 "    border: 1px solid #7eb4ea;\n"
+"    border-right: 0px solid #7eb4ea;\n"
 "    border-radius: 1px;\n"
 "    background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, \n"
 "                                stop: 0 #ecf4fc, stop: 1 #dcecfc);\n"
@@ -1753,14 +1801,49 @@ class Ui_MainWindow(object):
 "}")
         self.main_de_2.setFrame(False)
         self.main_de_2.setAlignment(QtCore.Qt.AlignCenter)
+        self.main_de_2.setButtonSymbols(QtWidgets.QAbstractSpinBox.NoButtons)
         self.main_de_2.setAccelerated(True)
         self.main_de_2.setDateTime(QtCore.QDateTime(QtCore.QDate(2018, 1, 1), QtCore.QTime(23, 0, 0)))
         self.main_de_2.setCurrentSection(QtWidgets.QDateTimeEdit.YearSection)
-        self.main_de_2.setCalendarPopup(True)
+        self.main_de_2.setCalendarPopup(False)
         self.main_de_2.setTimeSpec(QtCore.Qt.UTC)
         self.main_de_2.setDate(QtCore.QDate(2018, 1, 1))
         self.main_de_2.setObjectName("main_de_2")
-        self.horizontalLayout_12.addWidget(self.main_de_2)
+        self.horizontalLayout_20.addWidget(self.main_de_2)
+        self.date_bt_2 = QtWidgets.QToolButton(self.scrollAreaWidgetContents_3)
+        self.date_bt_2.setEnabled(False)
+        self.date_bt_2.setMinimumSize(QtCore.QSize(30, 27))
+        self.date_bt_2.setMaximumSize(QtCore.QSize(30, 27))
+        self.date_bt_2.setStyleSheet("QToolButton {\n"
+"    border: 1px solid #acacac;\n"
+"    background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, \n"
+"                                stop: 0 #f0f0f0, stop: 1 #e5e5e5);\n"
+"    width: 27px;\n"
+"    height: 27px;\n"
+"}\n"
+"\n"
+"QToolButton:disabled {\n"
+"    background-color:  rgb(200,200,200);\n"
+"}\n"
+"\n"
+"QToolButton:hover {\n"
+"    border: 1px solid #7eb4ea;\n"
+"    border-radius: 1px;\n"
+"    background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, \n"
+"                                stop: 0 #ecf4fc, stop: 1 #dcecfc);\n"
+"}\n"
+"\n"
+"\n"
+"QToolButton:flat {\n"
+"    border: none;\n"
+"}")
+        self.date_bt_2.setText("")
+        self.date_bt_2.setIcon(icon2)
+        self.date_bt_2.setIconSize(QtCore.QSize(20, 20))
+        self.date_bt_2.setAutoRaise(False)
+        self.date_bt_2.setObjectName("date_bt_2")
+        self.horizontalLayout_20.addWidget(self.date_bt_2)
+        self.horizontalLayout_12.addLayout(self.horizontalLayout_20)
         spacerItem36 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout_12.addItem(spacerItem36)
         self.verticalLayout_6.addLayout(self.horizontalLayout_12)
@@ -2355,9 +2438,9 @@ class Ui_MainWindow(object):
         self.toolBar.setObjectName("toolBar")
         MainWindow.addToolBar(QtCore.Qt.TopToolBarArea, self.toolBar)
         self.actionSave = QtWidgets.QAction(MainWindow)
-        icon2 = QtGui.QIcon()
-        icon2.addPixmap(QtGui.QPixmap("icons/save_popup_icon.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.actionSave.setIcon(icon2)
+        icon3 = QtGui.QIcon()
+        icon3.addPixmap(QtGui.QPixmap("icons/save_popup_icon.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.actionSave.setIcon(icon3)
         font = QtGui.QFont()
         font.setFamily("fonts/SourceSansPro-Regular.ttf")
         font.setPointSize(10)
@@ -2368,9 +2451,9 @@ class Ui_MainWindow(object):
         self.actionSave.setFont(font)
         self.actionSave.setObjectName("actionSave")
         self.actionOpen = QtWidgets.QAction(MainWindow)
-        icon3 = QtGui.QIcon()
-        icon3.addPixmap(QtGui.QPixmap("icons/open_popup_icon.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.actionOpen.setIcon(icon3)
+        icon4 = QtGui.QIcon()
+        icon4.addPixmap(QtGui.QPixmap("icons/open_popup_icon.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.actionOpen.setIcon(icon4)
         font = QtGui.QFont()
         font.setFamily("fonts/SourceSansPro-Regular.ttf")
         font.setPointSize(10)
@@ -2381,9 +2464,9 @@ class Ui_MainWindow(object):
         self.actionOpen.setFont(font)
         self.actionOpen.setObjectName("actionOpen")
         self.actionExit = QtWidgets.QAction(MainWindow)
-        icon4 = QtGui.QIcon()
-        icon4.addPixmap(QtGui.QPixmap("icons/exit_icon.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.actionExit.setIcon(icon4)
+        icon5 = QtGui.QIcon()
+        icon5.addPixmap(QtGui.QPixmap("icons/exit_icon.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.actionExit.setIcon(icon5)
         font = QtGui.QFont()
         font.setFamily("fonts/SourceSansPro-Regular.ttf")
         font.setPointSize(10)
@@ -2394,9 +2477,9 @@ class Ui_MainWindow(object):
         self.actionExit.setFont(font)
         self.actionExit.setObjectName("actionExit")
         self.actionAbout = QtWidgets.QAction(MainWindow)
-        icon5 = QtGui.QIcon()
-        icon5.addPixmap(QtGui.QPixmap("icons/about_popup_icon.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.actionAbout.setIcon(icon5)
+        icon6 = QtGui.QIcon()
+        icon6.addPixmap(QtGui.QPixmap("icons/about_popup_icon.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.actionAbout.setIcon(icon6)
         font = QtGui.QFont()
         font.setFamily("fonts/SourceSansPro-Regular.ttf")
         font.setPointSize(10)
@@ -2408,27 +2491,27 @@ class Ui_MainWindow(object):
         self.actionAbout.setObjectName("actionAbout")
         self.actionSeparator1 = QtWidgets.QAction(MainWindow)
         self.actionSeparator1.setEnabled(False)
-        icon6 = QtGui.QIcon()
-        icon6.addPixmap(QtGui.QPixmap("icons/separator_icon.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.actionSeparator1.setIcon(icon6)
+        icon7 = QtGui.QIcon()
+        icon7.addPixmap(QtGui.QPixmap("icons/separator_icon.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.actionSeparator1.setIcon(icon7)
         self.actionSeparator1.setObjectName("actionSeparator1")
         self.actionSeparator2 = QtWidgets.QAction(MainWindow)
         self.actionSeparator2.setEnabled(False)
-        self.actionSeparator2.setIcon(icon6)
+        self.actionSeparator2.setIcon(icon7)
         self.actionSeparator2.setObjectName("actionSeparator2")
         self.actionUpdate = QtWidgets.QAction(MainWindow)
         self.actionUpdate.setEnabled(False)
         self.actionUpdate.setIcon(icon)
         self.actionUpdate.setObjectName("actionUpdate")
         self.actionOptions = QtWidgets.QAction(MainWindow)
-        icon7 = QtGui.QIcon()
-        icon7.addPixmap(QtGui.QPixmap("icons/option_icon.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.actionOptions.setIcon(icon7)
+        icon8 = QtGui.QIcon()
+        icon8.addPixmap(QtGui.QPixmap("icons/option_icon.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.actionOptions.setIcon(icon8)
         self.actionOptions.setObjectName("actionOptions")
         self.actionExpert = QtWidgets.QAction(MainWindow)
-        icon8 = QtGui.QIcon()
-        icon8.addPixmap(QtGui.QPixmap("icons/expert_icon.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.actionExpert.setIcon(icon8)
+        icon9 = QtGui.QIcon()
+        icon9.addPixmap(QtGui.QPixmap("icons/expert_icon.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.actionExpert.setIcon(icon9)
         self.actionExpert.setObjectName("actionExpert")
         self.toolBar.addAction(self.actionExit)
         self.toolBar.addAction(self.actionSeparator1)

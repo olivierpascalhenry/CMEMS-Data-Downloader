@@ -1,22 +1,15 @@
 import logging
 import datetime
 from PyQt5 import QtWidgets, QtGui, QtCore
-from functions.window_functions import MyInfo
+from functions.window_functions import MyInfo, MyDayCalendar, MyMonthCalendar
 
 
 def info_button(self):
     logging.debug('gui_functions.py - info_button - self.sender().objectName() ' + self.sender().objectName())
-    if 'infoButton' in self.sender().objectName():
-        x = QtGui.QCursor.pos().x()
-        y = QtGui.QCursor.pos().y()
-        x = x - 225
-        y = y + 50
+    if 'info_bt' in self.sender().objectName():
         self.infoWindow = MyInfo(self.info_button_text_dict[self.sender().objectName()])
-        self.infoWindow.setMinimumSize(QtCore.QSize(450, self.infoWindow.sizeHint().height()))
-        self.infoWindow.setMaximumSize(QtCore.QSize(450, self.infoWindow.sizeHint().height()))
-        self.infoWindow.setGeometry(x, y, 450, self.infoWindow.sizeHint().height())
+        self.infoWindow.move(QtGui.QCursor.pos().x() - 275, QtGui.QCursor.pos().y() + 20)
         self.infoWindow.exec_()
-
 
 def activate_type_cb(self):
     logging.debug('gui_functions.py - activate_type_cb')
@@ -103,7 +96,7 @@ def activate_dataset_information(self):
         information_text = ('<p align="justify">Please click on the information button on the right to access more detailed information about the product.</p>'
                             + '<p align="justify">' + product['information']['short_description'] + '</p>')
         self.main_lb_7.setText(information_text)
-        swath, period = product['swath'], product['information']['temporal_coverage']
+        swath, period, resolution = product['swath'], product['information']['temporal_coverage'], product['information']['temporal_resolution']
         if 'Present' in period:
             start, end = period[5:15], period[29:]
             if '+' in end:
@@ -115,11 +108,31 @@ def activate_dataset_information(self):
             start, end = period[5:15], period[29:39]
         self.main_de_1.setEnabled(True)
         self.main_de_2.setEnabled(True)
-        self.main_de_1.setMinimumDate(QtCore.QDate.fromString(start, QtCore.Qt.ISODate))
-        self.main_de_1.setMaximumDate(QtCore.QDate.fromString(end, QtCore.Qt.ISODate))
+        self.date_bt_1.setEnabled(True)
+        self.date_bt_2.setEnabled(True)
+        date_format = 'yyyy-MM-dd'
+        if ',' in resolution:
+            if resolution[:resolution.find(',')] == 'monthly-mean':
+                date_format = 'yyyy-MM'
+        else:
+            if resolution == 'monthly-mean':
+                date_format = 'yyyy-MM'
+        
+        if date_format == 'yyyy-MM':
+            min_date = start[:-2] + '01'
+            max_date = end[:-2] + '28'
+        else:
+            min_date = start
+            max_date = end
+        self.main_de_1.setDisplayFormat(date_format)
+        self.main_de_2.setDisplayFormat(date_format)
+        self.date_bt_1.clicked.connect(lambda: display_calendar(self))
+        self.date_bt_2.clicked.connect(lambda: display_calendar(self))
+        self.main_de_1.setMinimumDate(QtCore.QDate.fromString(min_date, QtCore.Qt.ISODate))
+        self.main_de_1.setMaximumDate(QtCore.QDate.fromString(max_date, QtCore.Qt.ISODate))
         self.main_de_1.setDate(QtCore.QDate.fromString(start, QtCore.Qt.ISODate))
-        self.main_de_2.setMinimumDate(QtCore.QDate.fromString(start, QtCore.Qt.ISODate))
-        self.main_de_2.setMaximumDate(QtCore.QDate.fromString(end, QtCore.Qt.ISODate))
+        self.main_de_2.setMinimumDate(QtCore.QDate.fromString(min_date, QtCore.Qt.ISODate))
+        self.main_de_2.setMaximumDate(QtCore.QDate.fromString(max_date, QtCore.Qt.ISODate))
         self.main_de_2.setDate(QtCore.QDate.fromString(end, QtCore.Qt.ISODate))
         self.main_cb_6.clear()
         self.main_cb_6.setEnabled(True)
@@ -131,7 +144,8 @@ def activate_dataset_information(self):
             self.main_cb_6.currentIndexChanged.connect(lambda: activate_depth_cb(self, product['information']['vertical_coverage'], 
                                                                                  self.main_cb_6.currentIndex(), product['swath_vertical']))
             self.main_cb_6.currentIndexChanged.connect(lambda: activate_area_ln(self, product['suffix']))
-            self.main_cb_6.currentIndexChanged.connect(lambda: specific_period(self, self.main_cb_6.currentIndex(), product['swath_temporal']))
+            self.main_cb_6.currentIndexChanged.connect(lambda: specific_period(self, self.main_cb_6.currentIndex(), product['swath_temporal'], 
+                                                                               product['swath_temporal_resolution']))
         else:
             self.main_cb_6.addItem(swath)
             populate_variable_list(self, product['variables'])
@@ -222,11 +236,8 @@ def activate_area_ln(self, suffix):
         self.earth_im.setEnabled(True)
 
 
-def specific_period(self, i, swath_temporal):
+def specific_period(self, i, swath_temporal, swath_temporal_resolution):
     logging.debug('gui_functions.py - specific_period')
-    
-    print(i, swath_temporal)
-    
     if i > 0:
         i -= 1
         index = swath_temporal[i].find('to')
@@ -238,11 +249,26 @@ def specific_period(self, i, swath_temporal):
             else:
                 end = datetime.datetime.now()
             end = end.strftime('%Y-%m-%d')
-        self.main_de_1.setMinimumDate(QtCore.QDate.fromString(start, QtCore.Qt.ISODate))
-        self.main_de_1.setMaximumDate(QtCore.QDate.fromString(end, QtCore.Qt.ISODate))
+        date_format = 'yyyy-MM-dd'
+        if ',' in swath_temporal_resolution[i]:
+            if swath_temporal_resolution[i][:swath_temporal_resolution[i].find(',')] == 'mm':
+                date_format = 'yyyy-MM'
+        else:
+            if swath_temporal_resolution[i] == 'mm':
+                date_format = 'yyyy-MM'
+        if date_format == 'yyyy-MM':
+            min_date = start[:-2] + '01'
+            max_date = end[:-2] + '28'
+        else:
+            min_date = start
+            max_date = end
+        self.main_de_1.setDisplayFormat(date_format)
+        self.main_de_2.setDisplayFormat(date_format)
+        self.main_de_1.setMinimumDate(QtCore.QDate.fromString(min_date, QtCore.Qt.ISODate))
+        self.main_de_1.setMaximumDate(QtCore.QDate.fromString(max_date, QtCore.Qt.ISODate))
         self.main_de_1.setDate(QtCore.QDate.fromString(start, QtCore.Qt.ISODate))
-        self.main_de_2.setMinimumDate(QtCore.QDate.fromString(start, QtCore.Qt.ISODate))
-        self.main_de_2.setMaximumDate(QtCore.QDate.fromString(end, QtCore.Qt.ISODate))
+        self.main_de_2.setMinimumDate(QtCore.QDate.fromString(min_date, QtCore.Qt.ISODate))
+        self.main_de_2.setMaximumDate(QtCore.QDate.fromString(max_date, QtCore.Qt.ISODate))
         self.main_de_2.setDate(QtCore.QDate.fromString(end, QtCore.Qt.ISODate))
 
     
@@ -337,6 +363,8 @@ def deactivate_dataset_information(self):
     self.main_cb_6.addItem('No product selected...')
     self.main_cb_6.setCurrentIndex(0)
     self.main_cb_6.setEnabled(False)
+    self.main_de_1.setDisplayFormat('yyyy-MM-dd')
+    self.main_de_2.setDisplayFormat('yyyy-MM-dd')
     self.main_de_1.setMinimumDate(QtCore.QDate.fromString('1579-01-01', QtCore.Qt.ISODate))
     self.main_de_2.setMaximumDate(QtCore.QDate.fromString('2518-01-01', QtCore.Qt.ISODate))
     self.main_de_1.setDate(QtCore.QDate.fromString('1979-01-01', QtCore.Qt.ISODate))
@@ -345,6 +373,13 @@ def deactivate_dataset_information(self):
     self.main_de_2.setDate(QtCore.QDate.fromString('2018-01-01', QtCore.Qt.ISODate))
     self.main_de_1.setEnabled(False)
     self.main_de_2.setEnabled(False)
+    self.date_bt_1.setEnabled(False)
+    self.date_bt_2.setEnabled(False)
+    try:
+        self.date_bt_1.clicked.disconnect()
+        self.date_bt_2.clicked.disconnect()
+    except TypeError:
+        pass
     clear_layout(self.variables_vertical_layout)
     deactivate_depth_cb(self)
     deactivate_area_ln(self)
@@ -370,7 +405,42 @@ def clean_stylesheet_variable(self):
     self.main_lb_10.setStyleSheet("color: rgb(0,0,0);")
     self.tabWidget.tabBar().setTabTextColor(1, QtGui.QColor(0,0,0))
     
-    
+
+def display_calendar(self):
+    logging.debug('gui_functions.py - display_calendar')
+    object = {'date_bt_1': self.main_de_1, 'date_bt_2': self.main_de_2}
+    object_name = self.sender().objectName()
+    object_edit = object[object_name]
+    current_date = object_edit.date().toString(QtCore.Qt.ISODate)
+    min_date = object_edit.minimumDate().toString(QtCore.Qt.ISODate)
+    max_date = object_edit.maximumDate().toString(QtCore.Qt.ISODate)
+    y = self.sender().pos().y() + self.pos().y() + 152
+    if object_edit.displayFormat() == 'yyyy-MM-dd':
+        x = self.sender().pos().x() + self.pos().x() - 255
+        self.calendar_test = MyDayCalendar(current_date, min_date, max_date)
+    else:
+        x = self.sender().pos().x() + self.pos().x() - 175
+        self.calendar_test = MyMonthCalendar(current_date, min_date, max_date)
+    self.calendar_test.move(x, y)
+    self.calendar_test.setWindowFlags(QtCore.Qt.Popup|QtCore.Qt.FramelessWindowHint)
+    self.calendar_test.exec_()
+    if self.calendar_test.year is not None:
+        year = str(self.calendar_test.year)
+        month = str(self.calendar_test.month)
+        day = str(self.calendar_test.day)
+        if len(month) == 1:
+            month = '0' + month
+        if len(day) == 1:
+            day = '0' + day
+        if object_edit.displayFormat() == 'yyyy-MM':
+            if object_name == 'date_bt_1':
+                day = '01'
+            else:
+                day = '28'
+        date = year + '-' + month + '-' + day
+        object_edit.setDate(QtCore.QDate.fromString(date, QtCore.Qt.ISODate))
+
+
 def clear_layout(layout):
     logging.debug('gui_functions.py - clear_layout')
     for i in reversed(range(layout.count())):   
@@ -380,6 +450,4 @@ def clear_layout(layout):
         elif isinstance(item, QtWidgets.QLayout):
             clear_layout(item.layout())
         layout.removeItem(item)      
-    
-    
-    
+
