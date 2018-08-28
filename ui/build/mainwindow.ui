@@ -159,7 +159,7 @@ QTabBar QToolButton::left-arrow:pressed {
        <enum>QTabWidget::Rounded</enum>
       </property>
       <property name="currentIndex">
-       <number>0</number>
+       <number>2</number>
       </property>
       <property name="elideMode">
        <enum>Qt::ElideNone</enum>
@@ -363,8 +363,8 @@ QScrollBar::right-arrow:horizontal:pressed {
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>1000</width>
-             <height>356</height>
+             <width>995</width>
+             <height>354</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_4">
@@ -1183,6 +1183,165 @@ QComboBox QAbstractItemView::item {
                    </widget>
                   </item>
                   <item>
+                   <layout class="QHBoxLayout" name="horizontalLayout_21">
+                    <item>
+                     <spacer name="horizontalSpacer_46">
+                      <property name="orientation">
+                       <enum>Qt::Horizontal</enum>
+                      </property>
+                      <property name="sizeType">
+                       <enum>QSizePolicy::MinimumExpanding</enum>
+                      </property>
+                      <property name="sizeHint" stdset="0">
+                       <size>
+                        <width>40</width>
+                        <height>20</height>
+                       </size>
+                      </property>
+                     </spacer>
+                    </item>
+                    <item>
+                     <widget class="QLabel" name="main_lb_18">
+                      <property name="sizePolicy">
+                       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                        <horstretch>0</horstretch>
+                        <verstretch>0</verstretch>
+                       </sizepolicy>
+                      </property>
+                      <property name="minimumSize">
+                       <size>
+                        <width>0</width>
+                        <height>27</height>
+                       </size>
+                      </property>
+                      <property name="maximumSize">
+                       <size>
+                        <width>16777215</width>
+                        <height>27</height>
+                       </size>
+                      </property>
+                      <property name="font">
+                       <font>
+                        <family>FreeSans</family>
+                        <pointsize>10</pointsize>
+                        <weight>50</weight>
+                        <bold>false</bold>
+                        <stylestrategy>PreferAntialias</stylestrategy>
+                        <kerning>true</kerning>
+                       </font>
+                      </property>
+                      <property name="text">
+                       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;6) And a &lt;span style=&quot; font-weight:600;&quot;&gt;dataset&lt;/span&gt;:&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item>
+                     <spacer name="horizontalSpacer_47">
+                      <property name="orientation">
+                       <enum>Qt::Horizontal</enum>
+                      </property>
+                      <property name="sizeType">
+                       <enum>QSizePolicy::MinimumExpanding</enum>
+                      </property>
+                      <property name="sizeHint" stdset="0">
+                       <size>
+                        <width>40</width>
+                        <height>20</height>
+                       </size>
+                      </property>
+                     </spacer>
+                    </item>
+                   </layout>
+                  </item>
+                  <item>
+                   <widget class="QComboBox" name="main_cb_6">
+                    <property name="enabled">
+                     <bool>false</bool>
+                    </property>
+                    <property name="minimumSize">
+                     <size>
+                      <width>430</width>
+                      <height>27</height>
+                     </size>
+                    </property>
+                    <property name="maximumSize">
+                     <size>
+                      <width>430</width>
+                      <height>27</height>
+                     </size>
+                    </property>
+                    <property name="font">
+                     <font>
+                      <family>FreeSans</family>
+                      <pointsize>9</pointsize>
+                      <weight>50</weight>
+                      <bold>false</bold>
+                      <stylestrategy>PreferAntialias</stylestrategy>
+                      <kerning>true</kerning>
+                     </font>
+                    </property>
+                    <property name="styleSheet">
+                     <string notr="true">QComboBox {
+	border: 1px solid #acacac;
+    border-radius: 1px;
+	padding-left: 5px;
+    background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, 
+								stop: 0 #f0f0f0, stop: 1 #e5e5e5);
+}
+
+QComboBox:disabled {
+	background-color:  rgb(200,200,200);
+}
+
+QComboBox:hover {
+	border: 1px solid #7eb4ea;
+    border-radius: 1px;
+	background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, 
+								stop: 0 #ecf4fc, stop: 1 #dcecfc);
+}
+
+QComboBox::drop-down {
+	subcontrol-origin: padding;
+	subcontrol-position: top right;
+	width: 27px;
+    border-left-width: 1px;
+	border-left-color: darkgray;
+	border-left-style: solid;
+	border-top-right-radius: 3px;
+	border-bottom-right-radius: 3px;
+}
+
+QComboBox::down-arrow {
+	image: url(icons/down_arrow_icon.svg); 
+	width: 16px;
+	height: 16px
+}
+
+QComboBox QAbstractItemView {
+	selection-background-color: rgb(200,200,200);
+	selection-color: black;
+	background: #f0f0f0;
+	border: 0px solid #f0f0f0;
+}
+
+QComboBox QAbstractItemView::item {
+	margin: 5px 5px 5px 5px;
+}</string>
+                    </property>
+                    <property name="currentIndex">
+                     <number>0</number>
+                    </property>
+                    <property name="maxVisibleItems">
+                     <number>12</number>
+                    </property>
+                    <item>
+                     <property name="text">
+                      <string>No product selected...</string>
+                     </property>
+                    </item>
+                   </widget>
+                  </item>
+                  <item>
                    <spacer name="verticalSpacer">
                     <property name="orientation">
                      <enum>Qt::Vertical</enum>
@@ -1223,6 +1382,9 @@ QComboBox QAbstractItemView::item {
                     <width>27</width>
                     <height>27</height>
                    </size>
+                  </property>
+                  <property name="toolTip">
+                   <string/>
                   </property>
                   <property name="styleSheet">
                    <string notr="true">QToolButton {
@@ -1672,7 +1834,7 @@ QToolButton:flat {
       </widget>
       <widget class="QWidget" name="tabWidgetPage2">
        <attribute name="title">
-        <string>Datasets / Variables</string>
+        <string>Variables and File</string>
        </attribute>
        <layout class="QGridLayout" name="gridLayout_18">
         <item row="0" column="0">
@@ -1857,8 +2019,8 @@ QScrollBar::right-arrow:horizontal:pressed {
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>1000</width>
-             <height>373</height>
+             <width>484</width>
+             <height>205</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_5">
@@ -1897,7 +2059,7 @@ QScrollBar::right-arrow:horizontal:pressed {
             <item row="1" column="1">
              <layout class="QVBoxLayout" name="verticalLayout_5">
               <item>
-               <layout class="QHBoxLayout" name="horizontalLayout_3">
+               <layout class="QHBoxLayout" name="horizontalLayout_6">
                 <item>
                  <widget class="QLabel" name="main_lb_8">
                   <property name="sizePolicy">
@@ -1932,7 +2094,7 @@ QScrollBar::right-arrow:horizontal:pressed {
                    <string notr="true"/>
                   </property>
                   <property name="text">
-                   <string>Datasets:</string>
+                   <string>File name:</string>
                   </property>
                   <property name="alignment">
                    <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
@@ -1949,7 +2111,7 @@ QScrollBar::right-arrow:horizontal:pressed {
                   </property>
                   <property name="sizeHint" stdset="0">
                    <size>
-                    <width>10</width>
+                    <width>13</width>
                     <height>20</height>
                    </size>
                   </property>
@@ -1994,7 +2156,7 @@ QToolButton:flat {
                  </widget>
                 </item>
                 <item>
-                 <spacer name="horizontalSpacer_15">
+                 <spacer name="horizontalSpacer_16">
                   <property name="orientation">
                    <enum>Qt::Horizontal</enum>
                   </property>
@@ -2009,9 +2171,9 @@ QToolButton:flat {
                </layout>
               </item>
               <item>
-               <layout class="QHBoxLayout" name="horizontalLayout_6">
+               <layout class="QHBoxLayout" name="horizontalLayout_22">
                 <item>
-                 <spacer name="horizontalSpacer_11">
+                 <spacer name="horizontalSpacer_48">
                   <property name="orientation">
                    <enum>Qt::Horizontal</enum>
                   </property>
@@ -2027,19 +2189,19 @@ QToolButton:flat {
                  </spacer>
                 </item>
                 <item>
-                 <widget class="QComboBox" name="main_cb_6">
+                 <widget class="QLineEdit" name="main_ln_1">
                   <property name="enabled">
-                   <bool>false</bool>
+                   <bool>true</bool>
                   </property>
                   <property name="minimumSize">
                    <size>
-                    <width>430</width>
+                    <width>400</width>
                     <height>27</height>
                    </size>
                   </property>
                   <property name="maximumSize">
                    <size>
-                    <width>430</width>
+                    <width>400</width>
                     <height>27</height>
                    </size>
                   </property>
@@ -2050,72 +2212,32 @@ QToolButton:flat {
                     <weight>50</weight>
                     <bold>false</bold>
                     <stylestrategy>PreferAntialias</stylestrategy>
-                    <kerning>true</kerning>
                    </font>
                   </property>
+                  <property name="layoutDirection">
+                   <enum>Qt::LeftToRight</enum>
+                  </property>
                   <property name="styleSheet">
-                   <string notr="true">QComboBox {
-	border: 1px solid #acacac;
-    border-radius: 1px;
-	padding-left: 5px;
-    background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, 
-								stop: 0 #f0f0f0, stop: 1 #e5e5e5);
+                   <string notr="true">QLineEdit {
+	border-radius: 3px;
+   padding: 1px 4px 1px 4px;
+	background-color:  rgb(240, 240, 240);
 }
 
-QComboBox:disabled {
-	background-color:  rgb(200,200,200);
-}
-
-QComboBox:hover {
-	border: 1px solid #7eb4ea;
-    border-radius: 1px;
-	background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, 
-								stop: 0 #ecf4fc, stop: 1 #dcecfc);
-}
-
-QComboBox::drop-down {
-	subcontrol-origin: padding;
-	subcontrol-position: top right;
-	width: 27px;
-    border-left-width: 1px;
-	border-left-color: darkgray;
-	border-left-style: solid;
-	border-top-right-radius: 3px;
-	border-bottom-right-radius: 3px;
-}
-
-QComboBox::down-arrow {
-	image: url(icons/down_arrow_icon.svg); 
-	width: 16px;
-	height: 16px
-}
-
-QComboBox QAbstractItemView {
-	selection-background-color: rgb(200,200,200);
-	selection-color: black;
-	background: #f0f0f0;
-	border: 0px solid #f0f0f0;
-}
-
-QComboBox QAbstractItemView::item {
-	margin: 5px 5px 5px 5px;
+QLineEdit:disabled {
+	background-color:  rgb(200, 200, 200);
 }</string>
                   </property>
-                  <property name="currentIndex">
-                   <number>0</number>
+                  <property name="frame">
+                   <bool>false</bool>
                   </property>
-                  <property name="maxVisibleItems">
-                   <number>12</number>
+                  <property name="alignment">
+                   <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
                   </property>
-                  <item>
-                   <property name="text">
-                    <string>No product selected...</string>
-                   </property>
-                  </item>
                  </widget>
                 </item>
                 <item>
-                 <spacer name="horizontalSpacer_16">
+                 <spacer name="horizontalSpacer_49">
                   <property name="orientation">
                    <enum>Qt::Horizontal</enum>
                   </property>
@@ -2335,7 +2457,7 @@ QToolButton:flat {
       </widget>
       <widget class="QWidget" name="tabWidgetPage3">
        <attribute name="title">
-        <string>Time / Space and File</string>
+        <string>Time and Space</string>
        </attribute>
        <layout class="QGridLayout" name="gridLayout_3">
         <item row="0" column="0">
@@ -2724,34 +2846,40 @@ QToolButton:flat {
                    </widget>
                   </item>
                   <item>
-                   <widget class="QDateEdit" name="main_de_1">
-                    <property name="enabled">
-                     <bool>false</bool>
+                   <layout class="QHBoxLayout" name="horizontalLayout_19">
+                    <property name="spacing">
+                     <number>0</number>
                     </property>
-                    <property name="minimumSize">
-                     <size>
-                      <width>130</width>
-                      <height>27</height>
-                     </size>
-                    </property>
-                    <property name="maximumSize">
-                     <size>
-                      <width>130</width>
-                      <height>27</height>
-                     </size>
-                    </property>
-                    <property name="font">
-                     <font>
-                      <family>FreeSans</family>
-                      <pointsize>9</pointsize>
-                      <weight>50</weight>
-                      <bold>false</bold>
-                      <stylestrategy>PreferAntialias</stylestrategy>
-                     </font>
-                    </property>
-                    <property name="styleSheet">
-                     <string notr="true">QDateEdit {
+                    <item>
+                     <widget class="QDateEdit" name="main_de_1">
+                      <property name="enabled">
+                       <bool>false</bool>
+                      </property>
+                      <property name="minimumSize">
+                       <size>
+                        <width>0</width>
+                        <height>27</height>
+                       </size>
+                      </property>
+                      <property name="maximumSize">
+                       <size>
+                        <width>16777215</width>
+                        <height>27</height>
+                       </size>
+                      </property>
+                      <property name="font">
+                       <font>
+                        <family>FreeSans</family>
+                        <pointsize>9</pointsize>
+                        <weight>50</weight>
+                        <bold>false</bold>
+                        <stylestrategy>PreferAntialias</stylestrategy>
+                       </font>
+                      </property>
+                      <property name="styleSheet">
+                       <string notr="true">QDateEdit {
 	border: 1px solid #acacac;
+    border-right: 0px solid #acacac;
     border-radius: 1px;
 	padding-left: 5px;
     background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, 
@@ -2764,6 +2892,7 @@ QDateEdit:disabled {
 
 QDateEdit:hover {
 	border: 1px solid #7eb4ea;
+    border-right: 0px solid #7eb4ea;
     border-radius: 1px;
 	background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, 
 								stop: 0 #ecf4fc, stop: 1 #dcecfc);
@@ -2785,46 +2914,114 @@ QDateEdit::down-arrow {
 	width: 16px;
 	height: 16px
 }</string>
-                    </property>
-                    <property name="frame">
-                     <bool>false</bool>
-                    </property>
-                    <property name="alignment">
-                     <set>Qt::AlignCenter</set>
-                    </property>
-                    <property name="accelerated">
-                     <bool>true</bool>
-                    </property>
-                    <property name="dateTime">
-                     <datetime>
-                      <hour>23</hour>
-                      <minute>0</minute>
-                      <second>0</second>
-                      <year>1979</year>
-                      <month>1</month>
-                      <day>1</day>
-                     </datetime>
-                    </property>
-                    <property name="currentSection">
-                     <enum>QDateTimeEdit::YearSection</enum>
-                    </property>
-                    <property name="displayFormat">
-                     <string>yyyy-MM-dd</string>
-                    </property>
-                    <property name="calendarPopup">
-                     <bool>true</bool>
-                    </property>
-                    <property name="timeSpec">
-                     <enum>Qt::UTC</enum>
-                    </property>
-                    <property name="date">
-                     <date>
-                      <year>1979</year>
-                      <month>1</month>
-                      <day>1</day>
-                     </date>
-                    </property>
-                   </widget>
+                      </property>
+                      <property name="frame">
+                       <bool>false</bool>
+                      </property>
+                      <property name="alignment">
+                       <set>Qt::AlignCenter</set>
+                      </property>
+                      <property name="buttonSymbols">
+                       <enum>QAbstractSpinBox::NoButtons</enum>
+                      </property>
+                      <property name="accelerated">
+                       <bool>true</bool>
+                      </property>
+                      <property name="showGroupSeparator" stdset="0">
+                       <bool>false</bool>
+                      </property>
+                      <property name="dateTime">
+                       <datetime>
+                        <hour>23</hour>
+                        <minute>0</minute>
+                        <second>0</second>
+                        <year>1979</year>
+                        <month>1</month>
+                        <day>1</day>
+                       </datetime>
+                      </property>
+                      <property name="currentSection">
+                       <enum>QDateTimeEdit::YearSection</enum>
+                      </property>
+                      <property name="displayFormat">
+                       <string>yyyy-MM-dd</string>
+                      </property>
+                      <property name="calendarPopup">
+                       <bool>false</bool>
+                      </property>
+                      <property name="timeSpec">
+                       <enum>Qt::UTC</enum>
+                      </property>
+                      <property name="date">
+                       <date>
+                        <year>1979</year>
+                        <month>1</month>
+                        <day>1</day>
+                       </date>
+                      </property>
+                     </widget>
+                    </item>
+                    <item>
+                     <widget class="QToolButton" name="date_bt_1">
+                      <property name="enabled">
+                       <bool>false</bool>
+                      </property>
+                      <property name="minimumSize">
+                       <size>
+                        <width>30</width>
+                        <height>27</height>
+                       </size>
+                      </property>
+                      <property name="maximumSize">
+                       <size>
+                        <width>30</width>
+                        <height>27</height>
+                       </size>
+                      </property>
+                      <property name="styleSheet">
+                       <string notr="true">QToolButton {
+	border: 1px solid #acacac;
+	background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, 
+								stop: 0 #f0f0f0, stop: 1 #e5e5e5);
+	width: 27px;
+	height: 27px;
+}
+
+QToolButton:disabled {
+	background-color:  rgb(200,200,200);
+}
+
+QToolButton:hover {
+	border: 1px solid #7eb4ea;
+    border-radius: 1px;
+	background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, 
+								stop: 0 #ecf4fc, stop: 1 #dcecfc);
+}
+
+
+QToolButton:flat {
+	border: none;
+}</string>
+                      </property>
+                      <property name="text">
+                       <string/>
+                      </property>
+                      <property name="icon">
+                       <iconset>
+                        <normaloff>icons/down_arrow_icon.svg</normaloff>icons/down_arrow_icon.svg</iconset>
+                      </property>
+                      <property name="iconSize">
+                       <size>
+                        <width>20</width>
+                        <height>20</height>
+                       </size>
+                      </property>
+                      <property name="autoRaise">
+                       <bool>false</bool>
+                      </property>
+                     </widget>
+                    </item>
+                   </layout>
                   </item>
                   <item>
                    <widget class="QLabel" name="main_lb_14">
@@ -2859,34 +3056,40 @@ QDateEdit::down-arrow {
                    </widget>
                   </item>
                   <item>
-                   <widget class="QDateEdit" name="main_de_2">
-                    <property name="enabled">
-                     <bool>false</bool>
+                   <layout class="QHBoxLayout" name="horizontalLayout_20">
+                    <property name="spacing">
+                     <number>0</number>
                     </property>
-                    <property name="minimumSize">
-                     <size>
-                      <width>130</width>
-                      <height>27</height>
-                     </size>
-                    </property>
-                    <property name="maximumSize">
-                     <size>
-                      <width>130</width>
-                      <height>27</height>
-                     </size>
-                    </property>
-                    <property name="font">
-                     <font>
-                      <family>FreeSans</family>
-                      <pointsize>9</pointsize>
-                      <weight>50</weight>
-                      <bold>false</bold>
-                      <stylestrategy>PreferAntialias</stylestrategy>
-                     </font>
-                    </property>
-                    <property name="styleSheet">
-                     <string notr="true">QDateEdit {
+                    <item>
+                     <widget class="QDateEdit" name="main_de_2">
+                      <property name="enabled">
+                       <bool>false</bool>
+                      </property>
+                      <property name="minimumSize">
+                       <size>
+                        <width>0</width>
+                        <height>27</height>
+                       </size>
+                      </property>
+                      <property name="maximumSize">
+                       <size>
+                        <width>16777215</width>
+                        <height>27</height>
+                       </size>
+                      </property>
+                      <property name="font">
+                       <font>
+                        <family>FreeSans</family>
+                        <pointsize>9</pointsize>
+                        <weight>50</weight>
+                        <bold>false</bold>
+                        <stylestrategy>PreferAntialias</stylestrategy>
+                       </font>
+                      </property>
+                      <property name="styleSheet">
+                       <string notr="true">QDateEdit {
 	border: 1px solid #acacac;
+    border-right: 0px solid #acacac;
     border-radius: 1px;
 	padding-left: 5px;
     background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, 
@@ -2899,6 +3102,7 @@ QDateEdit:disabled {
 
 QDateEdit:hover {
 	border: 1px solid #7eb4ea;
+    border-right: 0px solid #7eb4ea;
     border-radius: 1px;
 	background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, 
 								stop: 0 #ecf4fc, stop: 1 #dcecfc);
@@ -2920,46 +3124,111 @@ QDateEdit::down-arrow {
 	width: 16px;
 	height: 16px
 }</string>
-                    </property>
-                    <property name="frame">
-                     <bool>false</bool>
-                    </property>
-                    <property name="alignment">
-                     <set>Qt::AlignCenter</set>
-                    </property>
-                    <property name="accelerated">
-                     <bool>true</bool>
-                    </property>
-                    <property name="dateTime">
-                     <datetime>
-                      <hour>23</hour>
-                      <minute>0</minute>
-                      <second>0</second>
-                      <year>2018</year>
-                      <month>1</month>
-                      <day>1</day>
-                     </datetime>
-                    </property>
-                    <property name="currentSection">
-                     <enum>QDateTimeEdit::YearSection</enum>
-                    </property>
-                    <property name="displayFormat">
-                     <string>yyyy-MM-dd</string>
-                    </property>
-                    <property name="calendarPopup">
-                     <bool>true</bool>
-                    </property>
-                    <property name="timeSpec">
-                     <enum>Qt::UTC</enum>
-                    </property>
-                    <property name="date">
-                     <date>
-                      <year>2018</year>
-                      <month>1</month>
-                      <day>1</day>
-                     </date>
-                    </property>
-                   </widget>
+                      </property>
+                      <property name="frame">
+                       <bool>false</bool>
+                      </property>
+                      <property name="alignment">
+                       <set>Qt::AlignCenter</set>
+                      </property>
+                      <property name="buttonSymbols">
+                       <enum>QAbstractSpinBox::NoButtons</enum>
+                      </property>
+                      <property name="accelerated">
+                       <bool>true</bool>
+                      </property>
+                      <property name="dateTime">
+                       <datetime>
+                        <hour>23</hour>
+                        <minute>0</minute>
+                        <second>0</second>
+                        <year>2018</year>
+                        <month>1</month>
+                        <day>1</day>
+                       </datetime>
+                      </property>
+                      <property name="currentSection">
+                       <enum>QDateTimeEdit::YearSection</enum>
+                      </property>
+                      <property name="displayFormat">
+                       <string>yyyy-MM-dd</string>
+                      </property>
+                      <property name="calendarPopup">
+                       <bool>false</bool>
+                      </property>
+                      <property name="timeSpec">
+                       <enum>Qt::UTC</enum>
+                      </property>
+                      <property name="date">
+                       <date>
+                        <year>2018</year>
+                        <month>1</month>
+                        <day>1</day>
+                       </date>
+                      </property>
+                     </widget>
+                    </item>
+                    <item>
+                     <widget class="QToolButton" name="date_bt_2">
+                      <property name="enabled">
+                       <bool>false</bool>
+                      </property>
+                      <property name="minimumSize">
+                       <size>
+                        <width>30</width>
+                        <height>27</height>
+                       </size>
+                      </property>
+                      <property name="maximumSize">
+                       <size>
+                        <width>30</width>
+                        <height>27</height>
+                       </size>
+                      </property>
+                      <property name="styleSheet">
+                       <string notr="true">QToolButton {
+	border: 1px solid #acacac;
+	background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, 
+								stop: 0 #f0f0f0, stop: 1 #e5e5e5);
+	width: 27px;
+	height: 27px;
+}
+
+QToolButton:disabled {
+	background-color:  rgb(200,200,200);
+}
+
+QToolButton:hover {
+	border: 1px solid #7eb4ea;
+    border-radius: 1px;
+	background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, 
+								stop: 0 #ecf4fc, stop: 1 #dcecfc);
+}
+
+
+QToolButton:flat {
+	border: none;
+}</string>
+                      </property>
+                      <property name="text">
+                       <string/>
+                      </property>
+                      <property name="icon">
+                       <iconset>
+                        <normaloff>icons/down_arrow_icon.svg</normaloff>icons/down_arrow_icon.svg</iconset>
+                      </property>
+                      <property name="iconSize">
+                       <size>
+                        <width>20</width>
+                        <height>20</height>
+                       </size>
+                      </property>
+                      <property name="autoRaise">
+                       <bool>false</bool>
+                      </property>
+                     </widget>
+                    </item>
+                   </layout>
                   </item>
                   <item>
                    <spacer name="horizontalSpacer_26">
@@ -3378,202 +3647,6 @@ QComboBox QAbstractItemView::item {
                      </size>
                     </property>
                    </spacer>
-                  </item>
-                 </layout>
-                </item>
-                <item>
-                 <spacer name="verticalSpacer_23">
-                  <property name="orientation">
-                   <enum>Qt::Vertical</enum>
-                  </property>
-                  <property name="sizeType">
-                   <enum>QSizePolicy::Fixed</enum>
-                  </property>
-                  <property name="sizeHint" stdset="0">
-                   <size>
-                    <width>20</width>
-                    <height>20</height>
-                   </size>
-                  </property>
-                 </spacer>
-                </item>
-                <item>
-                 <layout class="QHBoxLayout" name="horizontalLayout_17">
-                  <item>
-                   <widget class="QLabel" name="main_lb_16">
-                    <property name="sizePolicy">
-                     <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                      <horstretch>0</horstretch>
-                      <verstretch>0</verstretch>
-                     </sizepolicy>
-                    </property>
-                    <property name="minimumSize">
-                     <size>
-                      <width>0</width>
-                      <height>27</height>
-                     </size>
-                    </property>
-                    <property name="maximumSize">
-                     <size>
-                      <width>16777215</width>
-                      <height>27</height>
-                     </size>
-                    </property>
-                    <property name="font">
-                     <font>
-                      <family>FreeSans</family>
-                      <pointsize>10</pointsize>
-                      <weight>75</weight>
-                      <bold>true</bold>
-                      <stylestrategy>PreferAntialias</stylestrategy>
-                      <kerning>true</kerning>
-                     </font>
-                    </property>
-                    <property name="styleSheet">
-                     <string notr="true"/>
-                    </property>
-                    <property name="text">
-                     <string>File name:</string>
-                    </property>
-                    <property name="alignment">
-                     <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-                    </property>
-                   </widget>
-                  </item>
-                  <item>
-                   <spacer name="horizontalSpacer_41">
-                    <property name="orientation">
-                     <enum>Qt::Horizontal</enum>
-                    </property>
-                    <property name="sizeType">
-                     <enum>QSizePolicy::Fixed</enum>
-                    </property>
-                    <property name="sizeHint" stdset="0">
-                     <size>
-                      <width>10</width>
-                      <height>20</height>
-                     </size>
-                    </property>
-                   </spacer>
-                  </item>
-                  <item>
-                   <widget class="QToolButton" name="info_bt_7">
-                    <property name="maximumSize">
-                     <size>
-                      <width>27</width>
-                      <height>27</height>
-                     </size>
-                    </property>
-                    <property name="styleSheet">
-                     <string notr="true">QToolButton {
-	border: 1px solid transparent;
-	background-color: transparent;
-	width: 27px;
-	height: 27px;
-}
-
-QToolButton:flat {
-	border: none;
-}</string>
-                    </property>
-                    <property name="text">
-                     <string/>
-                    </property>
-                    <property name="icon">
-                     <iconset>
-                      <normaloff>icons/info_icon.svg</normaloff>icons/info_icon.svg</iconset>
-                    </property>
-                    <property name="iconSize">
-                     <size>
-                      <width>23</width>
-                      <height>23</height>
-                     </size>
-                    </property>
-                    <property name="autoRaise">
-                     <bool>false</bool>
-                    </property>
-                   </widget>
-                  </item>
-                  <item>
-                   <spacer name="horizontalSpacer_42">
-                    <property name="orientation">
-                     <enum>Qt::Horizontal</enum>
-                    </property>
-                    <property name="sizeHint" stdset="0">
-                     <size>
-                      <width>40</width>
-                      <height>20</height>
-                     </size>
-                    </property>
-                   </spacer>
-                  </item>
-                 </layout>
-                </item>
-                <item>
-                 <layout class="QHBoxLayout" name="horizontalLayout_18">
-                  <item>
-                   <spacer name="horizontalSpacer_43">
-                    <property name="orientation">
-                     <enum>Qt::Horizontal</enum>
-                    </property>
-                    <property name="sizeType">
-                     <enum>QSizePolicy::Fixed</enum>
-                    </property>
-                    <property name="sizeHint" stdset="0">
-                     <size>
-                      <width>20</width>
-                      <height>20</height>
-                     </size>
-                    </property>
-                   </spacer>
-                  </item>
-                  <item>
-                   <widget class="QLineEdit" name="main_ln_1">
-                    <property name="enabled">
-                     <bool>true</bool>
-                    </property>
-                    <property name="minimumSize">
-                     <size>
-                      <width>0</width>
-                      <height>27</height>
-                     </size>
-                    </property>
-                    <property name="maximumSize">
-                     <size>
-                      <width>16777215</width>
-                      <height>27</height>
-                     </size>
-                    </property>
-                    <property name="font">
-                     <font>
-                      <family>FreeSans</family>
-                      <pointsize>9</pointsize>
-                      <weight>50</weight>
-                      <bold>false</bold>
-                      <stylestrategy>PreferAntialias</stylestrategy>
-                     </font>
-                    </property>
-                    <property name="layoutDirection">
-                     <enum>Qt::LeftToRight</enum>
-                    </property>
-                    <property name="styleSheet">
-                     <string notr="true">QLineEdit {
-	border-radius: 3px;
-   padding: 1px 4px 1px 4px;
-	background-color:  rgb(240, 240, 240);
-}
-
-QLineEdit:disabled {
-	background-color:  rgb(200, 200, 200);
-}</string>
-                    </property>
-                    <property name="frame">
-                     <bool>false</bool>
-                    </property>
-                    <property name="alignment">
-                     <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-                    </property>
-                   </widget>
                   </item>
                  </layout>
                 </item>
@@ -4173,26 +4246,26 @@ QLineEdit:disabled {
        </spacer>
       </item>
       <item>
-       <widget class="QToolButton" name="productdownload">
+       <widget class="QComboBox" name="download_method">
         <property name="enabled">
-         <bool>true</bool>
+         <bool>false</bool>
         </property>
         <property name="minimumSize">
          <size>
-          <width>150</width>
+          <width>220</width>
           <height>35</height>
          </size>
         </property>
         <property name="maximumSize">
          <size>
-          <width>150</width>
+          <width>220</width>
           <height>35</height>
          </size>
         </property>
         <property name="font">
          <font>
           <family>FreeSans</family>
-          <pointsize>10</pointsize>
+          <pointsize>11</pointsize>
           <weight>50</weight>
           <bold>false</bold>
           <stylestrategy>PreferAntialias</stylestrategy>
@@ -4200,38 +4273,156 @@ QLineEdit:disabled {
          </font>
         </property>
         <property name="styleSheet">
-         <string notr="true">QToolButton {
+         <string notr="true">QComboBox {
 	border: 1px solid #acacac;
-	border-radius: 1px;
-	background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,
-									stop:0 #f0f0f0, stop:1 #e5e5e5);
+    border-radius: 1px;
+	padding-left: 5px;
+    background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, 
+								stop: 0 #f0f0f0, stop: 1 #e5e5e5);
 }
 
-QToolButton:disabled {
+QComboBox:disabled {
 	background-color:  rgb(200,200,200);
 }
 
-QToolButton:hover {
+QComboBox:hover {
 	border: 1px solid #7eb4ea;
-	border-radius: 1px;
-	background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,
-									stop:0 #ecf4fc, stop:1 #dcecfc);
+    border-radius: 1px;
+	background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, 
+								stop: 0 #ecf4fc, stop: 1 #dcecfc);
 }
 
-QToolButton:pressed {
-	border: 1px solid #579de5;
-	border-radius: 1px;
-	background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,
-									stop:0 #daecfc, stop:1 #c4e0fc);
+QComboBox::drop-down {
+	subcontrol-origin: padding;
+	subcontrol-position: top right;
+	width: 35px;
+    border-left-width: 1px;
+	border-left-color: darkgray;
+	border-left-style: solid;
+	border-top-right-radius: 3px;
+	border-bottom-right-radius: 3px;
+}
+
+QComboBox::down-arrow {
+	image: url(icons/down_arrow_icon.svg); 
+	width: 21px;
+	height: 21px
+}
+
+QComboBox QAbstractItemView {
+	selection-background-color: rgb(200,200,200);
+	selection-color: black;
+	background: #f0f0f0;
+	border: 0px solid #f0f0f0;
+}
+
+QComboBox QAbstractItemView::item {
+	margin: 5px 5px 5px 5px;
 }</string>
         </property>
-        <property name="text">
-         <string>Download</string>
+        <property name="currentIndex">
+         <number>0</number>
         </property>
+        <property name="maxVisibleItems">
+         <number>12</number>
+        </property>
+        <item>
+         <property name="text">
+          <string>Make a choice...</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Check size - Query</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Check size - Dataset</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Download - Query</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Download - Datset</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Download - FTP</string>
+         </property>
+        </item>
        </widget>
       </item>
       <item>
        <spacer name="horizontalSpacer_44">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeType">
+         <enum>QSizePolicy::Fixed</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>10</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item>
+       <widget class="QToolButton" name="downloadproduct">
+        <property name="minimumSize">
+         <size>
+          <width>35</width>
+          <height>35</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>35</width>
+          <height>35</height>
+         </size>
+        </property>
+        <property name="toolTip">
+         <string>Click to download product</string>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">QToolButton {
+	border: 1px solid transparent;
+	background-color: transparent;
+	width: 27px;
+	height: 27px;
+}
+
+QToolButton:flat {
+	border: none;
+}</string>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="icon">
+         <iconset>
+          <normaloff>icons/continue_icon.svg</normaloff>icons/continue_icon.svg</iconset>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>35</width>
+          <height>35</height>
+         </size>
+        </property>
+        <property name="autoRaise">
+         <bool>false</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <spacer name="horizontalSpacer_45">
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
         </property>
@@ -4247,60 +4438,40 @@ QToolButton:pressed {
        </spacer>
       </item>
       <item>
-       <widget class="QToolButton" name="getSize">
-        <property name="enabled">
-         <bool>true</bool>
-        </property>
-        <property name="minimumSize">
-         <size>
-          <width>150</width>
-          <height>35</height>
-         </size>
-        </property>
+       <widget class="QToolButton" name="info_bt_8">
         <property name="maximumSize">
          <size>
-          <width>150</width>
-          <height>35</height>
+          <width>27</width>
+          <height>27</height>
          </size>
-        </property>
-        <property name="font">
-         <font>
-          <family>FreeSans</family>
-          <pointsize>10</pointsize>
-          <weight>50</weight>
-          <bold>false</bold>
-          <stylestrategy>PreferAntialias</stylestrategy>
-          <kerning>true</kerning>
-         </font>
         </property>
         <property name="styleSheet">
          <string notr="true">QToolButton {
-	border: 1px solid #acacac;
-	border-radius: 1px;
-	background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,
-									stop:0 #f0f0f0, stop:1 #e5e5e5);
+	border: 1px solid transparent;
+	background-color: transparent;
+	width: 27px;
+	height: 27px;
 }
 
-QToolButton:disabled {
-	background-color:  rgb(200,200,200);
-}
-
-QToolButton:hover {
-	border: 1px solid #7eb4ea;
-	border-radius: 1px;
-	background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,
-									stop:0 #ecf4fc, stop:1 #dcecfc);
-}
-
-QToolButton:pressed {
-	border: 1px solid #579de5;
-	border-radius: 1px;
-	background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,
-									stop:0 #daecfc, stop:1 #c4e0fc);
+QToolButton:flat {
+	border: none;
 }</string>
         </property>
         <property name="text">
-         <string>Check size</string>
+         <string/>
+        </property>
+        <property name="icon">
+         <iconset>
+          <normaloff>icons/info_icon.svg</normaloff>icons/info_icon.svg</iconset>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>23</width>
+          <height>23</height>
+         </size>
+        </property>
+        <property name="autoRaise">
+         <bool>false</bool>
         </property>
        </widget>
       </item>

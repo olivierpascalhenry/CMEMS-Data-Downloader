@@ -414,9 +414,12 @@ class CMEMSDataDownloadThread(Qt.QThread):
     
     def _check_query_size(self, id_res):
         logging.debug('thread_functions.py - CMEMSDataDownloadThread - _check_query_size')
-        size = minidom.parseString(id_res.text).getElementsByTagName('requestSize')[0].getAttribute('size')
-        max_size = minidom.parseString(id_res.text).getElementsByTagName('requestSize')[0].getAttribute('maxAllowedSize')
-        unit = minidom.parseString(id_res.text).getElementsByTagName('requestSize')[0].getAttribute('unit')
+        try:
+            size = minidom.parseString(id_res.text).getElementsByTagName('requestSize')[0].getAttribute('size')
+            max_size = minidom.parseString(id_res.text).getElementsByTagName('requestSize')[0].getAttribute('maxAllowedSize')
+            unit = minidom.parseString(id_res.text).getElementsByTagName('requestSize')[0].getAttribute('unit')
+        except Exception:
+            logging.exception('An exception occured during _check_query_size(), id_res ' + str(id_res.headers) + ' ; ' + str(id_res.text))
         units = {'b':1024**0, 'kb':1024**1, 'mb':1024**2, 'gb':1024**3, 'tb':1024**4,
                    'B':1024**0, 'kB':1024**1, 'mB':1024**2, 'gB':1024**3, 'tB':1024**4}
         size2 = self._set_size(float(size) * units[unit])
@@ -472,5 +475,84 @@ class CMEMSDataDownloadThread(Qt.QThread):
     
     def stop(self):
         logging.debug('thread_functions.py - ECMWFDataDownloadThread - stop')
+        self.terminate()
+
+
+class DownloadFTPFile(Qt.QThread):
+    download_update = QtCore.pyqtSignal(list)
+    download_done = QtCore.pyqtSignal(list)
+    download_failed = QtCore.pyqtSignal()
+    download_canceled = QtCore.pyqtSignal(list)
+    
+    def __init__(self, ftp, file_list, folder):
+        Qt.QThread.__init__(self)
+        logging.info('thread_functions.py - DownloadFTPFile - __init__')
+        self.ftp = ftp
+        self.file_list = file_list
+        self.folder = folder
+        self.cancel = False
+        
+    def run(self):
+        logging.debug('thread_functions.py - DownloadFTPFile - run - download started')
+        text_1 = 'Downloading:'
+        text_2 = ''
+        self.f = None
+        try:
+            for i, file in enumerate(self.file_list):
+                logging.debug('thread_functions.py - DownloadFTPFile - run - file: ' + file)
+                if i > 0:
+                    text_2 = 'Finished:'
+                self.download_update.emit([i, text_1, text_2, 0])
+                self.total_size = self.ftp.size(file)
+                self.file_size = 0
+                self.f = open(self.folder + '/' + file,'wb')
+                
+                def callback(data):
+                    if self.cancel:
+                        self.f.close()
+                    else:
+                        self.file_size += len(data)
+                        self.download_update.emit([i, text_1, text_2, round(self.file_size * 100 / self.total_size)])
+                        self.f.write(data)
+                
+                if self.cancel:
+                    break
+                self.ftp.retrbinary('RETR '+ file, callback, blocksize=8192)
+                self.f.close()
+            if self.cancel:
+                logging.debug('thread_functions.py - DownloadProducts - run - download canceled')
+                self.download_canceled.emit([i - 1, 'Canceled:','',0])
+                try:
+                    self.f.close()
+                    self.f = None
+                    os.remove(self.folder + '/' + file)
+                except PermissionError:
+                    logging.exception('thread_functions.py - DownloadProducts - run - PermissionError - The file couldn\'t be removed.')
+            else:
+                logging.debug('thread_functions.py - DownloadProducts - run - download finished')
+                self.download_done.emit([len(self.file_list) - 1, 'Finished:', '', 100])
+        except Exception:
+            logging.exception('thread_functions.py - DownloadProducts - run - connexion issue')
+            try:
+                self.f.close()
+            except Exception:
+                pass
+            self.download_failed.emit()
+    
+    def _set_size(self, bytes):
+        suffixes = ['B', 'KB', 'MB', 'GB', 'TB', 'PB']
+        i = 0
+        while bytes >= 1024 and i < len(suffixes)-1:
+            bytes /= 1024.
+            i += 1
+        f = ('%.2f' % bytes).rstrip('0').rstrip('.')
+        return '%s %s' % (f, suffixes[i])
+    
+    def cancel_download(self):
+        logging.debug('thread_functions.py - DownloadFTPFile - cancel_download')
+        self.cancel = True
+    
+    def stop(self):
+        logging.debug('thread_functions.py - DownloadFTPFile - stop')
         self.terminate()
 

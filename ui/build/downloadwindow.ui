@@ -363,6 +363,17 @@ p, li { white-space: pre-wrap; }
          <kerning>true</kerning>
         </font>
        </property>
+       <property name="styleSheet">
+        <string notr="true">QProgressBar {
+   border: 0px solid black;
+   border-radius: 3px;
+   background: rgb(220,220,220);
+}
+
+QProgressBar::chunk {
+  background: rgb(0,200,0);
+}</string>
+       </property>
        <property name="value">
         <number>0</number>
        </property>

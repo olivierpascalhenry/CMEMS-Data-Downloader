@@ -1,7 +1,7 @@
-version=1.2
+version=1.4
 creation_date=2018-06-26
 server_url=http://my.cmems-du.eu/motu-web/Motu
-ftp_url=ftp://my.cmems-du.eu/Core/
+ftp_url=ftp://my.cmems-du.eu
 domain=Global
 type=Physics
 source=Satellite
@@ -22,5 +22,5 @@ production=SST-METOFFICE-EXETER-UK
 image=SST_GLO_SST_L4_REP_OBSERVATIONS_010_011.png
 variables=analysed_sst,sea_ice_fraction,sst_anomaly|analysed_sst,sea_ice_fraction,analysis_error,mask|analysed_sst,standard_deviation_ice,sea_ice_fraction,mask,standard_deviation_sst|analysed_sst,standard_deviation_sst
 swath=METOFFICE-GLO-SST-L4-RAN-OBS-ANOM,METOFFICE-GLO-SST-L4-RAN-OBS-SST,METOFFICE-GLO-SST-L4-RAN-OBS-SST-MON,METOFFICE-GLO-SST-L4-RAN-OBS-SST-SEAS
-suffix=-TDS
+suffix=TDS,FTP
 other_parameters=None

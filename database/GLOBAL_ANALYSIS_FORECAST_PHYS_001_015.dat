@@ -1,7 +1,7 @@
-version=1.2
+version=1.4
 creation_date=2018-07-16
 server_url=http://nrt.cmems-du.eu/motu-web/Motu
-ftp_url=ftp://nrt.cmems-du.eu/Core/
+ftp_url=ftp://nrt.cmems-du.eu
 domain=Global
 type=Physics
 source=Model
@@ -22,5 +22,5 @@ production=GLO-METOFFICE-EXETER-UK
 image=None
 variables=bottomT|uo,vo|siconc,sithick,usi,vsi|mlotst|so|zos|thetao|uo,vo|zos|thetao
 swath=MetO-GLO-PHYS-dm-BED,MetO-GLO-PHYS-dm-CUR,MetO-GLO-PHYS-dm-ICE,MetO-GLO-PHYS-dm-MLD,MetO-GLO-PHYS-dm-SAL,MetO-GLO-PHYS-dm-SSH,MetO-GLO-PHYS-dm-TEM,MetO-GLO-PHYS-hi-CUR,MetO-GLO-PHYS-hi-TEM,MetO-GLO-PHYS-hi-SSH
-suffix=-TDS
+suffix=TDS,FTP
 other_parameters=None

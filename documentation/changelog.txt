@@ -7,14 +7,35 @@ To do list:
 -----------
   
   - add products. (v0.8, v0.9, v1.0, ...)
-  - track last bugs, check stability. (v1.0)
-  - propose a download by FTP for a complete product (v1.2)
-  - improve expert window and add url field (v1.1).
-  - take into account product with FTP access (v1.2)
+  - if the weight of the query is above the MOTU limit, propose to divide query into multiple small queries (based on date) (v1.x)
+  - add an option to unlock date picker and select any date.
+  - review how gui works
+  - remove function to check fields.
 
   
 To fix list:
 ------------
+  
+
+August 28 2018, Release version 1.1.0
+=====================================
+
+  FIXED:
+    - an issue was fixed with the time period when creating the database.
+    - an issue about a missing object was fixed in the option window.
+    - when the folder where CMEMS files are stored doesn't exist, CDD should reset it in .ini file. It has been fixed.
+
+  ADDED:
+    - new products have been added in the database.
+    - a field to enter the url of the server where product are stored has been added to the expert window.
+    - info text has been added to all info buttons in the expert window.
+    - FTP download has been added.
+    - a new window for FTP has been added.
+    - the parameter "other_parameters" is now handled by the code in case there is specific behaviour with a product/dataset.
+    
+  MODIFIED:
+    - dataset selection has been moved from the second tab to the first one.
+    - buttons to download and check size have been replaced by a combobox and a button. the combobox allow to check size and download products based on TDS (complete query, with variables, area, depth and time selection) or DGF (complete dataset with only time selection).
 
 
 August 17 2018, Release version 1.0.0

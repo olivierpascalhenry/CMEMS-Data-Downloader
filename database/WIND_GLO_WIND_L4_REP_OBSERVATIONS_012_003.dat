@@ -1,7 +1,7 @@
-version=1.2
+version=1.4
 creation_date=2018-07-16
 server_url=http://my.cmems-du.eu/motu-web/Motu
-ftp_url=ftp://my.cmems-du.eu/Core/
+ftp_url=ftp://my.cmems-du.eu
 domain=Global
 type=Physics
 source=Satellite
@@ -22,5 +22,5 @@ production=SIW-IFREMER-BREST-FR
 image=None
 variables=eastward_wind,northward_wind,surface_downward_eastward_stress,surface_downward_northward_stress,wind_speed,surface_downward_northward_stress_rms,wind_stress,land_ice_mask,wind_stress_std,sampling_length,wind_stress_rms,eastward_wind_std,wind_speed_rms,surface_downward_eastward_stress_rms,eastward_wind_rms,surface_downward_northward_stress_std,northward_wind_std,surface_downward_eastward_stress_std,wind_speed_std,northward_wind_rms
 swath=CERSAT-GLO-REP_WIND_L4-OBS_FULL_TIME_SERIE
-suffix=-TDS
+suffix=TDS,FTP
 other_parameters=None

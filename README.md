@@ -1,6 +1,6 @@
 Version
 -------
-CMEMS Data Downloader v1.0.0
+CMEMS Data Downloader v1.1.0
 
 
 Project Overview:

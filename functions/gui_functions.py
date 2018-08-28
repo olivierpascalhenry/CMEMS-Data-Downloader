@@ -8,7 +8,16 @@ def info_button(self):
     logging.debug('gui_functions.py - info_button - self.sender().objectName() ' + self.sender().objectName())
     if 'info_bt' in self.sender().objectName():
         self.infoWindow = MyInfo(self.info_button_text_dict[self.sender().objectName()])
-        self.infoWindow.move(QtGui.QCursor.pos().x() - 275, QtGui.QCursor.pos().y() + 20)
+        if self.sender().objectName() == 'info_bt_8':
+            self.infoWindow.move(QtGui.QCursor.pos().x() - 350, QtGui.QCursor.pos().y() - 190)
+            self.infoWindow.setMinimumSize(QtCore.QSize(700, 380))
+            self.infoWindow.setMaximumSize(QtCore.QSize(700, 380))
+        elif self.sender().objectName() == 'info_bt_1':
+            self.infoWindow.move(QtGui.QCursor.pos().x() - 300, QtGui.QCursor.pos().y() + 20)
+            self.infoWindow.setMinimumSize(QtCore.QSize(600, 330))
+            self.infoWindow.setMaximumSize(QtCore.QSize(600, 330))
+        else:
+            self.infoWindow.move(QtGui.QCursor.pos().x() - 275, QtGui.QCursor.pos().y() + 20)
         self.infoWindow.exec_()
 
 def activate_type_cb(self):
@@ -96,7 +105,139 @@ def activate_dataset_information(self):
         information_text = ('<p align="justify">Please click on the information button on the right to access more detailed information about the product.</p>'
                             + '<p align="justify">' + product['information']['short_description'] + '</p>')
         self.main_lb_7.setText(information_text)
-        swath, period, resolution = product['swath'], product['information']['temporal_coverage'], product['information']['temporal_resolution']
+        self.main_cb_6.clear()
+        self.main_cb_6.setEnabled(True)
+        if isinstance(product['swath'], list):
+            self.main_cb_6.addItem('Make a choice...')
+            self.main_cb_6.addItems(product['swath'])
+            clear_layout(self.variables_vertical_layout)
+            self.main_cb_6.currentIndexChanged.connect(lambda: populate_variable_list(self, product))
+            self.main_cb_6.currentIndexChanged.connect(lambda: activate_depth_cb(self, self.main_cb_6.currentIndex(), product))
+            self.main_cb_6.currentIndexChanged.connect(lambda: activate_area_ln(self, product))
+            self.main_cb_6.currentIndexChanged.connect(lambda: activate_date_picker(self, product))
+            self.main_cb_6.currentIndexChanged.connect(lambda: activate_download_method(self, product))
+            if product['swath_temporal'] is not None:
+                self.main_cb_6.currentIndexChanged.connect(lambda: specific_period(self, self.main_cb_6.currentIndex(), product))
+        else:
+            self.main_cb_6.addItem(product['swath'])
+            populate_variable_list(self, product)
+            activate_depth_cb(self, self.main_cb_6.currentIndex(), product)
+            activate_area_ln(self, product)
+            activate_date_picker(self, product)
+            activate_download_method(self, product)
+
+
+def populate_variable_list(self, product):
+    logging.debug('gui_functions.py - populate_variable_list')
+    clean_stylesheet_dataset(self)
+    clean_stylesheet_variable(self)
+    clear_layout(self.variables_vertical_layout)
+    if not read_other_parameters(self, product['other_parameters'], 'download_method'):
+        variables = product['variables']
+        if self.main_cb_6.currentText() != 'Make a choice...':
+            font = QtGui.QFont()
+            font.setFamily("fonts/SourceSansPro-Regular.ttf")
+            font.setPointSize(10)
+            font.setKerning(True)
+            font.setStyleStrategy(QtGui.QFont.PreferAntialias)
+            if len(product['suffix']) == 1 and product['suffix'][0] == 'FTP':
+                label = QtWidgets.QLabel()
+                label.setMinimumSize(QtCore.QSize(0, 27))
+                label.setMaximumSize(QtCore.QSize(16777215, 27))
+                label.setFont(font)
+                label.setObjectName('label')
+                label.setText('The current product/dataset is only available via FTP and can\'t be subseted.')
+                self.variables_vertical_layout.addWidget(label)
+            else:
+                if variables is not None:
+                    if isinstance(variables, list):
+                        if isinstance(variables[0], list):
+                            index = self.main_cb_6.currentIndex() - 1
+                            variables = variables[index]
+                    else:
+                        variables = [variables]
+                    self.variables_cb.clear()
+                    var_num = 0
+                    tab_index = self.tabWidget.currentIndex()
+                    self.tabWidget.setCurrentIndex(1)
+                    for var in variables:
+                        self.variables_cb.append(QtWidgets.QCheckBox())
+                        self.variables_cb[var_num].setMinimumSize(QtCore.QSize(0, 27))
+                        self.variables_cb[var_num].setMaximumSize(QtCore.QSize(16777215, 27))
+                        self.variables_cb[var_num].setFont(font)
+                        self.variables_cb[var_num].setObjectName('variables_cb_' + str(var_num))
+                        self.variables_cb[var_num].setText(self.variables_name[var] + ' (' + var + ')')
+                        self.variables_cb[var_num].toggled.connect(lambda: clean_stylesheet_variable(self))
+                        self.variables_vertical_layout.addWidget(self.variables_cb[var_num])
+                        var_num += 1
+                    self.tabWidget.setCurrentIndex(tab_index)
+                else:
+                    label = QtWidgets.QLabel()
+                    label.setMinimumSize(QtCore.QSize(0, 27))
+                    label.setMaximumSize(QtCore.QSize(16777215, 27))
+                    label.setFont(font)
+                    label.setObjectName('label')
+                    label.setText('Only one variable is available with the current dataset. It has been automatically selected.')
+                    self.variables_vertical_layout.addWidget(label)
+
+
+def activate_depth_cb(self, product_index, product):
+    logging.debug('gui_functions.py - activate_depth_cb')
+    deactivate_depth_cb(self)
+    if self.main_cb_6.currentText() != 'Make a choice...' and self.main_cb_6.currentText() != 'No product selected...':
+        if not read_other_parameters(self, product['other_parameters'], 'download_method'):
+            depth = product['information']['vertical_coverage']
+            swath_vertical = product['swath_vertical']
+            suffixes = product['suffix']
+            if len(suffixes) == 1 and suffixes[0] == 'FTP':
+                pass
+            else:
+                if 'TDS' in suffixes:
+                    self.main_cb_7.setEnabled(True)
+                    self.main_cb_8.setEnabled(True)
+                if swath_vertical == None:
+                    if depth == 'surface':
+                        self.main_cb_7.clear()
+                        self.main_cb_7.addItem('surface')
+                        self.main_cb_8.clear()
+                        self.main_cb_8.addItem('surface')
+                else:
+                    if len(swath_vertical) > 1:
+                        start = swath_vertical[product_index - 1][0]
+                        end = swath_vertical[product_index - 1][1]
+                    else:
+                        start = swath_vertical[0][0]
+                        end = swath_vertical[0][1]
+                    self.main_cb_7.clear()
+                    self.main_cb_8.clear()
+                    if isinstance(start, list):
+                        self.main_cb_7.addItem('Make a choice...')
+                        self.main_cb_8.addItem('Make a choice...')
+                        self.main_cb_7.addItems(start)
+                        self.main_cb_8.addItems(end)
+                    else:
+                        self.main_cb_7.addItem(start)
+                        self.main_cb_8.addItem(end)
+
+
+def activate_area_ln(self, product):
+    logging.debug('gui_functions.py - activate_area_ln')
+    if not read_other_parameters(self, product['other_parameters'], 'download_method'):
+        suffixes = product['suffix']
+        if 'TDS' in suffixes:
+            self.space_ln_north.setEnabled(True)
+            self.space_ln_south.setEnabled(True)
+            self.space_ln_east.setEnabled(True)
+            self.space_ln_west.setEnabled(True)
+            self.earth_im.setEnabled(True)
+
+
+def activate_date_picker(self, product):
+    logging.debug('gui_functions.py - activate_date_picker')
+    deactivate_date_picker(self)
+    if not read_other_parameters(self, product['other_parameters'], 'download_method'):
+        period = product['information']['temporal_coverage']
+        resolution = product['information']['temporal_resolution']
         if 'Present' in period:
             start, end = period[5:15], period[29:]
             if '+' in end:
@@ -106,10 +247,11 @@ def activate_dataset_information(self):
             end = end.strftime('%Y-%m-%d')
         else:
             start, end = period[5:15], period[29:39]
-        self.main_de_1.setEnabled(True)
-        self.main_de_2.setEnabled(True)
-        self.date_bt_1.setEnabled(True)
-        self.date_bt_2.setEnabled(True)
+        if 'DGF' in product['suffix'] or 'TDS' in product['suffix']:
+            self.main_de_1.setEnabled(True)
+            self.main_de_2.setEnabled(True)
+            self.date_bt_1.setEnabled(True)
+            self.date_bt_2.setEnabled(True)
         date_format = 'yyyy-MM-dd'
         if ',' in resolution:
             if resolution[:resolution.find(',')] == 'monthly-mean':
@@ -117,7 +259,6 @@ def activate_dataset_information(self):
         else:
             if resolution == 'monthly-mean':
                 date_format = 'yyyy-MM'
-        
         if date_format == 'yyyy-MM':
             min_date = start[:-2] + '01'
             max_date = end[:-2] + '28'
@@ -134,142 +275,75 @@ def activate_dataset_information(self):
         self.main_de_2.setMinimumDate(QtCore.QDate.fromString(min_date, QtCore.Qt.ISODate))
         self.main_de_2.setMaximumDate(QtCore.QDate.fromString(max_date, QtCore.Qt.ISODate))
         self.main_de_2.setDate(QtCore.QDate.fromString(end, QtCore.Qt.ISODate))
-        self.main_cb_6.clear()
-        self.main_cb_6.setEnabled(True)
-        if isinstance(swath, list):
-            self.main_cb_6.addItem('Make a choice...')
-            self.main_cb_6.addItems(swath)
-            clear_layout(self.variables_vertical_layout)
-            self.main_cb_6.currentIndexChanged.connect(lambda: populate_variable_list(self, product['variables']))
-            self.main_cb_6.currentIndexChanged.connect(lambda: activate_depth_cb(self, product['information']['vertical_coverage'], 
-                                                                                 self.main_cb_6.currentIndex(), product['swath_vertical']))
-            self.main_cb_6.currentIndexChanged.connect(lambda: activate_area_ln(self, product['suffix']))
-            self.main_cb_6.currentIndexChanged.connect(lambda: specific_period(self, self.main_cb_6.currentIndex(), product['swath_temporal'], 
-                                                                               product['swath_temporal_resolution']))
-        else:
-            self.main_cb_6.addItem(swath)
-            populate_variable_list(self, product['variables'])
-            activate_depth_cb(self, product['information']['vertical_coverage'], self.main_cb_6.currentIndex(), product['swath_vertical'])
-            activate_area_ln(self, product['suffix'])
 
 
-def populate_variable_list(self, variables):
-    logging.debug('gui_functions.py - populate_variable_list')
-    clean_stylesheet_dataset(self)
-    clean_stylesheet_variable(self)
-    clear_layout(self.variables_vertical_layout)
-    if self.main_cb_6.currentText() != 'Make a choice...':
-        font = QtGui.QFont()
-        font.setFamily("fonts/SourceSansPro-Regular.ttf")
-        font.setPointSize(10)
-        font.setKerning(True)
-        font.setStyleStrategy(QtGui.QFont.PreferAntialias)
-        if variables is not None:
-            if isinstance(variables, list):
-                if isinstance(variables[0], list):
-                    index = self.main_cb_6.currentIndex() - 1
-                    variables = variables[index]
-            else:
-                variables = [variables]
-            self.variables_cb.clear()
-            var_num = 0
-            tab_index = self.tabWidget.currentIndex()
-            self.tabWidget.setCurrentIndex(1)
-            for var in variables:
-                self.variables_cb.append(QtWidgets.QCheckBox())
-                self.variables_cb[var_num].setMinimumSize(QtCore.QSize(0, 27))
-                self.variables_cb[var_num].setMaximumSize(QtCore.QSize(16777215, 27))
-                self.variables_cb[var_num].setFont(font)
-                self.variables_cb[var_num].setObjectName('variables_cb_' + str(var_num))
-                self.variables_cb[var_num].setText(self.variables_name[var] + ' (' + var + ')')
-                self.variables_cb[var_num].toggled.connect(lambda: clean_stylesheet_variable(self))
-                self.variables_vertical_layout.addWidget(self.variables_cb[var_num])
-                var_num += 1
-            self.tabWidget.setCurrentIndex(tab_index)
-        else:
-            label = QtWidgets.QLabel()
-            label.setMinimumSize(QtCore.QSize(0, 27))
-            label.setMaximumSize(QtCore.QSize(16777215, 27))
-            label.setFont(font)
-            label.setObjectName('label')
-            label.setText('Only one variable is available with the current dataset. It has been automatically selected.')
-            self.variables_vertical_layout.addWidget(label)
+def activate_download_method(self, product):
+    deactivate_download_method(self)
+    self.download_method.setEnabled(True)
+    if not read_other_parameters(self, product['other_parameters'], 'download_method'):
+        suffixes = product['suffix']
+        for suffix in suffixes:
+            if suffix == 'FTP':
+                self.download_method.model().item(5).setEnabled(True)
+            elif suffix == 'TDS':
+                self.download_method.model().item(3).setEnabled(True)
+                self.download_method.model().item(1).setEnabled(True)
+            elif suffix == 'DGF':
+                self.download_method.model().item(4).setEnabled(True)
+                self.download_method.model().item(2).setEnabled(True)
+        self.download_method.setCurrentIndex(0)
+    else:
+        self.download_method.model().item(5).setEnabled(True)
+        self.download_method.setCurrentIndex(5)
 
 
-def activate_depth_cb(self, depth, product_index, swath_vertical):
-    logging.debug('gui_functions.py - activate_depth_cb')
-    if self.main_cb_6.currentText() != 'Make a choice...' and self.main_cb_6.currentText() != 'No product selected...':
-        if swath_vertical == None:
-            if depth == 'surface':
-                self.main_cb_7.clear()
-                self.main_cb_7.addItem('surface')
-                self.main_cb_8.clear()
-                self.main_cb_8.addItem('surface')
-        else:
-            if len(swath_vertical) > 1:
-                start = swath_vertical[product_index - 1][0]
-                end = swath_vertical[product_index - 1][1]
-            else:
-                start = swath_vertical[0][0]
-                end = swath_vertical[0][1]
-            self.main_cb_7.clear()
-            self.main_cb_8.clear()
-            if isinstance(start, list):
-                self.main_cb_7.setEnabled(True)
-                self.main_cb_8.setEnabled(True)
-                self.main_cb_7.addItem('Make a choice...')
-                self.main_cb_8.addItem('Make a choice...')
-                self.main_cb_7.addItems(start)
-                self.main_cb_8.addItems(end)
-            else:
-                self.main_cb_7.addItem(start)
-                self.main_cb_8.addItem(end)
-
-
-def activate_area_ln(self, suffix):
-    logging.debug('gui_functions.py - activate_area_ln')
-    if 'TDS' in suffix:
-        self.space_ln_north.setEnabled(True)
-        self.space_ln_south.setEnabled(True)
-        self.space_ln_east.setEnabled(True)
-        self.space_ln_west.setEnabled(True)
-        self.earth_im.setEnabled(True)
-
-
-def specific_period(self, i, swath_temporal, swath_temporal_resolution):
+def specific_period(self, i, product):
     logging.debug('gui_functions.py - specific_period')
-    if i > 0:
-        i -= 1
-        index = swath_temporal[i].find('to')
-        start = swath_temporal[i][:index]
-        end = swath_temporal[i][index+2:]
-        if 'Present' in end:
-            if '+' in end:
-                end = datetime.datetime.now() + datetime.timedelta(days=int(end[end.find('+') + 1:]))
-            else:
-                end = datetime.datetime.now()
-            end = end.strftime('%Y-%m-%d')
-        date_format = 'yyyy-MM-dd'
-        if ',' in swath_temporal_resolution[i]:
-            if swath_temporal_resolution[i][:swath_temporal_resolution[i].find(',')] == 'mm':
-                date_format = 'yyyy-MM'
+    deactivate_date_picker(self)
+    if not read_other_parameters(self, product['other_parameters'], 'download_method'):
+        swath_temporal = product['swath_temporal']
+        swath_temporal_resolution = product['swath_temporal_resolution']
+        suffixes = product['suffix']
+        if len(suffixes) == 1 and suffixes[0] == 'FTP':
+            pass
         else:
-            if swath_temporal_resolution[i] == 'mm':
-                date_format = 'yyyy-MM'
-        if date_format == 'yyyy-MM':
-            min_date = start[:-2] + '01'
-            max_date = end[:-2] + '28'
-        else:
-            min_date = start
-            max_date = end
-        self.main_de_1.setDisplayFormat(date_format)
-        self.main_de_2.setDisplayFormat(date_format)
-        self.main_de_1.setMinimumDate(QtCore.QDate.fromString(min_date, QtCore.Qt.ISODate))
-        self.main_de_1.setMaximumDate(QtCore.QDate.fromString(max_date, QtCore.Qt.ISODate))
-        self.main_de_1.setDate(QtCore.QDate.fromString(start, QtCore.Qt.ISODate))
-        self.main_de_2.setMinimumDate(QtCore.QDate.fromString(min_date, QtCore.Qt.ISODate))
-        self.main_de_2.setMaximumDate(QtCore.QDate.fromString(max_date, QtCore.Qt.ISODate))
-        self.main_de_2.setDate(QtCore.QDate.fromString(end, QtCore.Qt.ISODate))
+            if i > 0:
+                i -= 1
+                index = swath_temporal[i].find('to')
+                start = swath_temporal[i][:index]
+                end = swath_temporal[i][index+2:]
+                if 'Present' in end:
+                    if '+' in end:
+                        end = datetime.datetime.now() + datetime.timedelta(days=int(end[end.find('+') + 1:]))
+                    else:
+                        end = datetime.datetime.now()
+                    end = end.strftime('%Y-%m-%d')
+                date_format = 'yyyy-MM-dd'
+                if swath_temporal_resolution is not None:
+                    if ',' in swath_temporal_resolution[i]:
+                        if swath_temporal_resolution[i][:swath_temporal_resolution[i].find(',')] == 'mm':
+                            date_format = 'yyyy-MM'
+                    else:
+                        if swath_temporal_resolution[i] == 'mm':
+                            date_format = 'yyyy-MM'
+                if date_format == 'yyyy-MM':
+                    min_date = start[:-2] + '01'
+                    max_date = end[:-2] + '28'
+                else:
+                    min_date = start
+                    max_date = end
+                self.main_de_1.setDisplayFormat(date_format)
+                self.main_de_2.setDisplayFormat(date_format)
+                self.main_de_1.setMinimumDate(QtCore.QDate.fromString(min_date, QtCore.Qt.ISODate))
+                self.main_de_1.setMaximumDate(QtCore.QDate.fromString(max_date, QtCore.Qt.ISODate))
+                self.main_de_1.setDate(QtCore.QDate.fromString(start, QtCore.Qt.ISODate))
+                self.main_de_2.setMinimumDate(QtCore.QDate.fromString(min_date, QtCore.Qt.ISODate))
+                self.main_de_2.setMaximumDate(QtCore.QDate.fromString(max_date, QtCore.Qt.ISODate))
+                self.main_de_2.setDate(QtCore.QDate.fromString(end, QtCore.Qt.ISODate))
+                self.main_de_1.setEnabled(True)
+                self.main_de_2.setEnabled(True)
+                self.date_bt_1.setEnabled(True)
+                self.date_bt_2.setEnabled(True)
 
     
 def deactivate_area_ln(self):
@@ -302,6 +376,27 @@ def deactivate_depth_cb(self):
     if depth_signal:
         self.main_cb_7.currentIndexChanged.connect(self.set_modified)
         self.main_cb_8.currentIndexChanged.connect(self.set_modified)
+
+
+def deactivate_date_picker(self):
+    logging.debug('gui_functions.py - deactivate_date_picker')
+    self.main_de_1.setDisplayFormat('yyyy-MM-dd')
+    self.main_de_2.setDisplayFormat('yyyy-MM-dd')
+    self.main_de_1.setMinimumDate(QtCore.QDate.fromString('1579-01-01', QtCore.Qt.ISODate))
+    self.main_de_2.setMaximumDate(QtCore.QDate.fromString('2518-01-01', QtCore.Qt.ISODate))
+    self.main_de_1.setDate(QtCore.QDate.fromString('1979-01-01', QtCore.Qt.ISODate))
+    self.main_de_1.setMinimumDate(QtCore.QDate.fromString('1579-01-01', QtCore.Qt.ISODate))
+    self.main_de_2.setMaximumDate(QtCore.QDate.fromString('2518-01-01', QtCore.Qt.ISODate))
+    self.main_de_2.setDate(QtCore.QDate.fromString('2018-01-01', QtCore.Qt.ISODate))
+    self.main_de_1.setEnabled(False)
+    self.main_de_2.setEnabled(False)
+    self.date_bt_1.setEnabled(False)
+    self.date_bt_2.setEnabled(False)
+    try:
+        self.date_bt_1.clicked.disconnect()
+        self.date_bt_2.clicked.disconnect()
+    except TypeError:
+        pass
 
 
 def deactivate_type_cb(self):
@@ -363,29 +458,21 @@ def deactivate_dataset_information(self):
     self.main_cb_6.addItem('No product selected...')
     self.main_cb_6.setCurrentIndex(0)
     self.main_cb_6.setEnabled(False)
-    self.main_de_1.setDisplayFormat('yyyy-MM-dd')
-    self.main_de_2.setDisplayFormat('yyyy-MM-dd')
-    self.main_de_1.setMinimumDate(QtCore.QDate.fromString('1579-01-01', QtCore.Qt.ISODate))
-    self.main_de_2.setMaximumDate(QtCore.QDate.fromString('2518-01-01', QtCore.Qt.ISODate))
-    self.main_de_1.setDate(QtCore.QDate.fromString('1979-01-01', QtCore.Qt.ISODate))
-    self.main_de_1.setMinimumDate(QtCore.QDate.fromString('1579-01-01', QtCore.Qt.ISODate))
-    self.main_de_2.setMaximumDate(QtCore.QDate.fromString('2518-01-01', QtCore.Qt.ISODate))
-    self.main_de_2.setDate(QtCore.QDate.fromString('2018-01-01', QtCore.Qt.ISODate))
-    self.main_de_1.setEnabled(False)
-    self.main_de_2.setEnabled(False)
-    self.date_bt_1.setEnabled(False)
-    self.date_bt_2.setEnabled(False)
-    try:
-        self.date_bt_1.clicked.disconnect()
-        self.date_bt_2.clicked.disconnect()
-    except TypeError:
-        pass
     clear_layout(self.variables_vertical_layout)
     deactivate_depth_cb(self)
     deactivate_area_ln(self)
+    deactivate_date_picker(self)
+    deactivate_download_method(self)
     clean_stylesheet_product(self)
     clean_stylesheet_dataset(self)
     clean_stylesheet_variable(self)
+
+
+def deactivate_download_method(self):
+    self.download_method.setEnabled(False)
+    for i in range(5):
+        self.download_method.model().item(i + 1).setEnabled(False)
+    self.download_method.setCurrentIndex(0)
 
 
 def clean_stylesheet_product(self):
@@ -440,6 +527,18 @@ def display_calendar(self):
         date = year + '-' + month + '-' + day
         object_edit.setDate(QtCore.QDate.fromString(date, QtCore.Qt.ISODate))
 
+
+def read_other_parameters(self, other_parameters, parameter):
+    if isinstance(other_parameters, dict):
+        if parameter == 'download_method':
+            try:
+                if other_parameters['download_method'][self.main_cb_6.currentText()] == 'FTP':
+                    return True
+            except KeyError:
+                return False
+    else:
+        return False
+    
 
 def clear_layout(layout):
     logging.debug('gui_functions.py - clear_layout')

@@ -1,7 +1,7 @@
-version=1.1
+version=1.3
 creation_date=2018-07-18
 server_url=http://my.cmems-du.eu/motu-web/Motu
-ftp_url=ftp://my.cmems-du.eu/Core/
+ftp_url=ftp://my.cmems-du.eu
 domain=Global
 type=Biogeochemistry
 source=Model
@@ -22,5 +22,5 @@ production=OC-PML-PLYMOUTH-UK
 image=None
 variables=RRS412|RRS443|RRS490|RRS510|RRS555|RRS670
 swath=dataset-oc-glo-opt-multi_cci-l3-rrs412_4km_daily-rep-v02,dataset-oc-glo-opt-multi_cci-l3-rrs443_4km_daily-rep-v02,dataset-oc-glo-opt-multi_cci-l3-rrs490_4km_daily-rep-v02,dataset-oc-glo-opt-multi_cci-l3-rrs510_4km_daily-rep-v02,dataset-oc-glo-opt-multi_cci-l3-rrs555_4km_daily-rep-v02,dataset-oc-glo-opt-multi_cci-l3-rrs670_4km_daily-rep-v02
-suffix=-TDS
+suffix=TDS,FTP
 other_parameters=None

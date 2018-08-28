@@ -1,7 +1,7 @@
-version=1.1
+version=1.3
 creation_date=2018-07-17
 server_url=http://nrt.cmems-du.eu/motu-web/Motu
-ftp_url=ftp://nrt.cmems-du.eu/Core/
+ftp_url=ftp://nrt.cmems-du.eu
 domain=Global
 type=Physics
 source=Satellite
@@ -22,5 +22,5 @@ production=SL-CLS-TOULOUSE-FR
 image=None
 variables=None
 swath=dataset-duacs-nrt-global-al-phy-l3,dataset-duacs-nrt-global-c2-phy-l3,dataset-duacs-nrt-global-j2g-phy-l3,dataset-duacs-nrt-global-j2n-phy-l3,dataset-duacs-nrt-global-j3-phy-l3,dataset-duacs-nrt-global-s3a-phy-l3
-suffix=-DGF
+suffix=DGF,FTP
 other_parameters=None

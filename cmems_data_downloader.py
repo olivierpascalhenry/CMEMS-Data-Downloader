@@ -9,7 +9,6 @@ from ui.mainwindow import MainWindow
 from ui._version import _downloader_version
 
 
-
 def launch_data_downloader(path):
     app = QApplication(sys.argv)
     splash_pix = QPixmap('icons\cmems_data_downloader_icon.svg')

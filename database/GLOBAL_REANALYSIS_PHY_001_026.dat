@@ -1,7 +1,7 @@
-version=1.0
+version=1.2
 creation_date=2018-08-10
 server_url=http://my.cmems-du.eu/motu-web/Motu
-ftp_url=ftp://my.cmems-du.eu/Core/
+ftp_url=ftp://my.cmems-du.eu
 domain=Global
 type=Physics
 source=Model
@@ -22,5 +22,5 @@ production=GLO-MERCATOR-TOULOUSE-FR
 image=None
 variables=thetao_cglo,thetao_foam,thetao_glor,thetao_mean,thetao_oras,thetao_std,so_cglo,so_foam,so_glor,so_mean,so_oras,so_std|uo_cglo,uo_foam,uo_glor,uo_mean,uo_oras,uo_std,vo_cglo,vo_foam,vo_glor,vo_mean,vo_oras,vo_std
 swath=global-reanalysis-phy-001-026-grepv1-monthly,global-reanalysis-phy-001-026-grepv1-uv-monthly
-suffix=-TDS
+suffix=TDS,FTP
 other_parameters=None
